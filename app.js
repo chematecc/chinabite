@@ -3,6 +3,32 @@
 // sharing does NOT count as an invite. Real invite counting needs a server (D1).
 (function () {
   "use strict";
+  // ================================================================
+  // DEV MODE / PAYWALL — 开发模式集中配置（全站只有这一处开关）
+  // DEV_MODE = true（默认开启）：开发版，全部功能解锁，不自我限制。
+  //   - 解码无限次（不扣 3 次/天，不看广告，不扣次数）
+  //   - 12 张饮食卡全开（代码里本来就全量渲染，无锁；DEV_MODE 下保持全开）
+  //   - Kit $6.99 内容全开预览（锁文案隐藏，见下面的 DEV MODE 初始化）
+  //   - 奖励广告不挡路（广告区隐藏，看广告才 +3 的流程不执行）
+  //   - 订阅框不挡功能（订阅逻辑本身不动）
+  // 付费逻辑没有删，只是被 DEV_MODE 绕过（下面所有绕过处都标 // PAYWALL）。
+  // 最终交付时把 DEV_MODE 设 false，免费/收费权限按蓝图恢复：
+  //   免费 3 次/天（好友链接 6 次）、广告 +3（上限 5 次/天）、
+  //   Kit 预览每区恰好 1 个样本、其余锁定。
+  // 价格 $6.99 不改，订阅代码结构不改。
+  // ================================================================
+  var DEV_MODE = true;
+  // PAYWALL：正式版免费/收费规则（DEV_MODE=false 时生效；
+  // DEV_MODE=true 时仅作记录，不执行）。
+  var PAYWALL = {
+    freeDecodesPerDay: 3,
+    referredDecodesPerDay: 6,
+    adBonusPerWatch: 3,
+    maxAdsPerDay: 5,
+    kitPriceUSD: 6.99,
+    kitDays: 90,
+    kitPreviewPerSection: 1 // Kit 预览每区恰好 1 个样本
+  };
   var D = window.CHINABITE_DATA;
   var $ = function (id) { return document.getElementById(id); };
   var KEY = "chinabite_state_v1";
@@ -26,12 +52,15 @@
   var params = new URLSearchParams(location.search);
   var incomingRef = params.get("ref");
   var referred = !!(incomingRef && incomingRef !== state.myRef);
-  var baseFree = referred ? 6 : 3;
-  var paidPreview = false;
+  var baseFree = referred ? PAYWALL.referredDecodesPerDay : PAYWALL.freeDecodesPerDay;
+  // PAYWALL：DEV_MODE 下默认等同已购 Kit 预览（无限解码、无广告），
+  // 付费预览开关本身保留，DEV_MODE=false 时恢复手动切换。
+  var paidPreview = DEV_MODE;
   var profile = "none";
   var lastDish = null;
 
-  function remaining() { return Math.max(0, baseFree + state.bonus - state.used); }
+  // PAYWALL：DEV_MODE 下解码无限次，不扣次数。
+  function remaining() { if (DEV_MODE) return Infinity; return Math.max(0, baseFree + state.bonus - state.used); }
   function usd(cny) { return (cny / D.rate).toFixed(2); }
   function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
 
@@ -158,6 +187,8 @@
         "<p>Photo the menu. Check: lard, stock, oyster sauce.</p>";
       return;
     }
+    // PAYWALL：DEV_MODE 下 remaining() 为 Infinity，此分支永不触发；
+    // DEV_MODE=false 时恢复：免费次数用完 → 挡住，去看广告或买 Kit。
     if (remaining() <= 0 && !paidPreview) {
       $("result").className = "subcard";
       $("result").innerHTML = "<div class=\"verdict ask\">Free decodes used up · 用完了</div>" +
@@ -166,6 +197,8 @@
         '<button type="button" onclick="document.getElementById(\'adSection\').scrollIntoView()">Watch ad · +3</button>';
       return;
     }
+    // PAYWALL：DEV_MODE 下 paidPreview=true，不扣次数；
+    // DEV_MODE=false 且免费时才扣 1 次。
     if (!paidPreview) { state.used++; save(); }
     renderResult(dish);
   }
@@ -395,18 +428,26 @@
 
   // ---- Counts ----
   function updateCounts() {
+    // PAYWALL：DEV_MODE 下显示无限，不显示剩余次数/广告进度。
+    if (DEV_MODE) {
+      $("countText").textContent = "开发模式 · 解码无限 ∞ · 全部解锁";
+      $("countBar").style.width = "100%";
+      return;
+    }
     $("countText").textContent = "Left today: " + remaining() + " of " + (baseFree + state.bonus) +
       (paidPreview ? " — Paid: unlimited, no ads" : "") +
-      " · Ads: " + state.adsToday + "/5";
+      " · Ads: " + state.adsToday + "/" + PAYWALL.maxAdsPerDay;
     var pct = Math.min(100, Math.round(remaining() / Math.max(1, baseFree + state.bonus) * 100));
     $("countBar").style.width = pct + "%";
   }
   updateCounts();
 
   // ---- Rewarded ad (DEMO ONLY — no real AdMob / AdSense) ----
+  // PAYWALL：DEV_MODE 下广告不挡路（广告区已隐藏）；此函数直接返回，不计时、不加次数。
   var adTimer = null;
   $("watchAdBtn").onclick = function () {
-    if (state.adsToday >= 5) { alert("Ad limit: 5/day. Back tomorrow."); return; }
+    if (DEV_MODE) return;
+    if (state.adsToday >= PAYWALL.maxAdsPerDay) { alert("Ad limit: 5/day. Back tomorrow."); return; }
     var n = 5;
     $("adOverlay").classList.remove("hidden");
     $("adCount").textContent = n;
@@ -424,8 +465,8 @@
   $("adSkip").onclick = function () {
     clearInterval(adTimer);
     $("adOverlay").classList.add("hidden");
-    state.bonus += 3; state.adsToday++; save(); updateCounts();
-    alert("+3 decodes. Bonus today: +" + state.bonus + ".");
+    state.bonus += PAYWALL.adBonusPerWatch; state.adsToday++; save(); updateCounts();
+    alert("+" + PAYWALL.adBonusPerWatch + " decodes. Bonus today: +" + state.bonus + ".");
   };
   $("closeAdBtn").onclick = function () { clearInterval(adTimer); $("adOverlay").classList.add("hidden"); };
 
@@ -528,7 +569,17 @@
   }
 
   // ---- Paid preview toggle (no real payment) ----
+  // PAYWALL：DEV_MODE 下强制等同已购（paidPreview=true），开关锁定在 ON，
+  // 广告区保持隐藏；DEV_MODE=false 时恢复手动切换。
   $("paidToggle").onchange = function (e) {
+    if (DEV_MODE) {
+      paidPreview = true;
+      e.target.checked = true;
+      $("adSection").classList.add("hidden");
+      $("paidNote").textContent = "开发模式：全部解锁，无广告。";
+      updateCounts();
+      return;
+    }
     paidPreview = e.target.checked;
     $("adSection").classList.toggle("hidden", paidPreview);
     $("paidNote").textContent = paidPreview
@@ -536,4 +587,24 @@
       : "Free version. Demo ads on.";
     updateCounts();
   };
+
+  // ---- DEV MODE 初始化：页面标记 + 解锁展示（付费逻辑本身不动，只绕过） ----
+  // 角标 #devBadge、锁文案 .paywall-lock、Kit 全开提示 #kitDevNote 都在 index.html；
+  // DEV_MODE=false 时角标隐藏、锁文案恢复显示、广告区恢复显示。
+  if (DEV_MODE) {
+    try { document.body.classList.add("dev-mode"); } catch (e) {}
+    var devBadge = $("devBadge");
+    if (devBadge) devBadge.classList.remove("hidden");
+    var adSec = $("adSection");
+    if (adSec) adSec.classList.add("hidden");
+    var paidTgl = $("paidToggle");
+    if (paidTgl) { paidTgl.checked = true; }
+    var paidN = $("paidNote");
+    if (paidN) paidN.textContent = "开发模式：全部解锁，无广告。";
+    document.querySelectorAll(".paywall-lock").forEach(function (el) { el.classList.add("hidden"); });
+    var kitNote = $("kitDevNote");
+    if (kitNote) kitNote.classList.remove("hidden");
+    var kitSub = $("kitPreviewSub");
+    if (kitSub) kitSub.textContent = "开发模式：Kit 全开预览 — 110 道菜 · 12 张卡 · 10 城全部可见。";
+  }
 })();
