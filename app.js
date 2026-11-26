@@ -65,10 +65,13 @@
   // [] = no restriction. "none" is not stored; it is the empty array.
   var profile = [];
   var lastDish = null;
+  var lastDrink = null; // last decoded drink, for price re-render on FX change
 
   // PAYWALL：DEV_MODE 下解码无限次，不扣次数。
   function remaining() { if (DEV_MODE) return Infinity; return Math.max(0, baseFree + state.bonus - state.used); }
-  function usd(cny) { return (cny / D.rate).toFixed(2); }
+  // Live FX (v6.4): every ¥→foreign amount goes through CBFX (fx.js) — one
+  // live rate, one formatter. Falls back to 7.1 only if fx.js is missing.
+  function usd(cny) { return (window.CBFX ? window.CBFX.fmt(cny) : "$" + (cny / 7.1).toFixed(2)); }
   function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
 
   // ---- Profiles (v4.3: MULTI-SELECT) ----
@@ -236,7 +239,11 @@
   // re-priced here — only the basis is stated; see Blueprint §12.40 for
   // the dishes furthest from this basis (the re-price list).
   var PRICE_BASIS_SHORT = "Reference only — mid-range local restaurant, Tier-1 city";
-  var PRICE_BASIS = "Reference only — mid-range local restaurant in a Tier-1 city (Shanghai / Beijing). Street stalls are cheaper; hotels & tourist spots cost more. ¥→$ at 7.1 (2026-11-26).";
+  // Live FX (v6.4): the rate tail is dynamic — currency + live rate date.
+  function priceBasis() {
+    var tail = window.CBFX ? window.CBFX.rateText() : "¥(CNY)→USD $ at 7.1 (2026-11-26)";
+    return "Reference only — mid-range local restaurant in a Tier-1 city (Shanghai / Beijing). Street stalls are cheaper; hotels & tourist spots cost more. " + tail + ".";
+  }
   var CITY_TIER = { shanghai: 1, beijing: 1, guangzhou: 1, shenzhen: 1, chengdu: 2, hangzhou: 2, chongqing: 2, xian: 2, kunming: 3, guilin: 3 };
 
   function renderResult(dish) {
@@ -254,19 +261,17 @@
       "<p><b>Heads up:</b> " + esc(containsEn(dish)) + "</p>" +
       "<p><b>How hot:</b> " + esc(spiceLabel(dish.spicy)) + "</p>" +
       ((dish.flags && dish.flags.length) ? "<p><b>Watch:</b> " + esc(dish.flags.join(", ")) + "</p>" : "") +
-      "<p><b>About:</b> ¥" + dish.price + " · ≈$" + usd(dish.price) + "</p>" +
-      "<p class=\"small price-note\">" + esc(PRICE_BASIS) + "</p>" +
+      "<p><b>About:</b> ¥" + dish.price + " · ≈" + usd(dish.price) + "</p>" +
+      "<p class=\"small price-note\">" + esc(priceBasis()) + "</p>" +
       "<p><b>Show them this:</b></p><p class=\"bigzh\">" + esc(dish.waiter) + "</p>" +
       "<p class=\"small\">" + esc(dish.py) + "</p>" +
       '<button type="button" id="addOrderBtn">Add to order</button> ' +
-      '<button type="button" class="ghost" id="shareDishBtn">Share</button>' +
       '<details class="subcard"><summary>Next · pick one</summary>' +
       '<div class="next-steps">' +
       '<button type="button" id="nextDeliveryBtn">Get it delivered</button>' +
       '<button type="button" class="ghost" id="nextQrBtn">How to order by QR</button>' +
       '<button type="button" class="ghost" id="nextCardBtn">Show diet card to waiter</button></div></details>';
     $("addOrderBtn").onclick = function () { addToOrder(dish); };
-    $("shareDishBtn").onclick = function () { shareDish(dish, v); };
     $("nextDeliveryBtn").onclick = function () { goDelivery(); };
     $("nextQrBtn").onclick = function () { gotoSection("qrSection"); };
     $("nextCardBtn").onclick = function () { gotoSection("dietSection"); };
@@ -686,7 +691,7 @@
       shown++;
       var b = document.createElement("button");
       b.className = "dish"; b.type = "button";
-      b.innerHTML = '<span class="en">' + esc(d.en) + '</span><br><span class="zh">' + esc(d.zh) + " · ¥" + d.price + " · ≈$" + usd(d.price) + " · Spice " + d.spicy + "/3</span>";
+      b.innerHTML = '<span class="en">' + esc(d.en) + '</span><br><span class="zh">' + esc(d.zh) + " · ¥" + d.price + " · ≈" + usd(d.price) + " · Spice " + d.spicy + "/3</span>";
       // Same verdict path as the chat: checkDish -> decode -> renderResult.
       b.onclick = function () { window.checkDish(d.zh); };
       el.appendChild(b);
@@ -700,10 +705,18 @@
   // v5.1: all 10 cities x 3 must-eats = 30 cards, grouped by city, with
   // city filter chips (All + 10 cities) on top. Photo if one exists in
   // DISH_IMG, otherwise a no-photo tile — never a wrong dish's photo.
+  // ---- v6.4: Home — Signature big-image cards + Cities dropdown ----
+  // Cities + categories are ONE dropdown each now (chips -> dropdown).
+  // Signature dishes show ONLY after a city is picked in the Cities
+  // dropdown — with no city selected the section shows a hint, nothing else.
+  // The picked city's photo appears with its 3 dishes (the picture is part
+  // of the reveal). City photos come from the same map as the Cities view.
+  var CITY_IMG = { beijing: "assets/city-beijing.webp", chengdu: "assets/city-chengdu.webp", chongqing: "assets/city-chongqing.webp", guangzhou: "assets/city-guangzhou.webp", guilin: "assets/city-guilin.webp", hangzhou: "assets/city-hangzhou.webp", kunming: "assets/city-kunming.webp", shanghai: "assets/city-shanghai.webp", shenzhen: "assets/city-shenzhen.webp", xian: "assets/city-xian.webp" };
+  var selectedCity = null; // city id, or null = nothing picked yet
+  var renderSigGroups = null;
   function renderHomeSignature() {
     var wrap = $("homeSignatureList");
     if (!wrap) return;
-    var chipsWrap = $("sigCityChips");
     var groups = [];
     (D.cities || []).forEach(function (c) {
       var ds = (c.mustEat || []).map(function (m) {
@@ -718,15 +731,25 @@
       var thumb = img
         ? '<span class="thumb"><img src="' + img + '" alt="' + esc(d.en) + '" width="120" height="120" loading="lazy"></span>'
         : '<span class="thumb thumb-ph" aria-hidden="true"><span class="ph-zh">' + esc((d.zh || "?").charAt(0)) + '</span></span>';
-      b.innerHTML = thumb + '<span><span class="en">' + esc(d.en) + '</span><span class="zh">' + esc(d.zh) + '</span><span class="price">¥' + d.price + ' · ≈$' + usd(d.price) + '</span><span class="spice">Spicy ' + d.spicy + '/3</span></span>';
+      b.innerHTML = thumb + '<span><span class="en">' + esc(d.en) + '</span><span class="zh">' + esc(d.zh) + '</span><span class="price">¥' + d.price + ' · ≈' + usd(d.price) + '</span><span class="spice">Spicy ' + d.spicy + '/3</span></span>';
       // Same verdict path as everywhere else: checkDish -> decode -> renderResult.
       b.onclick = function () { window.checkDish(d.zh); };
       return b;
     }
-    function renderGroups(filterId) {
+    function renderGroups(cityId) {
       wrap.innerHTML = "";
+      if (!cityId) {
+        wrap.innerHTML = '<p class="muted">Choose a city below to see its 3 must-eats.</p>';
+        return;
+      }
       groups.forEach(function (g) {
-        if (filterId && filterId !== "all" && g.city.id !== filterId) return;
+        if (g.city.id !== cityId) return;
+        var img = CITY_IMG[g.city.id];
+        if (img) {
+          var ph = document.createElement("p");
+          ph.innerHTML = '<img class="city-img" src="' + img + '" alt="' + esc(g.city.en) + ' street scene" width="491" height="327" loading="lazy">';
+          wrap.appendChild(ph);
+        }
         var h = document.createElement("p");
         h.className = "story-city sig-city";
         h.textContent = g.city.en + " · " + g.city.zh;
@@ -737,42 +760,42 @@
         wrap.appendChild(grid);
       });
     }
-    if (chipsWrap) {
-      var opts = [{ id: "all", en: "All cities" }].concat((D.cities || []).map(function (c) { return { id: c.id, en: c.en }; }));
-      opts.forEach(function (c) {
-        var b = document.createElement("button");
-        b.className = "chip"; b.type = "button"; b.textContent = c.en;
-        b.setAttribute("aria-pressed", c.id === "all" ? "true" : "false");
-        b.onclick = function () {
-          Array.prototype.forEach.call(chipsWrap.children, function (x) { x.setAttribute("aria-pressed", "false"); });
-          b.setAttribute("aria-pressed", "true");
-          renderGroups(c.id);
-        };
-        chipsWrap.appendChild(b);
-      });
-    }
-    renderGroups("all");
+    renderSigGroups = renderGroups;
+    renderGroups(selectedCity);
+  }
+  function selectCity(id) {
+    selectedCity = id || null;
+    var sel = $("citySelect");
+    if (sel && sel.value !== (selectedCity || "")) sel.value = selectedCity || "";
+    if (renderSigGroups) renderSigGroups(selectedCity);
+    if (!selectedCity) return;
+    var hs = $("homeSignature");
+    if (hs) { if (hs.tagName === "DETAILS") hs.open = true; hs.scrollIntoView({ behavior: "smooth", block: "start" }); }
   }
   renderHomeSignature();
   function renderHomeCities() {
-    var wrap = $("homeCityRow");
-    if (!wrap) return;
-    D.cities.forEach(function (c) {
-      var b = document.createElement("button");
-      b.className = "chip"; b.type = "button";
-      b.textContent = c.en + " · " + (c.mustEat || []).length + " must-eats";
-      b.setAttribute("aria-pressed", "false");
-      b.onclick = function () { gotoSection("citiesSection"); };
-      wrap.appendChild(b);
+    var sel = $("citySelect");
+    if (!sel) return;
+    sel.innerHTML = "";
+    var ph = document.createElement("option");
+    ph.value = ""; ph.textContent = "Choose a city\u2026";
+    sel.appendChild(ph);
+    (D.cities || []).forEach(function (c) {
+      var o = document.createElement("option");
+      o.value = c.id;
+      o.textContent = c.en + " \u00b7 " + (c.mustEat || []).length + " must-eats";
+      sel.appendChild(o);
     });
+    sel.addEventListener("change", function () { selectCity(sel.value || null); });
   }
   renderHomeCities();
 
-  // ---- Top search bar + category chips (v3.2, Uber Eats-style; v5.0: they
+  // ---- Top search bar + category dropdown (v3.2, Uber Eats-style; v5.0: they
   // filter the Home results list in place — the browse blocks hide while
-  // a filter is active, and come back when it is cleared.) ----
+  // a filter is active, and come back when it is cleared. v6.4: chips are
+  // one <select> now; same filter behaviour, "All" stays the default.) ----
   var CATS = [["all", "All"], ["signature", "Signature"], ["noodles", "Noodles"], ["dumplings", "Dumplings"], ["spicy", "Spicy"], ["veg", "Veg"], ["halal", "Halal"], ["soup", "Soup"], ["rice", "Rice"]];
-  var chipsEl = $("catChips");
+  var catSel = $("catSelect");
   var homeResults = $("homeResults");
   var homeDishList = $("homeDishList");
   function updateHomeFilter() {
@@ -788,31 +811,31 @@
     }
     return active;
   }
-  if (chipsEl) {
+  if (catSel) {
     CATS.forEach(function (c) {
-      var b = document.createElement("button");
-      b.className = "chip"; b.type = "button"; b.textContent = c[1];
-      b.setAttribute("aria-pressed", c[0] === "all" ? "true" : "false");
-      b.onclick = function () {
-        Array.prototype.forEach.call(chipsEl.children, function (x) { x.setAttribute("aria-pressed", "false"); });
-        b.setAttribute("aria-pressed", "true");
-        if (c[0] === "signature") {
-          // Signature lives as big cards on Home — clear the filter and
-          // scroll to them instead of filtering the quick list.
-          currentCat = "all";
-          if ($("topSearch")) $("topSearch").value = "";
-          updateHomeFilter();
-          var hs = $("homeSignature");
-          // v5.2: Signature is a <details> now — open it before scrolling,
-          // or the user lands on a closed header.
-          if (hs) { if (hs.tagName === "DETAILS") hs.open = true; hs.scrollIntoView({ behavior: "smooth", block: "start" }); }
-          return;
-        }
-        currentCat = c[0];
+      var o = document.createElement("option");
+      o.value = c[0]; o.textContent = c[1];
+      catSel.appendChild(o);
+    });
+    catSel.value = "all";
+    catSel.addEventListener("change", function () {
+      var v = catSel.value;
+      if (v === "signature") {
+        // Signature lives as big cards on Home — clear the filter and
+        // scroll to them instead of filtering the quick list.
+        currentCat = "all";
+        catSel.value = "all";
+        if ($("topSearch")) $("topSearch").value = "";
         updateHomeFilter();
-        if (homeResults) homeResults.scrollIntoView({ behavior: "smooth", block: "start" });
-      };
-      chipsEl.appendChild(b);
+        var hs = $("homeSignature");
+        // v5.2: Signature is a <details> now — open it before scrolling,
+        // or the user lands on a closed header.
+        if (hs) { if (hs.tagName === "DETAILS") hs.open = true; hs.scrollIntoView({ behavior: "smooth", block: "start" }); }
+        return;
+      }
+      currentCat = v;
+      updateHomeFilter();
+      if (homeResults) homeResults.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   }
   var topSearch = $("topSearch");
@@ -826,6 +849,22 @@
       if (d) window.checkDish(d.zh);
     });
   }
+
+  // ---- Live FX re-render (v6.4) ----
+  // Currency switch or live-rate arrival re-renders every converted amount
+  // in place — no reload. Static .fx-basis tails are refreshed by fx.js.
+  function refreshPrices() {
+    renderHomeSignature();
+    updateHomeFilter();
+    if (typeof renderDrinks === "function") renderDrinks();
+    if (typeof renderOrder === "function") renderOrder();
+    var res = $("result");
+    if (res && !res.classList.contains("hidden")) {
+      if (lastDrink && res.querySelector(".drink-card")) renderDrinkResult(lastDrink);
+      else if (lastDish) renderResult(lastDish);
+    }
+  }
+  if (window.CBFX) window.CBFX.onChange(refreshPrices);
 
   // ---- Toast (v6.0 — Orders: every tap answers) ----
   // One small pill above the bottom nav. Replaces the blocking
@@ -910,7 +949,7 @@
           "<button type=\"button\" class=\"qty-btn\" data-qty=\"1\" data-id=\"" + esc(x.id) + "\" aria-label=\"One more " + esc(d.en) + "\">+</button></span>" +
           "<span class=\"ord-price\">¥" + (d.price * x.qty) + "</span>" +
           "<button type=\"button\" class=\"qty-btn ord-remove\" data-remove=\"" + esc(x.id) + "\" aria-label=\"Remove " + esc(d.en) + "\">×</button></p>";
-      }).join("") + "<p><b>Total: ¥" + total + " · ≈$" + usd(total) + "</b> · " + items + (items === 1 ? " item" : " items") + "</p>" +
+      }).join("") + "<p><b>Total: ¥" + total + " · ≈" + usd(total) + "</b> · " + items + (items === 1 ? " item" : " items") + "</p>" +
         "<p class=\"small price-note\">The total is a guide, not the bill.</p>";
       el.querySelectorAll("[data-qty]").forEach(function (b) {
         b.onclick = function () {
@@ -1031,16 +1070,6 @@
     btn.classList.remove("armed");
     state.order = []; save(); renderOrder();
     showToast("List cleared.");
-  };
-  $("shareOrderBtn").onclick = function () {
-    if (!state.order.length) { showToast("Nothing to share yet — check a dish first.", "Decode a dish", function () { showView("search"); }); return; }
-    var text = "My China order list:\n" + state.order.map(function (x) {
-      var d = itemById(x.id);
-      if (!d) return "";
-      var temp = (d.kind === "drink" && x.temp) ? " (" + TEMP_EN[x.temp] + ")" : "";
-      return "- " + d.en + " (" + d.zh + ")" + temp + " ×" + x.qty;
-    }).filter(Boolean).join("\n") + "\nMade with China Bite: " + location.origin + location.pathname + "?ref=" + state.myRef;
-    shareText("My China Bite order list", text);
   };
   renderOrder();
 
@@ -1222,7 +1251,7 @@
     var temp = drinkTemp[dr.id] || dr.defaultTemp;
     return '<div class="subcard drink-card" id="' + pfx + 'Card-' + dr.id + '">' +
       "<h3>" + esc(dr.en) + " · " + esc(dr.zh) + "</h3>" +
-      '<p class="small">' + esc(dr.py) + " · ¥" + dr.price + " · ≈$" + usd(dr.price) + "</p>" +
+      '<p class="small">' + esc(dr.py) + " · ¥" + dr.price + " · ≈" + usd(dr.price) + "</p>" +
       "<p>" + esc(dr.note) + "</p>" +
       '<div class="drink-temp" role="group" aria-label="Temperature">' +
       dr.temps.map(function (t) {
@@ -1309,17 +1338,16 @@
   // are guidance, not a dish check. Same card as the drinks section,
   // plus a way into the full list.
   function renderDrinkResult(dr) {
+    lastDrink = dr;
     var res = $("result");
     res.className = "subcard";
     res.innerHTML =
       '<div class="verdict ok">Drink — ' + esc(dr.en) + " (" + esc(dr.zh) + ")</div>" +
       "<p>Pick iced below — the order line says so in Chinese.</p>" +
-      "<p><b>About:</b> ¥" + dr.price + " · ≈$" + usd(dr.price) + "</p>" +
-      '<p class="small price-note">' + esc(PRICE_BASIS) + "</p>" +
-      drinkCardHTML(dr, "res") +
-      '<p><button type="button" class="ghost" id="drinkAllBtn">See all drinks &amp; beer</button></p>';
+      "<p><b>About:</b> ¥" + dr.price + " · ≈" + usd(dr.price) + "</p>" +
+      '<p class="small price-note">' + esc(priceBasis()) + "</p>" +
+      drinkCardHTML(dr, "res");
     bindDrinkCard(res, dr, "res");
-    $("drinkAllBtn").onclick = function () { gotoSection("drinksSection"); };
   }
 
   // ---- Cities (10 cities; sample only, address not verified) ----
@@ -1330,7 +1358,7 @@
     D.cities.forEach(function (c) {
       var div = document.createElement("div");
       div.className = "subcard";
-      var cityImg = { beijing: "assets/city-beijing.webp", chengdu: "assets/city-chengdu.webp", chongqing: "assets/city-chongqing.webp", guangzhou: "assets/city-guangzhou.webp", guilin: "assets/city-guilin.webp", hangzhou: "assets/city-hangzhou.webp", kunming: "assets/city-kunming.webp", shanghai: "assets/city-shanghai.webp", shenzhen: "assets/city-shenzhen.webp", xian: "assets/city-xian.webp" }[c.id];
+      var cityImg = CITY_IMG[c.id];
       var html = "<h3>" + esc(c.en) + " · " + esc(c.zh) + "</h3>" +
         (cityImg ? "<img class=\"city-img\" src=\"" + cityImg + "\" alt=\"" + esc(c.en) + " street scene\" width=\"491\" height=\"327\" loading=\"lazy\">" : "") +
         "<p>" + esc(c.scene) + "</p>" +
@@ -1362,7 +1390,7 @@
     var t = dish.en + " — " + v.t + " | China Bite";
     document.title = t;
     var d = dish.en + " (" + dish.zh + "): " + v.t + ". " + v.why +
-      " Price ¥" + dish.price + " (≈$" + usd(dish.price) + ").";
+      " Price ¥" + dish.price + " (≈" + usd(dish.price) + ").";
     setMeta("description", d);
     setMeta("og:title", t);
     setMeta("og:description", d);
@@ -1376,12 +1404,6 @@
     } else { showToast("Sharing isn't available here — copy from the slip below."); }
   }
   window.shareText = shareText;
-  function shareDish(dish, v) {
-    var text = "I checked “" + dish.zh + " " + dish.en + "” in China: " + v.t + ". " + v.why +
-      " Price ¥" + dish.price + " (≈$" + usd(dish.price) + "). Check any Chinese dish in 10 seconds: " +
-      dishUrl(dish) + " #ChinaBite";
-    shareText("China Bite — " + dish.en, text);
-  }
 
   // ---- Deep links: #/dish/<id> and #/diet/<id> ----
   // Shared dish link opens the verdict directly, no charge (read-only view).
@@ -1926,7 +1948,7 @@
     DR: DR, findDrink: findDrink, showDrink: showDrink, addDrinkToOrder: addDrinkToOrder,
     findDish: findDish, findDishBest: findDishBest, suggestDishes: suggestDishes,
     dishMatchesQuery: dishMatchesQuery, askBunAbout: askBunAbout,
-    PRICE_BASIS: PRICE_BASIS, PRICE_BASIS_SHORT: PRICE_BASIS_SHORT, CITY_TIER: CITY_TIER,
+    get PRICE_BASIS() { return priceBasis(); }, PRICE_BASIS_SHORT: PRICE_BASIS_SHORT, CITY_TIER: CITY_TIER,
     verdictFor: verdictFor, renderResult: renderResult,
     checkDish: window.checkDish, gotoSection: gotoSection, showView: showView, openFaq: openFaq, goDelivery: goDelivery,
     addToOrder: addToOrder, speakInto: speakInto, recognizePhoto: recognizePhoto,

@@ -1596,6 +1596,7 @@
 <img src="assets/china-bite-mascot-dumpling-288.webp" alt="Bun — China Bite mascot" width="32" height="32">
 <span class="appbar-title" id="appTitle" role="button" tabindex="0" title="Back to home">China Bite</span>
 <span class="dev-badge hidden" id="devBadge" title="Dev mode: all features unlocked. Set DEV_MODE to false in app.js for final delivery.">DEV · Dev mode</span>
+<select id="fxSelect" class="fx-select" aria-label="Currency for prices"></select>
 </div>
 </div>
 </header>
@@ -1609,18 +1610,18 @@
 </div>
 <button type="button" class="bun-btn" id="homeChatBtn" data-view="chat" aria-label="Chat with Bun"><img src="assets/china-bite-mascot-dumpling-288.webp" alt="Bun" width="34" height="34"><span>Chat</span></button>
 </div>
-<div class="cat-chips" id="catChips" aria-label="Browse by category"></div>
+<select id="catSelect" class="filter-select" aria-label="Browse by category"></select>
 <div id="homeResults" class="hidden">
 <p class="sec-kicker" id="homeResultsTitle">Matches</p>
 <div class="grid" id="homeDishList"></div>
-<p class="small price-note">Prices are reference only — mid-range local restaurant, Tier-1 city.</p>
+<p class="small price-note">Prices are reference only — mid-range local restaurant, Tier-1 city. <span class="fx-basis">¥→$ at 7.1 (2026-11-26).</span></p>
 </div>
 <!-- v6.2: hero is a 3-photo carousel (banquet / Peking duck / flat-lay feast), auto-rotates every 4.5s, dots + swipe, pauses 12s after any interaction. All 3 slides are plain <img> in the DOM so they preload — no white flash on switch. No video, no sound. -->
 <div class="hero-banner browse-block" id="heroCarousel" role="region" aria-roledescription="carousel" aria-label="Chinese food photos">
 <div class="hero-slides">
-<img class="hero-slide is-active" src="assets/china-bite-hero-v55.webp" alt="A round table of elegant Chinese banquet dishes — bamboo steamers of dim sum, soups and greens on dark wood" width="800" height="320" fetchpriority="high" decoding="async">
-<img class="hero-slide" src="assets/china-bite-hero-v62-duck.webp" alt="Peking duck with pancakes, cucumber, scallion and sauces, seen from above" width="800" height="320" decoding="async">
-<img class="hero-slide" src="assets/china-bite-hero-v62-flatlay.webp" alt="A wooden table covered with Chinese dishes — roast chicken, soups, greens and rice" width="800" height="320" decoding="async">
+<figure class="hero-slide is-active"><img src="assets/china-bite-hero-v55.webp" alt="A round table of elegant Chinese banquet dishes — bamboo steamers of dim sum, soups and greens on dark wood" width="800" height="320" fetchpriority="high" decoding="async"><figcaption>A full table, family-style.</figcaption></figure>
+<figure class="hero-slide"><img src="assets/china-bite-hero-v62-duck.webp" alt="Peking duck with pancakes, cucumber, scallion and sauces, seen from above" width="800" height="320" decoding="async"><figcaption>Peking duck, sliced at the table.</figcaption></figure>
+<figure class="hero-slide"><img src="assets/china-bite-hero-v62-flatlay.webp" alt="A wooden table covered with Chinese dishes — roast chicken, soups, greens and rice" width="800" height="320" decoding="async"><figcaption>Home-style dishes, made to share.</figcaption></figure>
 </div>
 <div class="hero-dots" role="group" aria-label="Choose hero photo">
 <button type="button" class="hero-dot is-active" data-hero-dot="0" aria-label="Photo 1: banquet table" aria-current="true"></button>
@@ -1631,16 +1632,14 @@
 <p class="value-prop browse-block">The menu is in Chinese. Bun tells you what it is, if you can eat it, and how to order it — in 3 seconds.</p>
 <button type="button" class="ask-bun browse-block" id="askBunBtn" data-view="chat"><img src="assets/china-bite-mascot-dumpling-288.webp" alt="Bun" width="32" height="32"><span><b>Ask Bun</b></span></button>
 <details class="home-sec browse-block" id="homeSignature" open>
-<summary><span class="card-head"><h2>Signature Dishes</h2><span class="card-sub">3 must-eats from each of the 10 cities.</span></span><span class="chev" aria-hidden="true">▾</span></summary>
-<div class="cat-chips" id="sigCityChips" aria-label="Signature dishes by city"></div>
-<p class="small price-note">Prices are reference only — mid-range local restaurant, Tier-1 city. Street stalls are cheaper; hotels &amp; tourist spots cost more. ¥→$ at 7.1 (2026-11-26).</p>
+<summary><span class="card-head"><h2>Signature Dishes</h2><span class="card-sub">Pick a city below — its 3 must-eats appear here.</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<p class="small price-note">Prices are reference only — mid-range local restaurant, Tier-1 city. Street stalls are cheaper; hotels &amp; tourist spots cost more. <span class="fx-basis">¥→$ at 7.1 (2026-11-26).</span></p>
 <div class="story-grid" id="homeSignatureList"></div>
 </details>
 <details class="home-sec browse-block" id="homeCities">
 <summary><span class="card-head"><h2>10 Cities</h2><span class="card-sub">3 must-eats per city.</span></span><span class="chev" aria-hidden="true">▾</span></summary>
-<div class="city-row" id="homeCityRow"></div>
+<select id="citySelect" class="filter-select" aria-label="Choose a city"></select>
 </details>
-<p class="browse-block home-drinks-link"><button type="button" class="ghost" data-goto="drinksSection">🍺 Drinks &amp; beer — how to order it iced</button></p>
 </section>
 <section id="chatView" aria-label="Chat with Bun">
 <button type="button" class="ghost back-home" id="backHomeBtn" data-view="home">← Home</button>
@@ -1694,7 +1693,6 @@
 <div id="slipPreview" class="subcard"></div>
 <p>
 <button type="button" id="showSlipBtn">Show slip</button>
-<button type="button" class="ghost" id="shareOrderBtn">Share list</button>
 <button type="button" class="ghost" id="clearOrderBtn">Clear</button>
 </p>
 <p><button type="button" class="ghost" data-goto="drinksSection">🍺 Drinks — beer, Coke, tea</button></p>
@@ -1971,8 +1969,7 @@
 </details>
 <details class="faq-item" id="faq-drinks">
 <summary>Why is my beer warm?</summary>
-<p>Short answer: that's normal here — not a mistake. The why, and the exact words to ask for it iced, are in Drinks &amp; Beer.</p>
-<p><button type="button" class="ghost" data-goto="drinksSection">Open Drinks &amp; Beer</button></p>
+<p>Short answer: that's normal here — not a mistake. The why, and the exact words to ask for it iced, are in Drinks &amp; Beer — open it from Orders.</p>
 </details>
 </div>
 </details>
@@ -2015,6 +2012,7 @@
 </div>
 
 <div id="toast" class="toast hidden" role="status" aria-live="polite"><span id="toastMsg"></span><button type="button" id="toastAction" class="hidden"></button></div>
+<script src="fx.js"></script>
 <script src="data.js"></script>
 <script src="aliases.js"></script>
 <script src="drinks.js"></script>

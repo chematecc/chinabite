@@ -59,7 +59,7 @@
   function cityById(id) { return (D.cities || []).find(function (c) { return c.id === id; }) || null; }
   function dishById(id) { return (D.dishes || []).find(function (d) { return d.id === id; }) || null; }
   function cardById(id) { return (D.cards || []).find(function (c) { return c.id === id; }) || null; }
-  function usd(cny) { return (cny / D.rate).toFixed(2); }
+  function usd(cny) { return (window.CBFX ? window.CBFX.fmt(cny) : "$" + (cny / 7.1).toFixed(2)); }
   function scrollDown() {
     setTimeout(function () { try { window.scrollTo(0, document.body.scrollHeight); } catch (e) {} }, 50);
   }
@@ -166,7 +166,7 @@
     el.innerHTML = img + '<div class="cd-body">' +
       '<span class="en">' + esc(dish.en) + '</span>' +
       '<span class="zh">' + esc(dish.zh) + ' · ' + esc(dish.py || "") + '</span>' +
-      '<span class="price">¥' + dish.price + ' · ≈$' + usd(dish.price) + ' · Spicy ' + dish.spicy + '/3</span>' +
+      '<span class="price">¥' + dish.price + ' · ≈' + usd(dish.price) + ' · Spicy ' + dish.spicy + '/3</span>' +
       '<span class="cd-note">Price is reference only</span>' +
       '<span class="cd-verdict">' + esc(v.t) + " — " + esc(v.why) + '</span>' +
       '<div class="cd-actions">' +
@@ -226,7 +226,7 @@
       "<p><b>What's in it:</b> " + esc(dish.main) + "</p>" +
       "<p><b>Heads up:</b> " + esc(CB.containsEn(dish)) + "</p>" +
       "<p><b>How hot:</b> " + esc(CB.spiceLabel(dish.spicy)) + "</p>" +
-      "<p><b>About:</b> ¥" + dish.price + " · ≈$" + usd(dish.price) + "</p>" +
+      "<p><b>About:</b> ¥" + dish.price + " · ≈" + usd(dish.price) + "</p>" +
       "<p class=\"small price-note\">" + esc(CB.PRICE_BASIS) + "</p>" +
       "<p><b>Show them this:</b></p><p class=\"bigzh\">" + esc(dish.waiter) + "</p>" +
       "<p class=\"small\">" + esc(dish.py || "") + "</p>";
