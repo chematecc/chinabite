@@ -99,12 +99,7 @@
 <p><a class="btn-link" href="/#/dish/yangrou-chuan">Open in the China Bite app</a></p>
 <p><a class="btn-link" href="/">Ask Bun — chat about what to eat</a></p>
 <h2>Get it delivered</h2>
-<p><a class="btn-link" href="https://i.meituan.com/search?keyword=%E7%BE%8A%E8%82%89%E4%B8%B2" onclick="return tryApp('meituanwaimai://waimai/search?keyword=%E7%BE%8A%E8%82%89%E4%B8%B2','https://i.meituan.com/search?keyword=%E7%BE%8A%E8%82%89%E4%B8%B2')">Search this dish in Meituan Waimai</a>
-<a class="btn-link" href="https://www.dianping.com/" onclick="return tryApp('dianping://search?keyword=%E7%BE%8A%E8%82%89%E4%B8%B2','https://www.dianping.com/')">Search this dish on Dianping</a></p>
-<p class="small">Search only — you order and pay in Meituan / Dianping, not here. Tapping tries to open the app first; if it isn't installed you land on the web search instead. (Deep-link paths mirror app.js MEITUAN_LINKS — schemes are from public lists, not official docs, and still need a real-phone check.)</p>
-<script>
-function tryApp(scheme, fallback){var done=false;var t=setTimeout(function(){if(!done){done=true;location.href=fallback;}},1500);var h=function(){done=true;clearTimeout(t);};document.addEventListener("visibilitychange",h,{once:true});window.addEventListener("pagehide",h,{once:true});var f=document.createElement("iframe");f.style.display="none";f.src=scheme;document.body.appendChild(f);setTimeout(function(){if(f.parentNode)f.parentNode.removeChild(f);},2000);return false;}
-</script><footer>
+<p><a class="btn-link" href="/#/orders/delivery/yangrou-chuan">Get it delivered — the Delivery tab in the app searches this dish on Meituan / Dianping for you</a></p><footer>
 <p><a href="/">China Bite</a> — Discover China, One Bite at a Time. <a href="/dish/">All dishes</a> · <a href="/city/">All cities</a></p>
 <p class="small">Prices are reference only — mid-range local restaurant in a Tier-1 city (Shanghai / Beijing). Street stalls are cheaper; hotels &amp; tourist spots cost more. ¥→$ at 7.1 (2026-11-26). Addresses are never invented — places say "Address not verified" until checked.</p>
 </footer>
