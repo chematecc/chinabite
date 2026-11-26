@@ -646,7 +646,7 @@
   "kao-hongshu": "assets/dish-kaohongshu.webp", "kao-shenghao": "assets/dish-kaoshenghao.webp", "kao-yangrou-chuan": "assets/dish-kaoyangrouchuan.webp",
   "kao-yumi": "assets/dish-kaoyumi.webp", "koushui-chicken": "assets/dish-koushuichicken.webp", "kung-pao": "assets/dish-kungpao.webp",
   "lanzhou": "assets/dish-lanzhou.webp", "lazi-chicken": "assets/dish-lazichicken.webp", "liangban-cucumber": "assets/dish-liangbancucumber.webp",
-  "liangfen": "assets/dish-liangfen.webp", "liusha-bao": "assets/dish-liushabao.webp", "liuzhou-luoshifen": "assets/dish-liuzhouluoshifen.webp",
+  "liangban-muer": "assets/dish-liangbanmuer.webp", "liangfen": "assets/dish-liangfen.webp", "liusha-bao": "assets/dish-liushabao.webp", "liuzhou-luoshifen": "assets/dish-liuzhouluoshifen.webp",
   "luobo-gao": "assets/dish-luobogao.webp", "luohan-zhai": "assets/dish-luohanzhai.webp", "mala-gao": "assets/dish-malagao.webp",
   "mala-xiangguo": "assets/dish-malaxiangguo.webp", "malatang": "assets/dish-malatang.webp", "maoxuewang": "assets/dish-maoxuewang.webp",
   "mapo-tofu": "assets/dish-mapodoufu.webp", "mapo-tofu-veg": "assets/dish-mapotofuveg.webp", "nang": "assets/dish-nang.webp",
@@ -656,7 +656,7 @@
   "shengjian-bao": "assets/dish-shengjianbao.webp", "shizitou": "assets/dish-shizitou.webp", "shouzhuafan": "assets/dish-shouzhuafan.webp",
   "shuangpi-nai": "assets/dish-shuangpinai.webp", "shuizhu-beef": "assets/dish-shuizhubeef.webp", "shuizhu-fish": "assets/dish-shuizhufish.webp",
   "songshu-guiyu": "assets/dish-songshuguiyu.webp", "steamed-bass": "assets/dish-steamedbass.webp", "suancai-fish": "assets/dish-suancaifish.webp",
-  "sweet-sour-ribs": "assets/dish-sweetsourribs.webp", "tangcu-xiaopai": "assets/dish-tangcuxiaopai.webp", "tingzai-zhou": "assets/dish-tingzaizhou.webp",
+  "suanmeitang": "assets/dish-suanmeitang.webp", "sweet-sour-ribs": "assets/dish-sweetsourribs.webp", "tangcu-xiaopai": "assets/dish-tangcuxiaopai.webp", "tingzai-zhou": "assets/dish-tingzaizhou.webp",
   "tomato-egg": "assets/dish-tomatoegg.webp", "xiajiao": "assets/dish-xiajiao.webp", "xian-liangpi": "assets/dish-xianliangpi.webp",
   "xianggu-qingcai": "assets/dish-xiangguqingcai.webp", "xiangyou-shanhu": "assets/dish-xiangyoushanhu.webp", "xiaolongbao": "assets/dish-xiaolongbao.webp",
   "xiefen-xiaolong": "assets/dish-xiefenxiaolong.webp", "yangrou-chuan": "assets/dish-yangrouchuan.webp", "yangrou-paomo": "assets/dish-yangroupaomo.webp",
@@ -707,12 +707,15 @@
   // DISH_IMG, otherwise a no-photo tile — never a wrong dish's photo.
   // ---- v6.4: Home — Signature big-image cards + Cities dropdown ----
   // Cities + categories are ONE dropdown each now (chips -> dropdown).
-  // Signature dishes show ONLY after a city is picked in the Cities
-  // dropdown — with no city selected the section shows a hint, nothing else.
-  // The picked city's photo appears with its 3 dishes (the picture is part
-  // of the reveal). City photos come from the same map as the Cities view.
+  // ---- v6.5: the Cities dropdown defaults to Shanghai on load, so
+  // Signature shows Shanghai's photo + 3 must-eats immediately — no
+  // "choose a city" prompt state on first load. The user can pull the
+  // dropdown down to pick any other city; picking the placeholder
+  // option returns to the hint state. The picked city's photo appears
+  // with its 3 dishes (the picture is part of the reveal). City photos
+  // come from the same map as the Cities view.
   var CITY_IMG = { beijing: "assets/city-beijing.webp", chengdu: "assets/city-chengdu.webp", chongqing: "assets/city-chongqing.webp", guangzhou: "assets/city-guangzhou.webp", guilin: "assets/city-guilin.webp", hangzhou: "assets/city-hangzhou.webp", kunming: "assets/city-kunming.webp", shanghai: "assets/city-shanghai.webp", shenzhen: "assets/city-shenzhen.webp", xian: "assets/city-xian.webp" };
-  var selectedCity = null; // city id, or null = nothing picked yet
+  var selectedCity = "shanghai"; // v6.5: Shanghai is the homepage default; null = nothing picked yet (only via the placeholder option)
   var renderSigGroups = null;
   function renderHomeSignature() {
     var wrap = $("homeSignatureList");
@@ -786,6 +789,7 @@
       o.textContent = c.en + " \u00b7 " + (c.mustEat || []).length + " must-eats";
       sel.appendChild(o);
     });
+    sel.value = "shanghai"; // v6.5: dropdown shows Shanghai on first load
     sel.addEventListener("change", function () { selectCity(sel.value || null); });
   }
   renderHomeCities();
@@ -1783,6 +1787,10 @@
     document.querySelectorAll(".bottomnav a").forEach(function (x) {
       x.classList.toggle("active", x.getAttribute("data-view") === name);
     });
+    // v6.5: the floating Ask Bun button lives on every view except chat —
+    // in chat you're already talking to Bun, and it would sit on top of
+    // the composer. Hidden there, visible everywhere else.
+    var fb = $("askBunFloat"); if (fb) fb.classList.toggle("hidden", name === "chat");
   }
   // Tap a nav item: switch to the view holding that section, open the card
   // if it is collapsed, then scroll to it.

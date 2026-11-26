@@ -241,6 +241,14 @@ footer{padding:8px 4px;border-top:1px solid var(--line)}
 .ask-bun{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;text-align:left;padding:12px 16px;border-radius:20px;margin:0}
 .ask-bun img{width:32px;height:32px;border-radius:50%;object-fit:cover;display:block;flex:0 0 32px}
 .ask-bun span{flex:1;min-width:0}
+/* v6.5: floating Ask Bun — fixed to the right edge, just above the bottom
+   nav, on every view. Small pill (Bun avatar + "Ask Bun", 13px), card bg,
+   accent text; hugs the 400px column's right edge on wide screens and
+   stays 12px from the edge on phones. z 45: above the nav (40), below
+   toast (60) and overlay (50). Theme follows the phone (vars only). */
+.ask-bun-float{position:fixed;right:max(12px,calc(50% - 200px + 12px));bottom:calc(96px + env(safe-area-inset-bottom));z-index:45;display:flex;align-items:center;gap:6px;height:40px;min-height:40px;padding:0 12px 0 7px;margin:0;border-radius:999px;background:var(--card);border:1.5px solid var(--line-strong);box-shadow:var(--shadow-lift);font-size:13px;font-weight:600;color:var(--accent)}
+.ask-bun-float img{width:26px;height:26px;border-radius:50%;object-fit:cover;display:block}
+.ask-bun-float span{line-height:1}
 .home-sec{margin:6px 0 0}
 .home-sec .block-sub{margin:6px 0 12px}
 /* v5.2: home sections fold — Signature open by default, Cities closed.
