@@ -157,10 +157,10 @@
     $("shareDishBtn").onclick = function () { shareDish(dish, v); };
     $("nextDianpingBtn").onclick = function () {
       if (navigator.clipboard) navigator.clipboard.writeText(dish.zh);
-      var s = $("meituanSection"); if (s) { s.open = true; s.scrollIntoView(); }
+      gotoSection("meituanSection");
     };
-    $("nextQrBtn").onclick = function () { var s = $("qrSection"); if (s) { s.open = true; s.scrollIntoView(); } };
-    $("nextCardBtn").onclick = function () { var s = $("dietSection"); if (s) { s.open = true; s.scrollIntoView(); } };
+    $("nextQrBtn").onclick = function () { gotoSection("qrSection"); };
+    $("nextCardBtn").onclick = function () { gotoSection("dietSection"); };
     updateCounts();
   }
 
@@ -566,28 +566,83 @@
     });
   }
 
-  // ---- App mode nav: bottom nav + top menu ----
-  // Tap a nav item: open the card if it is collapsed, then scroll to it.
-  function gotoSection(id) {
-    var el = $(id);
-    if (!el) return;
-    if (el.tagName === "DETAILS") el.open = true;
-    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  // ---- App mode nav: views (v2.9 follow-up — homepage shows main content only) ----
+  // Homepage = Hero + Decoder + Signature Dishes + 10-city entry only.
+  // Everything else lives in its own view, reached from the bottom nav or
+  // the menu; nothing is stacked into one long homepage anymore.
+  // Views are show/hide only — all sections stay in the DOM, so decode,
+  // deep links (#/dish/, #/diet/) and the order slip keep working.
+  var VIEW_SECTIONS = ["hero", "decoder", "storyDishes", "qrSection", "dietSection", "adSection", "kitPreview", "citiesSection", "meituanSection", "kitSection", "referral", "socialSearch", "subscribe"];
+  var VIEWS = {
+    home: ["hero", "decoder", "storyDishes", "citiesSection"],
+    decode: ["decoder"],
+    cities: ["citiesSection"],
+    diet: ["dietSection"],
+    kit: ["kitPreview", "kitSection"],
+    qr: ["qrSection"],
+    meituan: ["meituanSection"],
+    subscribe: ["subscribe"],
+    more: ["referral", "socialSearch"]
+  };
+  var SECTION_VIEW = { hero: "home", decoder: "decode", storyDishes: "home", qrSection: "qr", dietSection: "diet", adSection: "decode", kitPreview: "kit", citiesSection: "cities", meituanSection: "meituan", kitSection: "kit", referral: "more", socialSearch: "more", subscribe: "subscribe" };
+  var currentView = "home";
+  function showView(name) {
+    var ids = VIEWS[name] || VIEWS.home;
+    currentView = name;
+    VIEW_SECTIONS.forEach(function (id) {
+      var el = $(id);
+      if (!el) return;
+      // PAYWALL: DEV_MODE hides the ad section; never un-hide it here.
+      if (id === "adSection" && DEV_MODE) { el.classList.add("hidden"); return; }
+      el.classList.toggle("hidden", ids.indexOf(id) < 0);
+    });
+    // Home: signature dishes open so the homepage shows them; cities stay
+    // collapsed as an entry card (tap to expand the 10 cities).
+    var story = $("storyDishes");
+    if (story) story.open = (name === "home");
+    window.scrollTo(0, 0);
+    document.querySelectorAll(".bottomnav a").forEach(function (x) {
+      x.classList.toggle("active", x.getAttribute("data-view") === name);
+    });
     var menu = $("appMenu");
     if (menu) menu.classList.add("hidden");
     var btn = $("menuBtn");
     if (btn) btn.setAttribute("aria-expanded", "false");
   }
+  // Tap a nav item: switch to the view holding that section, open the card
+  // if it is collapsed, then scroll to it.
+  function gotoSection(id) {
+    var el = $(id);
+    if (!el) return;
+    showView(SECTION_VIEW[id] || "home");
+    if (el.tagName === "DETAILS") el.open = true;
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
   document.querySelectorAll("[data-goto]").forEach(function (a) {
     a.addEventListener("click", function (e) {
       e.preventDefault();
       gotoSection(a.getAttribute("data-goto"));
-      if (a.closest(".bottomnav")) {
-        document.querySelectorAll(".bottomnav a").forEach(function (x) { x.classList.remove("active"); });
-        a.classList.add("active");
-      }
     });
   });
+  document.querySelectorAll("[data-view]").forEach(function (a) {
+    a.addEventListener("click", function (e) {
+      e.preventDefault();
+      showView(a.getAttribute("data-view"));
+    });
+  });
+  var appTitle = $("appTitle");
+  if (appTitle) {
+    var goHome = function () { showView("home"); };
+    appTitle.addEventListener("click", goHome);
+    appTitle.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); goHome(); } });
+  }
+  // First paint: homepage, unless a deep link asked for a dish or diet card.
+  (function initView() {
+    var h = location.hash || "";
+    if (/^#\/diet\//.test(h)) showView("diet");
+    else if (/^#\/dish\//.test(h)) showView("decode");
+    else showView("home");
+  })();
   var menuBtn = $("menuBtn");
   if (menuBtn) {
     menuBtn.onclick = function () {
