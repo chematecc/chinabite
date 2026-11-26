@@ -263,7 +263,29 @@
 
   // Quick-pick dish list (110) — Uber Eats-style rows, English first.
   // Re-rendered by the top search bar and the category chips (v3.2).
-  var SIGNATURE_IDS = ["dandan-mian", "mapo-tofu", "huiguo-pork", "shao-e", "xiajiao", "changfen", "shengjian-bao", "xiefen-xiaolong", "hongshao-rou"];
+  // ---- v5.1: Signature = every city's 3 must-eats (10 cities x 3 = 30
+  // slots, 27 unique dishes; changfen, liangfen and douhua appear in two
+  // cities each). Derived from D.cities so the list can never drift from
+  // the city data. "signature" category = the 27 unique ids.
+  var SIGNATURE_IDS = [];
+  (D.cities || []).forEach(function (c) {
+    (c.mustEat || []).forEach(function (m) {
+      if (SIGNATURE_IDS.indexOf(m.id) < 0) SIGNATURE_IDS.push(m.id);
+    });
+  });
+  // Dish photos that actually exist (9 files). chat.js keeps the same map
+  // for its dish cards — keep both in sync. Filenames are pinyin-based,
+  // NOT id-based: mapo-tofu -> dish-mapodoufu.webp, huiguo-pork ->
+  // dish-huiguorou.webp (the old id-derived filename built 404s for both).
+  // Anything not in this map gets a no-photo tile (first Chinese
+  // character) — never another dish's photo.
+  var DISH_IMG = {
+    "dandan-mian": "assets/dish-dandanmian.webp", "mapo-tofu": "assets/dish-mapodoufu.webp",
+    "huiguo-pork": "assets/dish-huiguorou.webp", "shao-e": "assets/dish-shaoe.webp",
+    "xiajiao": "assets/dish-xiajiao.webp", "changfen": "assets/dish-changfen.webp",
+    "shengjian-bao": "assets/dish-shengjianbao.webp", "xiefen-xiaolong": "assets/dish-xiefenxiaolong.webp",
+    "hongshao-rou": "assets/dish-hongshaorou.webp"
+  };
   var HALAL_IDS = ["lanzhou", "yangrou-chuan", "kao-baozi", "shouzhuafan", "halal-beef-noodles", "yangrou-tang", "ziran-yangrou", "nang", "dapanji", "yangrou-paomo"];
   var MEAT_FLAGS = ["pork", "beef", "chicken", "duck", "fish", "shrimp", "frog", "goose", "lamb"];
   function dishInCat(d, cat) {
@@ -303,20 +325,61 @@
   renderDishList("all", "");
 
   // ---- v5.0: Home — Signature big-image cards + 10-city entry ----
-  // The 9 signature dishes are exactly the 9 dishes with photo assets
-  // (assets/dish-<id-without-dashes>.webp), so the cards are image-led.
+  // v5.1: all 10 cities x 3 must-eats = 30 cards, grouped by city, with
+  // city filter chips (All + 10 cities) on top. Photo if one exists in
+  // DISH_IMG, otherwise a no-photo tile — never a wrong dish's photo.
   function renderHomeSignature() {
     var wrap = $("homeSignatureList");
     if (!wrap) return;
-    SIGNATURE_IDS.forEach(function (id) {
-      var d = D.dishes.find(function (x) { return x.id === id; });
-      if (!d) return;
+    var chipsWrap = $("sigCityChips");
+    var groups = [];
+    (D.cities || []).forEach(function (c) {
+      var ds = (c.mustEat || []).map(function (m) {
+        return D.dishes.find(function (x) { return x.id === m.id; });
+      }).filter(Boolean);
+      if (ds.length) groups.push({ city: c, dishes: ds });
+    });
+    function sigCard(d) {
       var b = document.createElement("button");
       b.className = "story"; b.type = "button";
-      b.innerHTML = '<span class="thumb"><img src="assets/dish-' + d.id.replace(/-/g, "") + '.webp" alt="' + esc(d.en) + '" width="120" height="120" loading="lazy"></span><span><span class="en">' + esc(d.en) + '</span><span class="zh">' + esc(d.zh) + '</span><span class="price">¥' + d.price + ' · ≈$' + usd(d.price) + '</span><span class="spice">Spicy ' + d.spicy + '/3</span></span>';
+      var img = DISH_IMG[d.id];
+      var thumb = img
+        ? '<span class="thumb"><img src="' + img + '" alt="' + esc(d.en) + '" width="120" height="120" loading="lazy"></span>'
+        : '<span class="thumb thumb-ph" aria-hidden="true"><span class="ph-zh">' + esc((d.zh || "?").charAt(0)) + '</span></span>';
+      b.innerHTML = thumb + '<span><span class="en">' + esc(d.en) + '</span><span class="zh">' + esc(d.zh) + '</span><span class="price">¥' + d.price + ' · ≈$' + usd(d.price) + '</span><span class="spice">Spicy ' + d.spicy + '/3</span></span>';
+      // Same verdict path as everywhere else: checkDish -> decode -> renderResult.
       b.onclick = function () { window.checkDish(d.zh); };
-      wrap.appendChild(b);
-    });
+      return b;
+    }
+    function renderGroups(filterId) {
+      wrap.innerHTML = "";
+      groups.forEach(function (g) {
+        if (filterId && filterId !== "all" && g.city.id !== filterId) return;
+        var h = document.createElement("p");
+        h.className = "story-city sig-city";
+        h.textContent = g.city.en + " · " + g.city.zh;
+        wrap.appendChild(h);
+        var grid = document.createElement("div");
+        grid.className = "story-grid";
+        g.dishes.forEach(function (d) { grid.appendChild(sigCard(d)); });
+        wrap.appendChild(grid);
+      });
+    }
+    if (chipsWrap) {
+      var opts = [{ id: "all", en: "All cities" }].concat((D.cities || []).map(function (c) { return { id: c.id, en: c.en }; }));
+      opts.forEach(function (c) {
+        var b = document.createElement("button");
+        b.className = "chip"; b.type = "button"; b.textContent = c.en;
+        b.setAttribute("aria-pressed", c.id === "all" ? "true" : "false");
+        b.onclick = function () {
+          Array.prototype.forEach.call(chipsWrap.children, function (x) { x.setAttribute("aria-pressed", "false"); });
+          b.setAttribute("aria-pressed", "true");
+          renderGroups(c.id);
+        };
+        chipsWrap.appendChild(b);
+      });
+    }
+    renderGroups("all");
   }
   renderHomeSignature();
   function renderHomeCities() {
