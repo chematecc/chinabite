@@ -30,7 +30,7 @@
     kitPreviewPerSection: 1 // Kit 预览每区恰好 1 个样本
   };
   var D = window.CHINABITE_DATA;
-  // v5.8: drinks live in drinks.js — same shape as the dishes, separate
+  // v5.9: drinks live in drinks.js — same shape as the dishes, separate
   // file so the 110-dish data is never touched. DR.drinks, DR.aliases.
   var DR = window.CHINABITE_DRINKS || { drinks: [], aliases: {} };
   var TEMP_EN = { iced: "Iced", room: "Room temp", hot: "Hot", warm: "Warm" };
@@ -276,6 +276,7 @@
     $("nextQrBtn").onclick = function () { gotoSection("qrSection"); };
     $("nextCardBtn").onclick = function () { gotoSection("dietSection"); };
     updateCounts();
+    updateDeliveryNote();
   }
 
   // ---- v5.3: decoder matching — exact -> alias -> pinyin -> contains -> fuzzy ----
@@ -472,7 +473,7 @@
     // Instant feedback: the user sees work happening, never a dead tap.
     showStatus("Looking it up…");
     var best = findDishBest(q);
-    // v5.8: drinks. Dishes are checked first — a drink only wins when
+    // v5.9: drinks. Dishes are checked first — a drink only wins when
     // no dish matches, or the dish hit is fuzzy (an exact drink name
     // beats a fuzzy dish guess). 豆浆 still decodes to the dish.
     if (!best.dish || best.how === "fuzzy") {
@@ -500,13 +501,14 @@
   // suggestion taps — one place, so a tap never skips the free-count rule.
   function deliverDish(dish) {
     // PAYWALL：DEV_MODE 下 remaining() 为 Infinity，此分支永不触发；
-    // DEV_MODE=false 时恢复：免费次数用完 → 挡住，去看广告或买 Kit。
+    // DEV_MODE=false 时恢复：免费次数用完 → 挡住，去看广告或解锁。
     if (remaining() <= 0 && !paidPreview) {
       $("result").className = "subcard";
       $("result").innerHTML = "<div class=\"verdict ask\">That's your free checks for today</div>" +
         "<p>Watch a 5-second ad and I'll give you 3 more.</p>" +
-        "<p>Or grab the Kit — $6.99, 90 days, unlimited.</p>" +
-        '<button type="button" onclick="document.getElementById(\'adSection\').scrollIntoView()">Watch ad · +3</button>';
+        "<p>Or unlock — $6.99, 90 days, unlimited, no ads.</p>" +
+        '<button type="button" onclick="var a=document.getElementById(\'adSection\');a.classList.remove(\'hidden\');a.scrollIntoView()">Watch ad · +3</button>' +
+        ' <button type="button" class="ghost" onclick="window.ChinaBite.gotoSection(\'paySection\')">See unlock — $6.99</button>';
       return;
     }
     // PAYWALL：DEV_MODE 下 paidPreview=true，不扣次数；
@@ -830,8 +832,35 @@
     });
   }
 
+  // ---- Toast (v6.0 — Orders: every tap answers) ----
+  // One small pill above the bottom nav. Replaces the blocking
+  // alert() calls: adding, sharing, clearing and deep links all answer
+  // here now, with an action button when there is a next step.
+  var toastTimer = null;
+  function showToast(msg, actionLabel, actionFn) {
+    var t = $("toast"), m = $("toastMsg"), b = $("toastAction");
+    if (!t || !m) return;
+    m.textContent = msg;
+    if (b) {
+      if (actionLabel) {
+        b.textContent = actionLabel;
+        b.classList.remove("hidden");
+        b.onclick = function (e) { if (e) e.stopPropagation(); hideToast(); if (actionFn) actionFn(); };
+      } else { b.classList.add("hidden"); b.onclick = null; }
+    }
+    t.classList.remove("hidden");
+    t.onclick = function () { hideToast(); };
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(hideToast, actionLabel ? 5000 : 3500);
+  }
+  function hideToast() {
+    var t = $("toast");
+    if (t) t.classList.add("hidden");
+    if (toastTimer) { clearTimeout(toastTimer); toastTimer = null; }
+  }
+
   // ---- Order list + slip (B route) ----
-  // v5.8: order items are dishes ({id, qty}) or drinks
+  // v5.9: order items are dishes ({id, qty}) or drinks
   // ({id: "drink:<id>", qty, temp}). One lookup for both, so the
   // total, the slip and Share all stay in one place.
   function drinkById(id) {
@@ -851,9 +880,9 @@
     var item = state.order.find(function (x) { return x.id === dish.id; });
     if (item) item.qty++; else state.order.push({ id: dish.id, qty: 1 });
     save(); renderOrder();
-    alert("Got it — " + dish.en + " is on your list.");
+    showToast(dish.en + " is on your list.", "View order", function () { showView("orders"); });
   }
-  // v5.8: drinks join the same order list — same slip, same total, no
+  // v5.9: drinks join the same order list — same slip, same total, no
   // second ordering system. Temp travels with the item so the slip can
   // say 冰镇, not just the drink name.
   function addDrinkToOrder(dr) {
@@ -862,7 +891,7 @@
     var item = state.order.find(function (x) { return x.id === key && x.temp === temp; });
     if (item) item.qty++; else state.order.push({ id: key, qty: 1, temp: temp });
     save(); renderOrder();
-    alert("Got it — " + dr.en + " (" + TEMP_EN[temp] + ") is on your list.");
+    showToast(dr.en + " (" + TEMP_EN[temp] + ") is on your list.", "View order", function () { showView("orders"); });
   }
   function renderOrder() {
     var el = $("orderList");
@@ -871,17 +900,79 @@
       var go = $("orderEmptyGo");
       if (go) go.onclick = function () { showView("search"); };
     } else {
-      var total = 0;
+      var total = 0, items = 0;
       el.innerHTML = state.order.map(function (x) {
         var d = itemById(x.id);
         if (!d) return "";
-        total += d.price * x.qty;
+        total += d.price * x.qty; items += x.qty;
         var temp = (d.kind === "drink" && x.temp) ? " · " + TEMP_ZH[x.temp] : "";
-        return "<p>• " + esc(d.en) + " (" + esc(d.zh) + temp + ") × " + x.qty + " — ¥" + (d.price * x.qty) + "</p>";
-      }).join("") + "<p><b>Total: ¥" + total + " · ≈$" + usd(total) + "</b> · " + state.order.length + (state.order.length === 1 ? " dish" : " dishes") + "</p>" +
+        return "<p class=\"ord-line\"><span class=\"ord-name\">• " + esc(d.en) + " (" + esc(d.zh) + temp + ")</span>" +
+          "<span class=\"ord-qty\"><button type=\"button\" class=\"qty-btn\" data-qty=\"-1\" data-id=\"" + esc(x.id) + "\" aria-label=\"One fewer " + esc(d.en) + "\">−</button>" +
+          "<span class=\"ord-n\">×" + x.qty + "</span>" +
+          "<button type=\"button\" class=\"qty-btn\" data-qty=\"1\" data-id=\"" + esc(x.id) + "\" aria-label=\"One more " + esc(d.en) + "\">+</button></span>" +
+          "<span class=\"ord-price\">¥" + (d.price * x.qty) + "</span>" +
+          "<button type=\"button\" class=\"qty-btn ord-remove\" data-remove=\"" + esc(x.id) + "\" aria-label=\"Remove " + esc(d.en) + "\">×</button></p>";
+      }).join("") + "<p><b>Total: ¥" + total + " · ≈$" + usd(total) + "</b> · " + items + (items === 1 ? " item" : " items") + "</p>" +
         "<p class=\"small price-note\">" + esc(PRICE_BASIS_SHORT) + " — the total is a guide, not the bill.</p>";
+      el.querySelectorAll("[data-qty]").forEach(function (b) {
+        b.onclick = function () {
+          var item = state.order.find(function (y) { return y.id === b.getAttribute("data-id"); });
+          if (!item) return;
+          item.qty += parseInt(b.getAttribute("data-qty"), 10);
+          if (item.qty <= 0) {
+            var gone = itemById(item.id);
+            state.order = state.order.filter(function (y) { return y.id !== item.id; });
+            save(); renderOrder();
+            if (gone) showToast(gone.en + " removed.");
+            return;
+          }
+          save(); renderOrder();
+        };
+      });
+      el.querySelectorAll("[data-remove]").forEach(function (b) {
+        b.onclick = function () {
+          var rid = b.getAttribute("data-remove");
+          var d = itemById(rid);
+          state.order = state.order.filter(function (y) { return y.id !== rid; });
+          save(); renderOrder();
+          if (d) showToast(d.en + " removed.");
+        };
+      });
     }
     renderSlip();
+    updateOrdBadge();
+    updateDeliveryLine();
+  }
+  // v6.0: the Orders tab carries the list count, so the tab never looks
+  // empty — the user can see at a glance whether anything is on the list.
+  function updateOrdBadge() {
+    var b = $("ordBadge");
+    if (!b) return;
+    var n = state.order.reduce(function (s, x) { return s + x.qty; }, 0);
+    b.textContent = n;
+    b.classList.toggle("hidden", n === 0);
+  }
+  // v6.0: Delivery never used the list, so switching tabs made it look
+  // lost. The Delivery panel now shows the list summary, and the search
+  // buttons say which dish they will search BEFORE the tap.
+  function updateDeliveryLine() {
+    var el = $("deliveryListLine");
+    if (!el) return;
+    var total = 0, items = 0;
+    state.order.forEach(function (x) {
+      var d = itemById(x.id);
+      if (d) { total += d.price * x.qty; items += x.qty; }
+    });
+    el.textContent = items
+      ? "Your list: " + items + (items === 1 ? " item" : " items") + " · ¥" + total + " — delivery searches one dish at a time, starting with the last one you checked."
+      : "Your list is empty — delivery searches one dish at a time, starting with the last one you checked.";
+  }
+  function updateDeliveryNote() {
+    var note = $("deliveryDishNote");
+    if (!note) return;
+    note.textContent = lastDish
+      ? "Will search: “" + lastDish.zh + " · " + lastDish.en + "” — tap a button below."
+      : "No dish checked yet — check a dish first, then this button searches it directly.";
   }
   function renderSlip() {
     var tableNo = ($("tableNo") && $("tableNo").value) || "____";
@@ -908,10 +999,43 @@
   }
   ["tableNo", "peopleNo"].forEach(function (id) { var el = $(id); if (el) el.addEventListener("input", renderSlip); });
   document.querySelectorAll('input[name="payMethod"]').forEach(function (r) { r.addEventListener("change", renderSlip); });
-  $("showSlipBtn").onclick = function () { renderSlip(); $("slipOverlay").classList.remove("hidden"); };
+  $("showSlipBtn").onclick = function () {
+    // v6.0: an empty slip is not a slip — answer with a next step instead
+    // of opening a blank overlay. The overlay mirrors the live preview
+    // here, not in a separate inline script — one place, always in sync.
+    if (!state.order.length) { showToast("Your list is empty — check a dish first.", "Decode a dish", function () { showView("search"); }); return; }
+    renderSlip();
+    var full = $("slipFull"), prev = $("slipPreview");
+    if (full && prev) full.innerHTML = prev.innerHTML;
+    $("slipOverlay").classList.remove("hidden");
+    setOrderStep(4);
+  };
   $("closeSlipBtn").onclick = function () { $("slipOverlay").classList.add("hidden"); };
-  $("clearOrderBtn").onclick = function () { state.order = []; save(); renderOrder(); };
+  // v6.0: Clear used to wipe the whole list on one tap, no questions
+  // asked. Now it arms first — tap again within 3s to confirm.
+  var clearArmTimer = null;
+  $("clearOrderBtn").onclick = function () {
+    var btn = $("clearOrderBtn");
+    if (!state.order.length) { showToast("Your list is already empty."); return; }
+    if (!clearArmTimer) {
+      btn.textContent = "Tap again to clear";
+      btn.classList.add("armed");
+      showToast("Tap again to clear your whole list.");
+      clearArmTimer = setTimeout(function () {
+        clearArmTimer = null;
+        btn.textContent = "Clear";
+        btn.classList.remove("armed");
+      }, 3000);
+      return;
+    }
+    clearTimeout(clearArmTimer); clearArmTimer = null;
+    btn.textContent = "Clear";
+    btn.classList.remove("armed");
+    state.order = []; save(); renderOrder();
+    showToast("List cleared.");
+  };
   $("shareOrderBtn").onclick = function () {
+    if (!state.order.length) { showToast("Nothing to share yet — check a dish first.", "Decode a dish", function () { showView("search"); }); return; }
     var text = "My China order list:\n" + state.order.map(function (x) {
       var d = itemById(x.id);
       if (!d) return "";
@@ -926,6 +1050,31 @@
   $("qrTable").innerHTML = "<table><tr><th>Chinese</th><th>English</th><th>What it means</th></tr>" +
     D.qrButtons.map(function (b) { return "<tr><td><b>" + esc(b.zh) + "</b></td><td>" + esc(b.en) + "</td><td>" + esc(b.note) + "</td></tr>"; }).join("") + "</table>";
 
+  // ---- Dine-in steps carry state (v6.0) ----
+  // The 3 steps were plain text — the user never knew where they were.
+  // Step 2 is a real choice now: the branch they pick highlights the
+  // matching route (A: mini-program table, B: order slip) and moves the
+  // steps forward. Showing the slip finishes step 3.
+  function setOrderStep(n) {
+    var steps = document.querySelectorAll("#dineSteps li");
+    steps.forEach(function (li) {
+      var s = parseInt(li.getAttribute("data-step"), 10);
+      li.classList.toggle("done", s < n);
+      li.classList.toggle("current", s === n);
+      li.classList.toggle("todo", s > n);
+    });
+  }
+  function markRoute(which) {
+    var a = $("routeA"), b = $("routeB");
+    if (a) a.classList.toggle("route-on", which === "a");
+    if (b) b.classList.toggle("route-on", which === "b");
+    setOrderStep(3);
+    var target = which === "a" ? a : b;
+    if (target && target.scrollIntoView) target.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+  if ($("qrOpenedBtn")) $("qrOpenedBtn").onclick = function () { markRoute("a"); showToast("Mini-program opened — the table below translates the buttons you'll see."); };
+  if ($("qrBlockedBtn")) $("qrBlockedBtn").onclick = function () { markRoute("b"); showToast("No problem — show the slip below to staff. No +86 number needed."); };
+
   // ---- Orders tabs: Dine-in / Delivery (v5.2) ----
   // Delivery is a guide only — ordering happens in Meituan / Ele.me,
   // not here. All copy comes from the FAQ + hotel card (no invented
@@ -938,31 +1087,56 @@
     del.setAttribute("aria-selected", isDel ? "true" : "false");
     dp.classList.toggle("hidden", isDel);
     vp.classList.toggle("hidden", !isDel);
+    if (isDel) updateDeliveryNote();
+  }
+  // v6.0: deep-link buttons answer at once — "Opening…" + disabled for
+  // 2s, so a second tap can't fire the scheme twice.
+  function pressBusy(btn) {
+    if (!btn) return;
+    var label = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "Opening…";
+    setTimeout(function () { btn.disabled = false; btn.textContent = label; }, 2000);
   }
   if ($("tabDineIn")) $("tabDineIn").onclick = function () { setOrderTab("dinein"); };
   if ($("tabDelivery")) $("tabDelivery").onclick = function () { setOrderTab("delivery"); };
   if ($("deliveryMeituanBtn")) $("deliveryMeituanBtn").onclick = function () {
     var note = $("deliveryDishNote");
+    var btn = $("deliveryMeituanBtn");
     if (lastDish) {
       if (note) note.textContent = "Opening Meituan Waimai search for “" + lastDish.zh + "” — if the app isn't installed you'll land on the web search instead.";
+      pressBusy(btn);
       openDeepLink(MEITUAN_LINKS.waimaiScheme(lastDish.zh), MEITUAN_LINKS.waimaiH5(lastDish.zh));
     } else {
       if (note) note.textContent = "Check a dish first — then this button searches it directly. Opening Meituan Waimai home for now.";
+      pressBusy(btn);
       openDeepLink(MEITUAN_LINKS.waimaiSchemeHome, MEITUAN_LINKS.waimaiH5Home);
     }
   };
   if ($("deliveryDianpingBtn")) $("deliveryDianpingBtn").onclick = function () {
     var note = $("deliveryDishNote");
+    var btn = $("deliveryDianpingBtn");
     if (lastDish) {
       if (note) note.textContent = "Opening Dianping search for “" + lastDish.zh + "” — reviews and group deals, in the app or on the web.";
+      pressBusy(btn);
       openDeepLink(MEITUAN_LINKS.dianpingScheme(lastDish.zh), MEITUAN_LINKS.dianpingH5);
     } else {
       if (note) note.textContent = "Check a dish first — then this button searches it directly. Opening Dianping home for now.";
+      pressBusy(btn);
       openDeepLink(MEITUAN_LINKS.dianpingSchemeHome, MEITUAN_LINKS.dianpingH5);
     }
   };
-  if ($("deliveryElemeBtn")) $("deliveryElemeBtn").onclick = function () { window.open("https://www.ele.me/", "_blank"); };
+  if ($("deliveryElemeBtn")) $("deliveryElemeBtn").onclick = function () {
+    var note = $("deliveryDishNote");
+    var btn = $("deliveryElemeBtn");
+    if (note) note.textContent = "Opening Ele.me (淘宝闪购) — if nothing opens, search 淘宝闪购 inside Alipay instead.";
+    pressBusy(btn);
+    var w = window.open("https://www.ele.me/", "_blank");
+    if (!w && note) note.textContent = "Popup blocked — open ele.me in your browser, or search 淘宝闪购 inside Alipay.";
+  };
   if ($("deliveryHotelBtn")) $("deliveryHotelBtn").onclick = function () { gotoSection("meituanSection"); };
+  if ($("deliverySeeListBtn")) $("deliverySeeListBtn").onclick = function () { setOrderTab("dinein"); };
+  updateDeliveryNote();
 
   // ---- Payment checklist ----
   var checks = [
@@ -972,12 +1146,22 @@
     ["c4", "List saved offline"]
   ];
   var ckEl = $("payChecks");
+  // v6.0: the checklist used to be four silent boxes — now it says how
+  // ready you are (x of 4), with the same progress bar as the decoder.
+  function updatePayProgress() {
+    var done = checks.filter(function (c) { return state.checks[c[0]]; }).length;
+    var p = $("payProgress");
+    if (p) p.textContent = done + " of " + checks.length + " ready" + (done === checks.length ? " — you're set." : "");
+    var bar = $("payBar");
+    if (bar) bar.style.width = Math.round(done / checks.length * 100) + "%";
+  }
   checks.forEach(function (c) {
     var lab = document.createElement("label");
     lab.innerHTML = '<input type="checkbox" ' + (state.checks[c[0]] ? "checked" : "") + "> " + esc(c[1]);
-    lab.querySelector("input").onchange = function (e) { state.checks[c[0]] = e.target.checked; save(); };
+    lab.querySelector("input").onchange = function (e) { state.checks[c[0]] = e.target.checked; save(); updatePayProgress(); };
     ckEl.appendChild(lab);
   });
+  updatePayProgress();
 
   // ---- Diet cards (12) ----
   var cardsEl = $("dietCards");
@@ -1000,7 +1184,7 @@
   });
   $("closeCardBtn").onclick = function () { $("cardOverlay").classList.add("hidden"); };
 
-  // ---- Drinks & beer (v5.8) ----
+  // ---- Drinks & beer (v5.9) ----
   // Same folding-card shape as Diet Cards; the culture note lives in the
   // HTML (drinksSection), the list renders here. One card per drink:
   // name, price, one-line note, temp chips, the big-Chinese order
@@ -1074,7 +1258,7 @@
     var card = $("dlCard-" + dr.id);
     if (card) card.scrollIntoView({ behavior: "smooth", block: "start" });
   }
-  // ---- Drink lookup for the decoder (v5.8) ----
+  // ---- Drink lookup for the decoder (v5.9) ----
   // Aliases live ONLY in drinks.js (window.CHINABITE_DRINKS.aliases),
   // matched after normStr() like the dish aliases. Dishes are checked
   // FIRST in decode() — this runs only when no dish matches, or the
@@ -1170,10 +1354,10 @@
     setMeta("twitter:description", d);
   }
   function shareText(title, text) {
-    if (navigator.share) { navigator.share({ title: title, text: text }).catch(function () {}); }
+    if (navigator.share) { navigator.share({ title: title, text: text }).then(function () { showToast("Shared."); }).catch(function () {}); }
     else if (navigator.clipboard) {
-      navigator.clipboard.writeText(text).then(function () { alert("Copied. Paste into WeChat."); });
-    } else { alert(text); }
+      navigator.clipboard.writeText(text).then(function () { showToast("Copied. Paste into WeChat."); });
+    } else { showToast("Sharing isn't available here — copy from the slip below."); }
   }
   window.shareText = shareText;
   function shareDish(dish, v) {
@@ -1229,8 +1413,8 @@
     btn.onclick = function () {
       var text = "酒店：" + (nameEl.value || "____") + " 房号：" + (roomEl.value || "____") +
         "\n您好，我是外国人，请放在前台，不要打电话，发信息即可。谢谢！";
-      if (navigator.clipboard) navigator.clipboard.writeText(text).then(function () { alert("Hotel card copied."); });
-      else alert(text);
+      if (navigator.clipboard) navigator.clipboard.writeText(text).then(function () { showToast("Hotel card copied."); });
+      else showToast("Copy isn't available here — long-press the card text instead.");
     };
   })();
 
@@ -1244,6 +1428,19 @@
     var link = location.origin + location.pathname + "?ref=" + state.myRef;
     if (navigator.clipboard) navigator.clipboard.writeText(link).then(function () { alert("Link copied."); });
   };
+  // v6.1: share goes DIRECT to the social app — one tap on the tag opens
+  // that platform's share sheet with the invite link ready. Only platforms
+  // with a real web share URL are here: X, Facebook, WhatsApp. Instagram
+  // and TikTok have no web share-intent URL, so they are NOT listed
+  // (do not invent a deep link for them).
+  (function wireShareLinks() {
+    var link = location.origin + location.pathname + "?ref=" + state.myRef;
+    var text = "China Bite — I can read any Chinese menu in 3 seconds. Try it free: " + link + " #ChinaBite";
+    function set(id, href) { var a = $(id); if (a) a.href = href; }
+    set("shareXBtn", "https://twitter.com/intent/tweet?text=" + encodeURIComponent(text));
+    set("shareFbBtn", "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(link));
+    set("shareWaBtn", "https://wa.me/?text=" + encodeURIComponent(text));
+  })();
   // PLACEHOLDER — no server, invites not verified.
   $("inviteCount").textContent = "0 (placeholder)";
 
@@ -1403,6 +1600,10 @@
   var adTimer = null;
   $("watchAdBtn").onclick = function () {
     if (DEV_MODE) return;
+    // v6.1: paid = no ads. Paid users never reach this button (the ad
+    // section is hidden for them), but guard anyway — never show an ad
+    // to someone who paid to remove them.
+    if (paidPreview) return;
     if (state.adsToday >= PAYWALL.maxAdsPerDay) { alert("Ad limit: 5/day. Back tomorrow."); return; }
     var n = 5;
     $("adOverlay").classList.remove("hidden");
@@ -1432,13 +1633,16 @@
   // workers.dev 生产域名 2026-11-26 14:38 起全站报 404 error code 1042，
   // 脚本本身正常（版本预览 URL 200），是生产路由故障，改走自定义域名绕过。
   var SUBSCRIBE_API = "https://bite-api.chinavisacheck.com/api/subscribe";
+  // v6.1: sign-up copy — "new dishes first" is gone (Oliver: no use).
+  // Your email IS your account: no password. We email only when there's
+  // something new worth sending.
   var SUBSCRIBE_COPY = {
-    en: { title: "New dishes first.", line: "One email when we add dishes. Nothing else.", btn: "Subscribe", privacy: "Only China Bite updates. No marketing. Unsubscribe anytime.", done: "You're in.", doneLine: "New dishes, in your inbox. First.", already: "Already subscribed.", bad: "That email doesn't look right.", pending: "Not live yet. Saved on this device." },
-    zh: { title: "新菜先知道。", line: "加了新菜才发一封。别的没有。", btn: "订阅", privacy: "只收 China Bite 更新。不发营销。可随时退订。", done: "订好了。", doneLine: "有新菜，第一时间发你邮箱。", already: "已经订过了。", bad: "邮箱格式不对，再看一眼。", pending: "还没接通，先存在本机了。" },
-    ja: { title: "新メニューを先に。", line: "新しい料理が増えたときだけ送ります。", btn: "登録する", privacy: "China Bite の更新のみ。広告なし。いつでも解除できます。", done: "登録完了。", doneLine: "新メニュー情報をお届けします。", already: "登録済みです。", bad: "メールアドレスを確認してください。", pending: "まだ接続されていません。この端末に保存しました。" },
-    ko: { title: "새 메뉴를 먼저.", line: "새 요리가 추가될 때만 메일을 보냅니다.", btn: "구독하기", privacy: "China Bite 소식만 받습니다. 광고 없음. 언제든 해지 가능.", done: "구독 완료.", doneLine: "새 메뉴 소식을 가장 먼저 보내드립니다.", already: "이미 구독 중입니다.", bad: "이메일 형식을 확인해 주세요.", pending: "아직 연결되지 않았습니다. 이 기기에 저장했습니다." },
-    de: { title: "Neue Gerichte zuerst.", line: "Eine Mail, wenn neue Gerichte kommen. Sonst nichts.", btn: "Abonnieren", privacy: "Nur China Bite Updates. Kein Marketing. Jederzeit kündbar.", done: "Angemeldet.", doneLine: "Neue Gerichte zuerst in deinem Postfach.", already: "Schon angemeldet.", bad: "Diese E-Mail sieht nicht richtig aus.", pending: "Noch nicht live. Auf diesem Gerät gespeichert." },
-    fr: { title: "Les nouveaux plats d'abord.", line: "Un e-mail quand on ajoute des plats. Rien d'autre.", btn: "S'abonner", privacy: "Uniquement les actus China Bite. Pas de marketing. Désinscription à tout moment.", done: "C'est noté.", doneLine: "Les nouveaux plats, d'abord dans ta boîte mail.", already: "Déjà abonné.", bad: "Cette adresse e-mail semble incorrecte.", pending: "Pas encore en ligne. Enregistré sur cet appareil." }
+    en: { title: "Sign up.", line: "Your email is your account — no password. One email when there's something new, nothing else.", btn: "Subscribe", privacy: "Only China Bite updates. No marketing. Unsubscribe anytime.", done: "You're in.", doneLine: "We'll email you when there's something new.", already: "Already subscribed.", bad: "That email doesn't look right.", pending: "Couldn't reach the server. Saved on this device." },
+    zh: { title: "注册。", line: "邮箱就是你的账号，不用密码。有新内容时才发一封，别的没有。", btn: "订阅", privacy: "只收 China Bite 更新。不发营销。可随时退订。", done: "订好了。", doneLine: "有新内容时发你邮箱。", already: "已经订过了。", bad: "邮箱格式不对，再看一眼。", pending: "连不上服务器，先存在本机了。" },
+    ja: { title: "登録。", line: "メールアドレスがアカウントです。パスワード不要。新着があるときだけ送ります。", btn: "登録する", privacy: "China Bite の更新のみ。広告なし。いつでも解除できます。", done: "登録完了。", doneLine: "新着があればメールでお知らせします。", already: "登録済みです。", bad: "メールアドレスを確認してください。", pending: "サーバーに届きませんでした。この端末に保存しました。" },
+    ko: { title: "가입하기.", line: "이메일이 계정입니다. 비밀번호가 필요 없습니다. 새 소식이 있을 때만 메일을 보냅니다.", btn: "구독하기", privacy: "China Bite 소식만 받습니다. 광고 없음. 언제든 해지 가능.", done: "가입 완료.", doneLine: "새 소식이 있으면 메일로 알려드립니다.", already: "이미 구독 중입니다.", bad: "이메일 형식을 확인해 주세요.", pending: "서버에 연결하지 못했습니다. 이 기기에 저장했습니다." },
+    de: { title: "Anmelden.", line: "Deine E-Mail ist dein Konto — kein Passwort. Eine Mail nur, wenn es etwas Neues gibt.", btn: "Abonnieren", privacy: "Nur China Bite Updates. Kein Marketing. Jederzeit kündbar.", done: "Angemeldet.", doneLine: "Wir mailen dir, wenn es etwas Neues gibt.", already: "Schon angemeldet.", bad: "Diese E-Mail sieht nicht richtig aus.", pending: "Server nicht erreichbar. Auf diesem Gerät gespeichert." },
+    fr: { title: "S'inscrire.", line: "Ton e-mail est ton compte — pas de mot de passe. Un e-mail seulement quand il y a du nouveau.", btn: "S'abonner", privacy: "Uniquement les actus China Bite. Pas de marketing. Désinscription à tout moment.", done: "C'est noté.", doneLine: "On t'écrira quand il y aura du nouveau.", already: "Déjà abonné.", bad: "Cette adresse e-mail semble incorrecte.", pending: "Serveur injoignable. Enregistré sur cet appareil." }
   };
   var subForm = $("subscribeForm"), subEmail = $("subscribeEmail"), subLang = $("subscribeLang");
   function subCopy() { return SUBSCRIBE_COPY[subLang.value] || SUBSCRIBE_COPY.en; }
@@ -1497,11 +1701,11 @@
   // chat is a feature behind the Bun button / Ask Bun, not the homepage) ----
   // v5.0: Home = search + chips + hero + Ask Bun + Signature + cities +
   // decode teaser. Search = the decoder (type / voice / camera / 110
-  // quick-pick). Orders = QR order slip. Account = Kit on top, then
-  // subscribe / share / FAQ. Views are show/hide only — all sections stay
-  // in the DOM, so decode, deep links (#/dish/, #/diet/) and the order
-  // slip keep working.
-  var VIEW_SECTIONS = ["homeView", "chatView", "chatComposer", "decoder", "qrSection", "dietSection", "drinksSection", "adSection", "kitPreview", "citiesSection", "meituanSection", "kitSection", "referral", "faqSection", "subscribe"];
+  // quick-pick). Orders = QR order slip. Account = Unlock + sign-up +
+  // share / FAQ (v6.1: no "Kit" wording in Account). Views are show/hide
+  // only — all sections stay in the DOM, so decode, deep links (#/dish/,
+  // #/diet/) and the order slip keep working.
+  var VIEW_SECTIONS = ["homeView", "chatView", "chatComposer", "decoder", "qrSection", "dietSection", "drinksSection", "adSection", "citiesSection", "meituanSection", "paySection", "referral", "faqSection", "subscribe"];
   var VIEWS = {
     home: ["homeView"],
     chat: ["chatView", "chatComposer"],
@@ -1510,12 +1714,12 @@
     cities: ["citiesSection"],
     diet: ["dietSection"],
     drinks: ["drinksSection"],
-    account: ["kitPreview", "kitSection", "subscribe", "referral", "faqSection"],
+    account: ["paySection", "subscribe", "referral", "faqSection"],
     qr: ["qrSection"],
     meituan: ["meituanSection"],
     subscribe: ["subscribe"],
   };
-  var SECTION_VIEW = { homeView: "home", chatView: "chat", chatComposer: "chat", decoder: "search", qrSection: "orders", dietSection: "diet", drinksSection: "drinks", adSection: "search", kitPreview: "account", citiesSection: "cities", meituanSection: "meituan", kitSection: "account", referral: "account", faqSection: "account", subscribe: "subscribe" };
+  var SECTION_VIEW = { homeView: "home", chatView: "chat", chatComposer: "chat", decoder: "search", qrSection: "orders", dietSection: "diet", drinksSection: "drinks", adSection: "search", citiesSection: "cities", meituanSection: "meituan", paySection: "account", referral: "account", faqSection: "account", subscribe: "subscribe" };
   var currentView = "chat";
   function showView(name) {
     var ids = VIEWS[name] || VIEWS.home;
@@ -1527,10 +1731,16 @@
       if (id === "adSection" && DEV_MODE) { el.classList.add("hidden"); return; }
       el.classList.toggle("hidden", ids.indexOf(id) < 0);
     });
-    // Account view: Kit sits at the top, already open — no extra tap.
+    // Account view: Unlock + sign-up open — no extra tap. The sign-up
+    // email input blinks, so the empty field reads as "fill me in".
     if (name === "account") {
-      var kp = $("kitPreview"); if (kp) kp.open = true;
-      var ks = $("kitSection"); if (ks) ks.open = true;
+      var ps = $("paySection"); if (ps) ps.open = true;
+      var sb = $("subscribe"); if (sb) sb.open = true;
+    }
+    // v6.0: Orders opens the QR Order card — the bottom-nav tap used to
+    // switch views but leave the card collapsed, so it looked dead.
+    if (name === "orders") {
+      var q = $("qrSection"); if (q) q.open = true;
     }
     window.scrollTo(0, 0);
     document.querySelectorAll(".bottomnav a").forEach(function (x) {
@@ -1640,7 +1850,7 @@
   } catch (e) {}
 
   // ---- DEV MODE 初始化：页面标记 + 解锁展示（付费逻辑本身不动，只绕过） ----
-  // 角标 #devBadge、锁文案 .paywall-lock、Kit 全开提示 #kitDevNote 都在 index.html；
+  // 角标 #devBadge、锁文案 .paywall-lock 都在 index.html；
   // DEV_MODE=false 时角标隐藏、锁文案恢复显示、广告区恢复显示。
   if (DEV_MODE) {
     try { document.body.classList.add("dev-mode"); } catch (e) {}
@@ -1653,10 +1863,6 @@
     var paidN = $("paidNote");
     if (paidN) paidN.textContent = "Dev mode: all unlocked, no ads.";
     document.querySelectorAll(".paywall-lock").forEach(function (el) { el.classList.add("hidden"); });
-    var kitNote = $("kitDevNote");
-    if (kitNote) kitNote.classList.remove("hidden");
-    var kitSub = $("kitPreviewSub");
-    if (kitSub) kitSub.textContent = "Dev mode: Kit preview fully open — 110 dishes · 12 cards · 10 cities visible.";
   }
     // ---- v5.0: minimal public API for the chat layer (chat.js) ----
   // The chat is a feature now (Bun button / Ask Bun open it); it answers
