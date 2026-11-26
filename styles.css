@@ -191,7 +191,6 @@ th{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06
 .mascot-mini{width:36px;height:36px;border-radius:50%;object-fit:cover;display:block;margin:4px 0;border:1px solid var(--line)}
 #subscribeDone .verdict{margin:10px 0}
 footer{padding:8px 4px;border-top:1px solid var(--line)}
-.kit{font-family:var(--font-display);font-size:17px;font-weight:600}
 .city-img{width:100%;height:200px;object-fit:cover;display:block;margin:10px 0;border-radius:20px}
 .btn-link{display:block;text-align:center;background:var(--accent);color:var(--accent-ink);font-weight:600;padding:14px 20px;font-size:15px;min-height:48px;text-decoration:none;margin:4px 0;border-radius:999px;box-shadow:0 6px 16px rgba(109,40,217,.25)}
 
@@ -337,3 +336,63 @@ footer{padding:8px 4px;border-top:1px solid var(--line)}
 .faq-item p{font-size:15px;color:var(--muted);line-height:1.6;margin:8px 0 4px}
 .faq-item p b{color:var(--ink)}
 .next-row button{margin:0;text-align:left}
+/* ---- v5.9: drinks — same card language as dishes; temp chips reuse .chip ---- */
+.drink-card h3{margin:0 0 4px}
+.drink-card p{margin:6px 0}
+.drink-temp{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.drink-temp .chip{margin:0}
+.home-drinks-link{margin:14px 0 0;text-align:center}
+#drinkPhrases table{width:100%;border-collapse:collapse}
+#drinkPhrases td{padding:6px 8px 6px 0;font-size:15px;line-height:1.5;vertical-align:top}
+#drinkPhrases td:first-child{white-space:nowrap}
+/* ---- v6.1: Account — blinking sign-up email input + direct social share ---- */
+/* Email input pulses gently (border glow + placeholder fade) so the empty
+   field reads as "fill me in" without shouting. Subtle on purpose. */
+@keyframes sub-blink {
+  0%, 100% { border-color: var(--line-strong); box-shadow: none; }
+  50% { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(109, 40, 217, .18); }
+}
+@keyframes sub-blink-ph { 0%, 100% { opacity: .45; } 50% { opacity: 1; } }
+input.blink-input { animation: sub-blink 2.2s ease-in-out infinite; }
+input.blink-input::placeholder { animation: sub-blink-ph 2.2s ease-in-out infinite; }
+input.blink-input:focus { animation: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(109, 40, 217, .18); }
+@media (prefers-reduced-motion: reduce) {
+  input.blink-input, input.blink-input::placeholder { animation: none; }
+}
+.share-row { display: flex; gap: 8px; margin: 8px 0; }
+.share-btn { flex: 1; text-align: center; background: var(--card); color: var(--ink); border: 1.5px solid var(--line-strong); font-weight: 600; font-size: 14px; padding: 12px 6px; min-height: 48px; border-radius: 999px; text-decoration: none; display: flex; align-items: center; justify-content: center; }
+.share-btn:active { transform: scale(.97); }
+
+/* ---- v6.0: Orders — logic you can see, taps that answer ---- */
+/* Toast: one pill above the bottom nav. Every tap answers — no more
+   silent taps, no more blocking alert(). */
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom));width:calc(100% - 24px);max-width:376px;background:#0A0A0B;color:#fff;border-radius:999px;padding:12px 16px;display:flex;align-items:center;gap:10px;z-index:60;box-shadow:0 10px 28px rgba(0,0,0,.35);font-size:14px;font-weight:600;cursor:pointer}
+.toast span{flex:1;min-width:0}
+.toast button{flex:0 0 auto;margin:0;min-height:36px;padding:6px 14px;font-size:14px;box-shadow:none}
+/* Orders nav badge: list count on the tab, so it never looks empty. */
+.bottomnav a{position:relative}
+.ord-badge{position:absolute;top:2px;right:calc(50% - 28px);min-width:18px;height:18px;border-radius:999px;background:var(--accent);color:#fff;font-size:11px;font-weight:700;line-height:18px;text-align:center;padding:0 5px}
+/* Dine-in stepper: numbered, with current / done state. */
+.steps{list-style:none;margin:12px 0;padding:0;display:flex;flex-direction:column;gap:10px;counter-reset:step}
+.steps li{position:relative;padding:10px 12px 10px 44px;border:1px solid var(--line);border-radius:16px;background:var(--card2)}
+.steps li::before{counter-increment:step;content:counter(step);position:absolute;left:12px;top:10px;width:22px;height:22px;border-radius:50%;background:var(--card);border:1.5px solid var(--line-strong);color:var(--muted);font-size:13px;font-weight:700;line-height:20px;text-align:center}
+.steps li.current{border-color:var(--accent)}
+.steps li.current::before{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.steps li.done{opacity:.85}
+.steps li.done::before{content:"✓";background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.step-btns{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.step-btns button{margin:0}
+.route-on{border:1.5px solid var(--accent);border-radius:20px;padding:12px;margin:12px 0}
+/* Order lines: qty stepper + remove, so the list is editable in place. */
+.ord-line{display:flex;align-items:center;gap:8px;margin:10px 0}
+/* Route A table: keep headers + Chinese cells on one line ("CHINESE"
+   used to break as "CHINES E"); the note column still wraps. */
+#qrTable th{white-space:nowrap}
+#qrTable td:first-child{white-space:nowrap}
+.ord-line .ord-name{flex:1;min-width:0}
+.ord-line .ord-price{font-weight:700;white-space:nowrap}
+.ord-qty{display:flex;align-items:center;gap:6px;flex:0 0 auto}
+.ord-n{min-width:24px;text-align:center;font-weight:600}
+.qty-btn{width:32px;height:32px;min-width:32px;min-height:32px;padding:0;margin:0;border-radius:50%;font-size:16px;box-shadow:none;display:inline-flex;align-items:center;justify-content:center}
+.qty-btn.ord-remove{background:var(--card);color:var(--muted);border:1.5px solid var(--line-strong)}
+button.armed{background:var(--warn-bg);color:var(--warn);border-color:var(--warn)}

@@ -145,7 +145,7 @@
           "name": "Is it free?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "3 free checks a day. Watch a 5s ad: +3. Kit $6.99, 90 days."
+            "text": "3 free checks a day. Watch a 5s ad: +3. Paid unlock $6.99, 90 days."
           }
         },
         {
@@ -1644,6 +1644,7 @@
 <summary><span class="card-head"><h2>10 Cities</h2><span class="card-sub">3 must-eats per city.</span></span><span class="chev" aria-hidden="true">▾</span></summary>
 <div class="city-row" id="homeCityRow"></div>
 </details>
+<p class="browse-block home-drinks-link"><button type="button" class="ghost" data-goto="drinksSection">🍺 Drinks &amp; beer — how to order it iced</button></p>
 </section>
 <section id="chatView" aria-label="Chat with Bun">
 <button type="button" class="ghost back-home" id="backHomeBtn" data-view="home">← Home</button>
@@ -1670,14 +1671,21 @@
 <button type="button" role="tab" id="tabDineIn" aria-selected="true" aria-controls="dineInPanel">Dine-in</button>
 <button type="button" role="tab" id="tabDelivery" aria-selected="false" aria-controls="deliveryPanel">Delivery</button>
 </div>
+<p class="small" id="orderWayNote">Two ways to eat — at the table, or delivered to your hotel. Your list stays saved when you switch.</p>
 <div id="dineInPanel" role="tabpanel" aria-labelledby="tabDineIn">
 <img class="city-img" src="assets/dish-shengjianbao.webp" alt="Shengjian bao — pan-fried soup buns, a Shanghai must-eat" width="800" height="533" loading="lazy">
 <h3>How it works — 3 steps</h3>
-<p><b>1 · Scan.</b> Scan the QR code on the table — the menu opens in a mini-program.</p>
-<p><b>2 · If it won't open.</b> Some menus ask for a +86 phone number. Skip that — use the order slip below instead.</p>
-<p><b>3 · Show &amp; pay.</b> Show the slip to the waiter, eat, then pay at the counter.</p>
+<ol class="steps" id="dineSteps">
+<li data-step="1" class="current"><b>Scan.</b> Scan the QR code on the table — the menu opens in a mini-program.</li>
+<li data-step="2" class="todo"><b>Did it open?</b> Pick one:
+<span class="step-btns"><button type="button" class="ghost" id="qrOpenedBtn">It opened</button><button type="button" class="ghost" id="qrBlockedBtn">It didn't open</button></span></li>
+<li data-step="3" class="todo"><b>Show &amp; pay.</b> Show the slip to the waiter, eat, then pay at the counter.</li>
+</ol>
+<div id="routeA">
 <h3>Route A — Mini-program opens</h3>
 <div id="qrTable"></div>
+</div>
+<div id="routeB">
 <h3>Route B — Won't open? Asks for +86?</h3>
 <p>Show this slip to staff.</p>
 <label for="tableNo">Table</label>
@@ -1693,6 +1701,8 @@
 <button type="button" class="ghost" id="shareOrderBtn">Share list</button>
 <button type="button" class="ghost" id="clearOrderBtn">Clear</button>
 </p>
+<p><button type="button" class="ghost" data-goto="drinksSection">🍺 Drinks — beer, Coke, tea</button></p>
+</div>
 <h3>Your order</h3>
 <div id="orderList"></div>
 <h3>Good to know</h3>
@@ -1701,12 +1711,17 @@
 <p><b>No Chinese?</b> The slip below is big Chinese text — show the screen, no talking needed.</p>
 <p><b>Pay at the counter</b> — Alipay, WeChat, or cash. The slip says how you'll pay.</p>
 <p><b>Want more?</b> Add another dish the same way — the total updates by itself.</p>
+<p><b>Thirsty?</b> Drinks come room temp in China — beer, Coke, water. The Drinks section shows how to ask for them iced.</p>
 </div>
 <h3>Before your first meal</h3>
+<p class="small" id="payProgress" role="status">0 of 4 ready</p>
+<div class="progress"><div id="payBar" style="width:0%"></div></div>
 <div id="payChecks"></div>
 </div>
 <div id="deliveryPanel" role="tabpanel" aria-labelledby="tabDelivery" class="hidden">
 <p class="muted">No table? Get it delivered to your hotel. This is a guide — you order in Meituan or 淘宝闪购 (Ele.me), not here.</p>
+<p class="small" id="deliveryListLine" role="status"></p>
+<p><button type="button" class="ghost" id="deliverySeeListBtn">See my list</button></p>
 <h3>How it works — 4 steps</h3>
 <p><b>1 · Open the app.</b> Meituan, or in Alipay open the 淘宝闪购 mini-program (was Ele.me). Meituan is the second choice.</p>
 <p><b>2 · Search in Chinese.</b> The buttons below open Meituan or Dianping search for the last dish you checked — no typing, no copying.</p>
@@ -1739,6 +1754,38 @@
 </div>
 </details>
 
+<!-- v5.9: drinks — same folding-card shape as Diet Cards. Culture first
+     (room temp is the default), then the list. No new bottom-nav item:
+     Home and Orders link in with data-goto. -->
+<details class="card" id="drinksSection">
+<summary><span class="card-head"><h2>Drinks &amp; Beer</h2><span class="card-sub">Beer, Coke, tea — and how to ask for it iced.</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<div class="card-body">
+<div class="subcard">
+<p><b>Room temp is the default.</b> In China, drinks arrive at room temperature unless you ask. That's normal — not a mistake, and not a warm beer the waiter forgot to chill.</p>
+<p><b>Beer:</b> most restaurants keep beer at room temp. Want it cold? Say <b>冰镇啤酒</b> — ice-cold beer.</p>
+<p><b>Coke, Sprite, water:</b> same — room temp by default. Say <b>冰的</b> (iced), or <b>加冰</b> (with ice).</p>
+<p><b>Tea:</b> hot by default, often by the pot, sometimes free. Iced tea is the exception — say <b>冰的</b>.</p>
+<p><b>Spirits:</b> baijiu is never iced. Red wine comes at room temp. Yellow wine is often served warm.</p>
+</div>
+<details class="subcard" id="drinkPhrases">
+<summary><b>Say it — 冰 / 常温 / 加冰</b></summary>
+<table>
+<tr><td><b>冰镇啤酒</b></td><td>ice-cold beer</td></tr>
+<tr><td><b>冰的</b></td><td>iced / cold</td></tr>
+<tr><td><b>加冰</b></td><td>with ice</td></tr>
+<tr><td><b>常温</b></td><td>room temperature</td></tr>
+<tr><td><b>不要冰</b></td><td>no ice</td></tr>
+<tr><td><b>热的</b></td><td>hot</td></tr>
+<tr><td><b>一瓶 / 一壶 / 一杯</b></td><td>a bottle / a pot / a glass</td></tr>
+</table>
+<p class="small">Show the big Chinese line on a drink card to the waiter — no talking needed.</p>
+</details>
+<div class="cat-chips" id="drinkCatChips" aria-label="Drinks by type"></div>
+<div id="drinkList"></div>
+<p class="small price-note">Prices are reference only — mid-range local restaurant, Tier-1 city. Street stalls are cheaper; hotels &amp; tourist spots cost more. ¥→$ at 7.1 (2026-11-26).</p>
+</div>
+</details>
+
 <details class="card" id="adSection">
 <summary><span class="card-head"><h2>Free Decodes</h2><span class="card-sub">Watch a 5s ad, get +3 — hidden in dev mode</span></span><span class="chev" aria-hidden="true">▾</span></summary>
 <div class="card-body">
@@ -1746,22 +1793,23 @@
 <p>Up to 5 a day — that's 15 extra.</p>
 <p class="small">Just a demo — no real money here.</p>
 <p><button type="button" id="watchAdBtn">Watch ad · +3</button></p>
+<p><button type="button" class="ghost" data-goto="paySection">Go ad-free — unlock for $6.99</button></p>
 <p><label><input type="checkbox" id="paidToggle"> Preview paid (no ads)</label></p>
 <p class="small" id="paidNote">Free version. Demo ads on.</p>
 </div>
 </details>
 
-<details class="card" id="kitPreview">
-<summary><span class="card-head"><h2>Kit Preview</h2><span class="card-sub">A little taste — one dish, one card, one city. The rest is in the Kit.</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<!-- v6.1: Account no longer says "Kit" — this is the paid unlock card.
+     Payment is NOT connected yet (no Stripe product): the button below
+     goes to the sign-up form, it does not fake a checkout. -->
+<details class="card" id="paySection" open>
+<summary><span class="card-head"><h2>Unlock — $6.99</h2><span class="card-sub">90 days · unlimited · no ads</span></span><span class="chev" aria-hidden="true">▾</span></summary>
 <div class="card-body">
-<p><b>1 dish, full.</b> Mapo Tofu — verdict, inside, hidden, spice, price.</p>
-<p><b>1 card, full.</b> Peanut allergy — 3 lines, big Chinese.</p>
-<p><b>1 city, sample.</b> Shanghai — 3 places. See Cities below.</p>
-<p class="paywall-lock">Rest is locked:</p>
-<p id="kitDevNote" class="dev-note hidden">Dev mode: Kit preview fully open — 110 dishes · 12 cards · 10 cities visible (final version goes back to 1 sample per section).</p>
-<p class="paywall-lock">110 dishes · 12 cards · 10 cities — Kit only.</p>
-<p><a class="btn-link" href="mailto:hello@chinavisacheck.com?subject=China%20Bite%20Kit%20—%20notify%20me%20at%20launch&body=Hi%2C%20please%20tell%20me%20when%20the%20China%20Bite%20Kit%20is%20ready.">Kit $6.99 · 90 days</a></p>
-<p class="small">No payment here. Email only.</p>
+<p><b>110 dishes, with photos and prices. 12 diet cards. 10 cities.</b></p>
+<p>Unlimited checks, no ads. One payment, 90 days — no subscription.</p>
+<p><b>Paid — no ads.</b> Free users see ads; paying removes them everywhere.</p>
+<p class="small" id="payStatus">Payments aren't open yet — we're still connecting Stripe. Leave your email below and we'll tell you the moment you can pay. No charge until then.</p>
+<p><button type="button" class="big" data-goto="subscribe">Leave your email — tell me when payments open</button></p>
 </div>
 </details>
 
@@ -1826,24 +1874,14 @@
 </div>
 </details>
 
-<details class="card" id="kitSection">
-<summary><span class="card-head"><h2>Kit · $6.99</h2><span class="card-sub">110 dishes · 12 cards · 10 cities — $6.99 / 90 days</span></span><span class="chev" aria-hidden="true">▾</span></summary>
-<div class="card-body">
-<p class="kit">110 dishes. 12 cards. 10 cities.</p>
-<p>90 days. No ads.</p>
-<p><a class="btn-link" href="mailto:hello@chinavisacheck.com?subject=China%20Bite%20Kit%20—%20notify%20me%20at%20launch&body=Hi%2C%20please%20tell%20me%20when%20the%20China%20Bite%20Kit%20is%20ready.">Notify me</a></p>
-<p class="small">No payment here. Email only.</p>
-</div>
-</details>
-
 <details class="card" id="subscribe">
-<summary><span class="card-head"><h2 id="subTitle">New dishes first.</h2><span class="card-sub">New dishes first — one email when we add dishes</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<summary><span class="card-head"><h2 id="subTitle">Sign up.</h2><span class="card-sub">Your email is your account — no password</span></span><span class="chev" aria-hidden="true">▾</span></summary>
 <div class="card-body">
 <img class="sub-mascot" src="assets/china-bite-mascot-dumpling-288.webp" alt="China Bite mascot — a cheerful dumpling holding chopsticks" width="56" height="56" loading="lazy">
-<p id="subLine">One email when we add dishes. Nothing else.</p>
+<p id="subLine">Your email is your account — no password. One email when there's something new, nothing else.</p>
 <form id="subscribeForm" novalidate>
 <label for="subscribeEmail">Email</label>
-<input type="email" id="subscribeEmail" placeholder="you@example.com" autocomplete="email" required>
+<input type="email" id="subscribeEmail" class="blink-input" placeholder="you@example.com" autocomplete="email" required>
 <label for="subscribeLang">Language</label>
 <select id="subscribeLang">
 <option value="en" selected>English</option>
@@ -1860,7 +1898,7 @@
 <div id="subscribeDone" class="hidden">
 <img class="sub-mascot" src="assets/china-bite-mascot-dumpling-288.webp" alt="China Bite mascot — a cheerful dumpling holding chopsticks" width="56" height="56" loading="lazy">
 <div class="verdict ok" id="subDoneTitle">You're in.</div>
-<p id="subDoneLine">New dishes, in your inbox. First.</p>
+<p id="subDoneLine">We'll email you when there's something new.</p>
 </div>
 </div>
 </details>
@@ -1874,6 +1912,13 @@
 <p><button type="button" id="copyRefBtn">Copy link</button></p>
 <p id="refNote"></p>
 <p>Friends invited: <span id="inviteCount">0</span></p>
+<p><b>Share it directly:</b></p>
+<div class="share-row" id="shareRow">
+<a class="share-btn" id="shareXBtn" href="#" target="_blank" rel="noopener">X</a>
+<a class="share-btn" id="shareFbBtn" href="#" target="_blank" rel="noopener">Facebook</a>
+<a class="share-btn" id="shareWaBtn" href="#" target="_blank" rel="noopener">WhatsApp</a>
+</div>
+<p class="small">Tap one — it opens that app with your link ready to send.</p>
 </div>
 </details>
 
@@ -1906,10 +1951,10 @@
 </details>
 <details class="faq-item" id="faq-free">
 <summary>How many free checks do I get?</summary>
-<p>3 free checks a day. A friend's link gets you 6. Watch a 5-second ad for +3 more, up to 5 ads a day. The Kit is $6.99 for 90 days, unlimited, no ads.</p>
+<p>3 free checks a day. A friend's link gets you 6. Watch a 5-second ad for +3 more, up to 5 ads a day. Paid unlock is $6.99 for 90 days: unlimited checks, no ads.</p>
 </details>
 <details class="faq-item" id="faq-kit">
-<summary>What's in the Kit, and how much is it?</summary>
+<summary>What do I get when I pay $6.99?</summary>
 <p>$6.99, one time, 90 days. 110 dishes with photos and prices, 12 diet cards, 10 cities, QR ordering help. No ads, no subscription.</p>
 </details>
 <details class="faq-item" id="faq-invite">
@@ -1928,6 +1973,10 @@
 <summary>Are the prices exact?</summary>
 <p>No — rough guides from 2026-11-26, about ¥7.1 to the dollar. The basis is a mid-range local restaurant in a Tier-1 city (Shanghai / Beijing). Street stalls are cheaper, hotels and tourist spots cost more. Menus change, so treat them as a ballpark.</p>
 </details>
+<details class="faq-item" id="faq-drinks">
+<summary>Why is my beer warm?</summary>
+<p>It's not a mistake. In China, drinks are served at room temperature by default — beer, Coke, water, all of it. If you want it cold, say 冰镇啤酒 (ice-cold beer) for beer, or 冰的 (iced) for anything else. The Drinks section has the exact words to show the waiter.</p>
+</details>
 </div>
 </details>
 
@@ -1943,8 +1992,8 @@
 <nav class="bottomnav" aria-label="Bottom navigation">
 <a href="#homeView" data-view="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/></svg><span>Home</span></a>
 <a href="#decoder" data-view="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></svg><span>Search</span></a>
-<a href="#qrSection" data-view="orders"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3z"/><path d="M9 8h6M9 12h6"/></svg><span>Orders</span></a>
-<a href="#kitPreview" data-view="account"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg><span>Account</span></a>
+<a href="#qrSection" data-view="orders"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3z"/><path d="M9 8h6M9 12h6"/></svg><span>Orders</span><span class="ord-badge hidden" id="ordBadge">0</span></a>
+<a href="#subscribe" data-view="account"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg><span>Account</span></a>
 </nav>
 
 <div id="slipOverlay" class="overlay hidden">
@@ -1968,15 +2017,11 @@
 </div>
 </div>
 
+<div id="toast" class="toast hidden" role="status" aria-live="polite"><span id="toastMsg"></span><button type="button" id="toastAction" class="hidden"></button></div>
 <script src="data.js"></script>
 <script src="aliases.js"></script>
+<script src="drinks.js"></script>
 <script src="app.js"></script>
 <script src="chat.js"></script>
-<script>
-// Slip overlay mirrors the live slip preview.
-document.getElementById('showSlipBtn').addEventListener('click', function () {
-  document.getElementById('slipFull').innerHTML = document.getElementById('slipPreview').innerHTML;
-});
-</script>
 </body>
 </html>
