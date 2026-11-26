@@ -874,7 +874,10 @@
   function addToOrder(dish) {
     var item = state.order.find(function (x) { return x.id === dish.id; });
     if (item) item.qty++; else state.order.push({ id: dish.id, qty: 1 });
-    save(); renderOrder();
+    // v6.0: adding IS checking — the delivery tab searches the last dish
+    // added, so a dish added from chat (no decode) still has a target.
+    lastDish = dish;
+    save(); renderOrder(); updateDeliveryNote();
     showToast(dish.en + " is on your list.", "View order", function () { showView("orders"); });
   }
   // v5.9: drinks join the same order list — same slip, same total, no
@@ -989,7 +992,7 @@
     $("slipPreview").innerHTML =
       "<p class=\"bigzh\">您好，请帮我用你们的手机下单，谢谢！</p>" +
       "<p class=\"bigzh\">桌号：" + esc(tableNo) + " &nbsp; 人数：" + esc(people) + "</p>" +
-      (lines.length ? "<p class=\"bigzh\">" + esc(lines.join("<br>")) + "</p><p class=\"bigzh\">总计：" + slipTotal + "元。</p>" : "<p class=\"muted\">(Add dishes to your list in the decoder first.)</p>") +
+      (lines.length ? "<p class=\"bigzh\">" + lines.map(esc).join("<br>") + "</p><p class=\"bigzh\">总计：" + slipTotal + "元。</p>" : "<p class=\"muted\">(Add dishes to your list in the decoder first.)</p>") +
       "<p class=\"bigzh\">我用" + esc(payText) + "。</p>";
   }
   ["tableNo", "peopleNo"].forEach(function (id) { var el = $(id); if (el) el.addEventListener("input", renderSlip); });
@@ -1144,6 +1147,7 @@
     if (!w && note) note.textContent = "Popup blocked — open ele.me in your browser, or search Taobao Flash Purchase inside Alipay.";
   };
   if ($("deliveryHotelBtn")) $("deliveryHotelBtn").onclick = function () { gotoSection("meituanSection"); };
+  if ($("deliveryPhoneBtn")) $("deliveryPhoneBtn").onclick = function () { openFaq("faq-phone"); };
   if ($("deliverySeeListBtn")) $("deliverySeeListBtn").onclick = function () { setOrderTab("dinein"); };
   updateDeliveryNote();
 
@@ -1382,22 +1386,6 @@
   // ---- Deep links: #/dish/<id> and #/diet/<id> ----
   // Shared dish link opens the verdict directly, no charge (read-only view).
   (function deepLink() {
-    // v6.0: #/orders/delivery[/<dish-id>] — the single delivery entry;
-    // dish pages link here instead of keeping their own deep links.
-    var om = (location.hash || "").match(/^#\/orders\/delivery(?:\/([a-z0-9-]+))?/);
-    if (om) {
-      if (om[1]) {
-        var od = D.dishes.find(function (d) { return d.id === om[1]; });
-        if (od) lastDish = od;
-      }
-      showView("orders");
-      setOrderTab("delivery");
-      updateDeliveryNote();
-      var dp = $("deliveryPanel");
-      if (dp) dp.scrollIntoView();
-      return;
-    }
-    if (/^#\/orders/.test(location.hash || "")) { showView("orders"); return; }
     var m = (location.hash || "").match(/^#\/dish\/([a-z0-9-]+)/);
     if (m) {
       var dish = D.dishes.find(function (d) { return d.id === m[1]; });
@@ -1837,7 +1825,23 @@
     var h = location.hash || "";
     if (/^#\/diet\//.test(h)) showView("diet");
     else if (/^#\/dish\//.test(h)) showView("search");
-    else if (/^#\/orders/.test(h)) { /* deep link already set the view */ }
+    else if (/^#\/orders\/delivery/.test(h)) {
+      // v6.0: #/orders/delivery[/<dish-id>] — the single delivery entry;
+      // dish pages link here instead of keeping their own deep links.
+      // Handled here (not in deepLink above) because showView needs
+      // VIEWS, which is assigned just before this point.
+      var om = h.match(/^#\/orders\/delivery(?:\/([a-z0-9-]+))?/);
+      if (om && om[1]) {
+        var od = D.dishes.find(function (d) { return d.id === om[1]; });
+        if (od) lastDish = od;
+      }
+      showView("orders");
+      setOrderTab("delivery");
+      updateDeliveryNote();
+      var dp = $("deliveryPanel");
+      if (dp) dp.scrollIntoView();
+    }
+    else if (/^#\/orders/.test(h)) showView("orders");
     else showView("home");
   })();
 
