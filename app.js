@@ -442,7 +442,7 @@
         var prev = $("photoPreview"), st = $("photoStatus");
         if (prev) {
           prev.classList.remove("hidden");
-          prev.innerHTML = '<img src="' + reader.result + '" alt="菜单照片" style="width:100%;border-radius:14px;display:block">';
+          prev.innerHTML = '<img src="' + reader.result + '" alt="菜单照片" style="width:100%;border-radius:24px;display:block">';
         }
         if (st) {
           st.classList.remove("hidden");
