@@ -10,6 +10,7 @@
 - China Bite tells first-time visitors to China if a dish is safe for them.
 - Pick a diet profile, type a Chinese dish name, get: Can eat / Ask first / Avoid.
 - Each dish shows: main ingredients, hidden risks, spice 0-3, reference price.
+- Prices are reference only — based on a mid-range local restaurant in a Tier-1 city (Shanghai / Beijing). Street stalls are cheaper; hotels and tourist spots cost more. ¥→$ at 7.1 (2026-11-26).
 - QR ordering help: 80%+ of Chinese restaurants use QR ordering in WeChat.
 - 12 big Chinese diet cards to show the waiter. Works offline.
 

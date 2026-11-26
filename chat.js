@@ -44,6 +44,10 @@
           try { localStorage.setItem(PROFILE_KEY, JSON.stringify(p)); } catch (e) {}
         }
         if (!Array.isArray(p.diet)) p.diet = [];
+        // v5.3 (idiot-friendly): city defaults to Shanghai — the first stop
+        // for most visitors. Only when never set (undefined); an explicit
+        // "Not in China yet" (null) is kept, never overwritten.
+        if (p.city === undefined) p.city = "shanghai";
         return p;
       }
     } catch (e) {}
@@ -136,6 +140,7 @@
       '<span class="en">' + esc(dish.en) + '</span>' +
       '<span class="zh">' + esc(dish.zh) + ' · ' + esc(dish.py || "") + '</span>' +
       '<span class="price">¥' + dish.price + ' · ≈$' + usd(dish.price) + ' · Spicy ' + dish.spicy + '/3</span>' +
+      '<span class="cd-note">Price is reference only</span>' +
       '<span class="cd-verdict">' + esc(v.t) + " — " + esc(v.why) + '</span>' +
       '<div class="cd-actions">' +
       '<button type="button" data-act="check">Tell me more</button>' +
@@ -195,6 +200,7 @@
       "<p><b>Heads up:</b> " + esc(CB.containsEn(dish)) + "</p>" +
       "<p><b>How hot:</b> " + esc(CB.spiceLabel(dish.spicy)) + "</p>" +
       "<p><b>About:</b> ¥" + dish.price + " · ≈$" + usd(dish.price) + "</p>" +
+      "<p class=\"small price-note\">" + esc(CB.PRICE_BASIS) + "</p>" +
       "<p><b>Show them this:</b></p><p class=\"bigzh\">" + esc(dish.waiter) + "</p>" +
       "<p class=\"small\">" + esc(dish.py || "") + "</p>";
     addBun(html, { cards: [dish], nextSteps: dish });
@@ -487,13 +493,31 @@
     { label: "Something light", value: "light" },
     { label: "Surprise me", value: "surprise" }
   ];
+  // v5.3 (idiot-friendly): the 3 questions are never a wall. One tap on
+  // "Skip — just ask" fills the defaults (Shanghai, no restriction,
+  // surprise me) and goes straight to asking. Defaults are pre-filled,
+  // never mandatory; "My tastes" changes them anytime.
+  function skipOnboarding(label) {
+    if (!profile.city) profile.city = "shanghai";
+    if (!Array.isArray(profile.diet)) profile.diet = [];
+    profile.craving = profile.craving || "surprise";
+    profile.done = true;
+    saveProfile();
+    CB.setProfile(profile.diet);
+    onboardingStep = null;
+    addUser(esc(label || "Skip — just ask"));
+    sayLater("Got it — Shanghai · no restrictions · surprise me. You can change it anytime with “My tastes” up top.", null, 600);
+    setTimeout(suggestChips, 1400);
+  }
   function askCity() {
     onboardingStep = "city";
     sayLater("Hey, I'm Bun — your food friend in China. I know 110 dishes, 12 diet cards and 10 cities, and I'll tell you in 3 seconds if you can eat something.<br><br>First — where are you eating?", null, 600);
     setTimeout(function () {
-      renderChips(CITY_CHIPS.concat([{ label: "Not in China yet", value: null }]).map(function (c) {
+      var list = CITY_CHIPS.concat([{ label: "Not in China yet", value: null }]).map(function (c) {
         return { label: c.label, onClick: function () { pickCity(c.value, c.label); } };
-      }));
+      });
+      list.push({ label: "Skip — just ask", onClick: function () { skipOnboarding("Skip — just ask"); } });
+      renderChips(list);
     }, 1400);
   }
   function pickCity(id, label) {
@@ -523,6 +547,10 @@
     done.className = "chip chip-done"; done.type = "button"; done.textContent = "Done — that's me ✓";
     done.onclick = confirmDiet;
     chipsBar.appendChild(done);
+    var skip = document.createElement("button");
+    skip.className = "chip"; skip.type = "button"; skip.textContent = "Skip the rest →";
+    skip.onclick = function () { skipOnboarding("Skip the rest →"); };
+    chipsBar.appendChild(skip);
     scrollDown();
   }
   function toggleDiet(v) {

@@ -129,7 +129,7 @@
           "name": "How much does it cost?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Reference price in ¥ and ≈$. Date: 2026-11-26."
+            "text": "Reference price in ¥ and ≈$. Date: 2026-11-26. Basis: a mid-range local restaurant in a Tier-1 city (Shanghai / Beijing). Street stalls are cheaper; hotels and tourist spots cost more."
           }
         },
         {
@@ -1623,18 +1623,21 @@
 <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></svg>
 <input type="search" id="topSearch" placeholder="Search dishes — try Mapo Tofu" autocomplete="off" lang="en" aria-label="Search dishes">
 </div>
-<button type="button" class="bun-btn" id="homeChatBtn" data-view="chat" aria-label="Chat with Bun"><img src="assets/china-bite-mascot-dumpling-288.webp" alt="Bun" width="34" height="34"></button>
+<button type="button" class="bun-btn" id="homeChatBtn" data-view="chat" aria-label="Chat with Bun"><img src="assets/china-bite-mascot-dumpling-288.webp" alt="Bun" width="34" height="34"><span>Chat</span></button>
 </div>
 <div class="cat-chips" id="catChips" aria-label="Browse by category"></div>
 <div id="homeResults" class="hidden">
 <p class="sec-kicker" id="homeResultsTitle">Matches</p>
 <div class="grid" id="homeDishList"></div>
+<p class="small price-note">Prices are reference only — mid-range local restaurant, Tier-1 city.</p>
 </div>
 <div class="hero-banner browse-block"><img src="assets/china-bite-hero-v5.webp" alt="A young woman in a cheongsam eating noodles with chopsticks under a red lantern in a Chinese restaurant" width="800" height="320" fetchpriority="high"></div>
+<p class="value-prop browse-block">The menu is in Chinese. Bun tells you what it is, if you can eat it, and how to order it — in 3 seconds.</p>
 <button type="button" class="ask-bun browse-block" id="askBunBtn" data-view="chat"><img src="assets/china-bite-mascot-dumpling-288.webp" alt="Bun" width="32" height="32"><span><b>Ask Bun</b><small>Not sure what to eat? Chat with Bun — 3 quick questions.</small></span></button>
 <details class="home-sec browse-block" id="homeSignature" open>
 <summary><span class="card-head"><h2>Signature Dishes</h2><span class="card-sub">30 signature dishes — 3 must-eats from each of the 10 cities.</span></span><span class="chev" aria-hidden="true">▾</span></summary>
 <div class="cat-chips" id="sigCityChips" aria-label="Signature dishes by city"></div>
+<p class="small price-note">Prices are reference only — mid-range local restaurant, Tier-1 city. Street stalls are cheaper; hotels &amp; tourist spots cost more. ¥→$ at 7.1 (2026-11-26).</p>
 <div class="story-grid" id="homeSignatureList"></div>
 </details>
 <details class="home-sec browse-block" id="homeCities">
@@ -1776,6 +1779,7 @@
 </details>
 <section class="card card-decoder" id="decoder">
 <h2>Decode</h2>
+<p class="decode-purpose">Can't read the menu? Type it, say it, or snap it — Bun tells you if you can eat it.</p>
 
 <div class="count-slim">
 <p id="countText">Left today: 3 of 3</p>
@@ -1784,25 +1788,26 @@
 <p><b>Step 1 — Your diet</b></p>
 <div class="chips" id="profiles"></div>
 <p class="muted" id="profileDesc">No restriction.</p>
-<p><b>Step 2 — Snap it, say it, or type it</b></p>
-<div class="input-row">
-<button type="button" class="camera-btn" id="cameraBtn">Snap the menu</button>
-<button type="button" class="voice-btn" id="voiceBtn">🎙 Say the dish</button>
+<p><b>Step 2 — Pick one way in</b></p>
+<div class="decode-ways">
+<button type="button" class="way-btn" id="typeBtn">⌨️ Type</button>
+<button type="button" class="way-btn voice-btn" id="voiceBtn">🎙 Speak</button>
+<button type="button" class="way-btn camera-btn" id="cameraBtn">📷 Snap</button>
 </div>
 <p class="voice-row"><button type="button" class="voice-lang" id="voiceLangBtn" aria-label="Voice language">Voice: English</button><span class="small" id="voiceStatus" role="status"></span></p>
 <input type="file" id="photoInput" accept="image/*" capture="environment" class="hidden" aria-label="Menu photo">
 <div id="photoPreview" class="hidden"></div>
 <p id="photoStatus" class="small hidden" role="status"></p>
-<details class="subcard" id="manualInput">
-<summary>Type it instead</summary>
 <label for="dishInput">Dish name</label>
-<input type="text" id="dishInput" placeholder="e.g. Mapo Tofu" autocomplete="off" lang="zh-CN">
+<input type="text" id="dishInput" placeholder="Try: Mapo Tofu, 番茄炒蛋, or 'spicy noodles'" autocomplete="off" lang="zh-CN">
+<div id="decodeSuggest" class="decode-suggest hidden" aria-live="polite"></div>
 <p><button type="button" class="big" id="decodeBtn">Check this dish</button></p>
-</details>
+<p id="decodeStatus" class="small hidden" role="status"></p>
 <div id="result" class="hidden"></div>
 <details class="subcard" id="dishPicker">
-<summary>110 dishes — tap one to check it</summary>
+<summary>Or tap a dish — all 110</summary>
 <p class="small">Tap one — I'll tell you in 3 seconds.</p>
+<p class="small price-note">Prices are reference only — mid-range local restaurant, Tier-1 city. Street stalls are cheaper; hotels &amp; tourist spots cost more. ¥→$ at 7.1 (2026-11-26).</p>
 <div class="grid" id="dishList"></div>
 </details>
 <p class="small">Just a guide, not medical advice.<br>If you're not sure, don't eat it.</p>
@@ -1927,7 +1932,7 @@
 </details>
 <details class="faq-item" id="faq-prices">
 <summary>Are the prices exact?</summary>
-<p>No — rough guides from 2026-11-26, about ¥7.1 to the dollar. Menus change, so treat them as a ballpark.</p>
+<p>No — rough guides from 2026-11-26, about ¥7.1 to the dollar. The basis is a mid-range local restaurant in a Tier-1 city (Shanghai / Beijing). Street stalls are cheaper, hotels and tourist spots cost more. Menus change, so treat them as a ballpark.</p>
 </details>
 </div>
 </details>
@@ -1970,6 +1975,7 @@
 </div>
 
 <script src="data.js"></script>
+<script src="aliases.js"></script>
 <script src="app.js"></script>
 <script src="chat.js"></script>
 <script>

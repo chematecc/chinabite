@@ -206,6 +206,16 @@ footer{padding:8px 4px;border-top:1px solid var(--line)}
 #manualInput summary::-webkit-details-marker{display:none}
 
 
+/* ---- v5.3: decoder, clearer — one purpose line, three labelled ways in,
+   live suggestions under the input, one-line price basis everywhere. ---- */
+.decode-purpose{font-size:15px;line-height:1.6;color:var(--ink);margin:0 0 4px}
+.decode-ways{display:flex;gap:10px;margin:4px 0}
+.decode-ways .way-btn{flex:1;min-width:0;margin:0;padding:12px 8px;font-size:15px}
+.decode-suggest{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 0}
+.decode-suggest .chip{margin:0}
+.price-note{font-size:13px !important;line-height:1.5}
+#decodeStatus{margin:8px 0 0}
+.chat-dish .cd-note{font-size:12px;color:var(--muted);display:block;margin-top:2px}
 /* ---- v3.4: three ways in (Mindtrip-style — one row, plain language) ---- */
 .input-row{display:flex;gap:10px;margin:4px 0}
 .input-row button{flex:1;min-width:0;margin:0;padding:12px 10px;font-size:14px}
@@ -217,8 +227,14 @@ footer{padding:8px 4px;border-top:1px solid var(--line)}
 /* ---- v5.0: Uber Eats home — search row + Bun button, Ask Bun, cities ---- */
 .search-row{display:flex;gap:10px;align-items:center}
 .search-row .searchbar{flex:1;min-width:0}
-.bun-btn{flex:0 0 48px;width:48px;height:48px;min-height:48px;padding:0;margin:0;border-radius:50%;background:var(--card);border:1.5px solid var(--line-strong);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center}
+/* v5.3 (idiot-friendly): the Bun button is no longer icon-only — avatar +
+   the word "Chat", so a first-time user never has to guess what it does. */
+.bun-btn{flex:0 0 auto;width:auto;height:48px;min-height:48px;padding:0 14px 0 7px;margin:0;border-radius:999px;background:var(--card);border:1.5px solid var(--line-strong);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px;font-weight:600;color:var(--ink)}
 .bun-btn img{width:34px;height:34px;border-radius:50%;object-fit:cover;display:block}
+.bun-btn span{line-height:1}
+/* v5.3: the one-line value prop — what this app solves, first screen,
+   under the Hero. Cormorant italic, no headline wall, no stats. */
+.value-prop{font-family:var(--font-display);font-size:19px;font-style:italic;font-weight:500;line-height:1.45;color:var(--ink);margin:2px 2px 0;text-align:center}
 .ask-bun{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;text-align:left;padding:12px 16px;border-radius:20px;margin:0}
 .ask-bun img{width:32px;height:32px;border-radius:50%;object-fit:cover;display:block;flex:0 0 32px}
 .ask-bun span{flex:1;min-width:0}

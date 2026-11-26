@@ -1,5 +1,10 @@
 // China Bite — Day 3-8 validation build. 110 dishes, 12 diet cards, 10 cities.
 // Prices: reference only, ¥, ≈$ at 7.1, 2026-11-26.
+// Price basis (v5.3): a mid-range local restaurant in a Tier-1 city
+// (Shanghai / Beijing). Street stalls are cheaper; hotels and tourist
+// areas cost more. Tier-2: Chengdu / Hangzhou / Chongqing / Xi'an.
+// Tier-3: Kunming / Guilin. Numbers are NOT re-priced here — see
+// Blueprint §12.40 for the dishes furthest from this basis.
 window.CHINABITE_DATA = {
   rate: 7.1,
   rateDate: "2026-11-26",

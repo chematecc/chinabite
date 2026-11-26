@@ -222,6 +222,18 @@
     setTimeout(function () { if (f.parentNode) f.parentNode.removeChild(f); }, 2000);
   }
 
+  // ---- v5.3: price basis (one honest line, everywhere a price shows) ----
+  // Prices were set as a flat reference with no stated basis. The basis is:
+  // a mid-range local restaurant in a Tier-1 city (Shanghai / Beijing).
+  // Street stalls are cheaper; hotels and tourist areas cost more; Tier-2
+  // cities (Chengdu / Hangzhou / Chongqing / Xi'an) and Tier-3 cities
+  // (Kunming / Guilin) usually run cheaper than this. Numbers are NOT
+  // re-priced here — only the basis is stated; see Blueprint §12.40 for
+  // the dishes furthest from this basis (the re-price list).
+  var PRICE_BASIS_SHORT = "Reference only — mid-range local restaurant, Tier-1 city";
+  var PRICE_BASIS = "Reference only — mid-range local restaurant in a Tier-1 city (Shanghai / Beijing). Street stalls are cheaper; hotels & tourist spots cost more. ¥→$ at 7.1 (2026-11-26).";
+  var CITY_TIER = { shanghai: 1, beijing: 1, guangzhou: 1, shenzhen: 1, chengdu: 2, hangzhou: 2, chongqing: 2, xian: 2, kunming: 3, guilin: 3 };
+
   function renderResult(dish) {
     lastDish = dish;
     var v = verdictFor(dish);
@@ -238,6 +250,7 @@
       "<p><b>How hot:</b> " + esc(spiceLabel(dish.spicy)) + "</p>" +
       ((dish.flags && dish.flags.length) ? "<p><b>Watch:</b> " + esc(dish.flags.join(", ")) + "</p>" : "") +
       "<p><b>About:</b> ¥" + dish.price + " · ≈$" + usd(dish.price) + "</p>" +
+      "<p class=\"small price-note\">" + esc(PRICE_BASIS) + "</p>" +
       "<p><b>Show them this:</b></p><p class=\"bigzh\">" + esc(dish.waiter) + "</p>" +
       "<p class=\"small\">" + esc(dish.py) + "</p>" +
       '<button type="button" id="addOrderBtn">Add to order</button> ' +
@@ -260,29 +273,220 @@
     updateCounts();
   }
 
+  // ---- v5.3: decoder matching — exact -> alias -> pinyin -> contains -> fuzzy ----
+  // One normalizer for everything: lowercase, tone marks stripped,
+  // full-width folded to half-width, all spaces and punctuation dropped.
+  // So "麻婆豆付", "Mapo Tofu", "mapo doufu" and "  麻婆豆腐，" all reduce
+  // to comparable keys. Alias keys live ONLY in aliases.js
+  // (window.CHINABITE_ALIASES) — never scattered through the code.
+  // Pinyin keys are derived from data.js `py` at runtime, so the 110
+  // dishes never need a hand-kept pinyin table.
+  function normStr(s) {
+    return String(s || "").toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/[\uFF01-\uFF5E]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0xFEE0); })
+      .replace(/[\s\p{P}\u3000-\u303F]/gu, "");
+  }
+  function stripParen(s) { return String(s || "").replace(/[(（][^)）]*[)）]/g, ""); }
+  function levenshtein(a, b) {
+    var m = a.length, n = b.length;
+    if (!m) return n; if (!n) return m;
+    var prev = [], cur = [], i, j;
+    for (j = 0; j <= n; j++) prev[j] = j;
+    for (i = 1; i <= m; i++) {
+      cur[0] = i;
+      for (j = 1; j <= n; j++) {
+        cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a.charAt(i - 1) === b.charAt(j - 1) ? 0 : 1));
+      }
+      var t = prev; prev = cur; cur = t;
+    }
+    return prev[n];
+  }
+  // Lookup tables, built once from data.js + aliases.js.
+  var ALIAS_MAP = {}, ALIAS_BY_DISH = {}, PY_MAP = {};
+  (function buildMatchIndexes() {
+    var raw = window.CHINABITE_ALIASES || {};
+    Object.keys(raw).forEach(function (k) {
+      var nk = normStr(k), id = raw[k];
+      if (!nk || !id) return;
+      ALIAS_MAP[nk] = id;
+      (ALIAS_BY_DISH[id] = ALIAS_BY_DISH[id] || []).push(nk);
+    });
+    D.dishes.forEach(function (d) {
+      var py = normStr(stripParen(d.py || ""));
+      if (py && !PY_MAP[py]) PY_MAP[py] = d.id;
+    });
+  })();
+  function dishByIdLocal(id) {
+    for (var i = 0; i < D.dishes.length; i++) if (D.dishes[i].id === id) return D.dishes[i];
+    return null;
+  }
+  function dishKeys(d) {
+    var keys = [normStr(d.zh), normStr(d.en), normStr(stripParen(d.py || ""))];
+    (ALIAS_BY_DISH[d.id] || []).forEach(function (k) { keys.push(k); });
+    return keys.filter(Boolean);
+  }
+  // Score one dish against a normalized query (0-100). Used for the
+  // "Did you mean" list — token overlap + substring + edit similarity,
+  // so regional words and near-misses surface real dishes, never random ones.
+  function matchScore(d, n) {
+    if (!n) return 0;
+    var best = 0;
+    dishKeys(d).forEach(function (k) {
+      var s = 0;
+      if (k === n) s = Math.max(s, 100);
+      else if (k.indexOf(n) >= 0 || n.indexOf(k) >= 0) s = Math.max(s, 70);
+      else {
+        var dist = levenshtein(n, k);
+        if (dist <= 3) s = Math.max(s, Math.round((1 - dist / Math.max(n.length, k.length)) * 50));
+      }
+      best = Math.max(best, s);
+    });
+    // Token overlap: every query character found in the Chinese name, or
+    // every query word found in the English name, counts. This is what
+    // catches 包子 -> the bao dishes.
+    var zh = d.zh || "", en = (d.en || "").toLowerCase();
+    var chars = n.replace(/[a-z0-9]/g, "").split("");
+    var hit = 0;
+    chars.forEach(function (c) { if (zh.indexOf(c) >= 0) hit++; });
+    if (chars.length >= 2) best = Math.max(best, Math.round(hit / chars.length * 60));
+    var words = n.replace(/[^a-z]+/g, " ").trim().split(" ").filter(Boolean);
+    if (words.length) {
+      var whit = words.filter(function (w) { return en.indexOf(w) >= 0; }).length;
+      best = Math.max(best, Math.round(whit / words.length * 45));
+    }
+    // Cross-language ingredient match: a Chinese food word in the query
+    // against the dish's English ingredients. This is what catches
+    // 土豆丝 / 洋芋丝 -> 地三鲜 (the only potato-shreds-ish dish) even
+    // though no dish is literally called 土豆丝. Suggestions only — it
+    // never auto-decodes a verdict.
+    if (n.length >= 2) {
+      var hay = ((d.main || "") + " " + (d.en || "")).toLowerCase();
+      var ing = 0;
+      Object.keys(ING_WORDS).forEach(function (k) {
+        if (n.indexOf(k) >= 0 && hay.indexOf(ING_WORDS[k]) >= 0) ing += 25;
+      });
+      best = Math.max(best, Math.min(ing, 45));
+    }
+    return best;
+  }
+  // Chinese food word -> English ingredient word (for matchScore only).
+  var ING_WORDS = {
+    土豆: "potato", 洋芋: "potato", 马铃薯: "potato", 茄子: "eggplant",
+    辣椒: "chili", 辣: "chili", 鸡蛋: "egg", 蛋: "egg", 猪肉: "pork",
+    牛肉: "beef", 羊肉: "lamb", 鸡: "chicken", 鸭: "duck", 鱼: "fish",
+    虾: "shrimp", 花生: "peanut", 豆腐: "tofu", 面: "noodle", 饭: "rice",
+    汤: "soup", 饺子: "dumpling", 包子: "bun", 馒头: "bun", 青菜: "green",
+    蘑菇: "mushroom", 木耳: "wood ear", 黄瓜: "cucumber",
+    西红柿: "tomato", 番茄: "tomato", 米粉: "rice noodle", 米线: "rice noodle"
+  };
+  // Ranked candidates, best first. Only dishes scoring >= 25 count as a
+  // real suggestion — below that we say so honestly instead of guessing.
+  function suggestDishes(q, count) {
+    var n = normStr(q);
+    if (!n) return [];
+    var scored = D.dishes.map(function (d) { return { dish: d, score: matchScore(d, n) }; })
+      .filter(function (x) { return x.score >= 25; })
+      .sort(function (a, b) { return b.score - a.score; });
+    return scored.slice(0, count || 3).map(function (x) { return x.dish; });
+  }
+  // Full match, with HOW it matched. findDish() (strict, no fuzzy) is what
+  // OCR and chat use — auto-decoding a fuzzy guess could hand a person with
+  // an allergy the wrong verdict. The decoder UI uses findDishBest() and
+  // shows a "Did you mean" confirmation for fuzzy hits instead.
+  function findDishBest(q) {
+    var n = normStr(q);
+    if (!n) return { dish: null, how: "none" };
+    var d, i;
+    for (i = 0; i < D.dishes.length; i++) {
+      d = D.dishes[i];
+      if (normStr(d.zh) === n || normStr(d.en) === n) return { dish: d, how: "exact" };
+    }
+    if (ALIAS_MAP[n]) { d = dishByIdLocal(ALIAS_MAP[n]); if (d) return { dish: d, how: "alias" }; }
+    if (PY_MAP[n]) { d = dishByIdLocal(PY_MAP[n]); if (d) return { dish: d, how: "pinyin" }; }
+    if (n.length >= 2) {
+      var best = null, bestLen = -1;
+      D.dishes.forEach(function (x) {
+        if (normStr(x.zh).indexOf(n) >= 0 || normStr(x.en).indexOf(n) >= 0 || normStr(stripParen(x.py || "")).indexOf(n) >= 0) {
+          var len = normStr(x.zh).length + normStr(x.en).length;
+          if (len > bestLen) { bestLen = len; best = x; }
+        }
+      });
+      if (best) return { dish: best, how: "contains" };
+      // The dish name is inside a longer query ("Can I eat mapo tofu?").
+      best = null; bestLen = -1;
+      D.dishes.forEach(function (x) {
+        var kz = normStr(x.zh), ke = normStr(x.en);
+        if ((kz.length >= 2 && n.indexOf(kz) >= 0) || (ke.length >= 3 && n.indexOf(ke) >= 0)) {
+          var len2 = kz.length + ke.length;
+          if (len2 > bestLen) { bestLen = len2; best = x; }
+        }
+      });
+      if (best) return { dish: best, how: "contains" };
+      // Fuzzy: 1-2 edits away, and less than half the query changed.
+      // A 3-char query like 土豆丝 is distance 2 from 豆花 (delete 土,
+      // swap 丝->花) but means something entirely different, so it must
+      // NOT be offered as a match.
+      var fbest = null, fdist = 99;
+      D.dishes.forEach(function (x) {
+        dishKeys(x).forEach(function (k) {
+          var dist = levenshtein(n, k);
+          if (dist <= 2 && dist * 2 < n.length && dist < fdist) { fdist = dist; fbest = x; }
+        });
+      });
+      if (fbest) return { dish: fbest, how: "fuzzy", dist: fdist };
+    }
+    return { dish: null, how: "none" };
+  }
   function findDish(q) {
-    q = (q || "").trim();
-    if (!q) return null;
-    var exact = D.dishes.find(function (d) { return d.zh === q || d.en.toLowerCase() === q.toLowerCase(); });
-    if (exact) return exact;
-    return D.dishes.find(function (d) { return d.zh.indexOf(q) >= 0 || d.en.toLowerCase().indexOf(q.toLowerCase()) >= 0; }) || null;
+    var r = findDishBest(q);
+    return (r.how === "fuzzy" || r.how === "none") ? null : r.dish;
+  }
+  // One dish for the home search / quick-pick filter: name, pinyin or any
+  // alias contains the query (so 西红柿炒鸡蛋 finds 番茄炒蛋 there too).
+  function dishMatchesQuery(d, q) {
+    var n = normStr(q);
+    if (!n) return true;
+    if (normStr(d.zh).indexOf(n) >= 0 || normStr(d.en).indexOf(n) >= 0 || normStr(stripParen(d.py || "")).indexOf(n) >= 0) return true;
+    return (ALIAS_BY_DISH[d.id] || []).some(function (k) { return k.indexOf(n) >= 0 || n.indexOf(k) >= 0; });
   }
 
   function decode() {
     var q = $("dishInput").value;
-    var dish = findDish(q);
-    if (!dish) {
+    var res = $("result"), status = $("decodeStatus");
+    function showStatus(t) { if (status) { status.classList.remove("hidden"); status.textContent = t; } }
+    function hideStatus() { if (status) status.classList.add("hidden"); }
+    hideSuggestions();
+    if (!q.trim()) {
+      hideStatus();
+      res.className = "subcard";
+      res.innerHTML = "<div class=\"verdict ask\">What are we checking?</div>" +
+        "<p>Type a dish name — try Mapo Tofu, or 番茄炒蛋. Or tap a dish below, and I'll tell you in 3 seconds.</p>";
+      return;
+    }
+    // Instant feedback: the user sees work happening, never a dead tap.
+    showStatus("Looking it up…");
+    var best = findDishBest(q);
+    if (!best.dish) {
       if (q.trim()) {
         state.unknown.push({ q: q.trim(), at: new Date().toISOString() });
         save();
       }
-      $("result").className = "subcard";
-      $("result").innerHTML = "<div class=\"verdict ask\">Hmm, not on my list yet</div>" +
-        "<p>I know " + D.dishes.length + " dishes — and this one isn't one of them. Yet.</p>" +
-        "<p>I saved it on your phone, and we'll add it.</p>" +
-        "<p>Meanwhile, snap the menu — and watch out for lard, stock and oyster sauce. They hide everywhere.</p>";
+      hideStatus();
+      renderNoMatch(q);
       return;
     }
+    if (best.how === "fuzzy") {
+      hideStatus();
+      renderDidYouMean(q, best.dish);
+      return;
+    }
+    hideStatus();
+    deliverDish(best.dish);
+  }
+  // Paywall gate + counting, shared by decode(), Did-you-mean and
+  // suggestion taps — one place, so a tap never skips the free-count rule.
+  function deliverDish(dish) {
     // PAYWALL：DEV_MODE 下 remaining() 为 Infinity，此分支永不触发；
     // DEV_MODE=false 时恢复：免费次数用完 → 挡住，去看广告或买 Kit。
     if (remaining() <= 0 && !paidPreview) {
@@ -298,8 +502,100 @@
     if (!paidPreview) { state.used++; save(); }
     renderResult(dish);
   }
+  // Fuzzy hit (1-2 edits): never auto-decode — show the guess and let the
+  // user confirm with one tap. A wrong auto-verdict could hurt someone
+  // with an allergy; a confirmation tap costs nothing.
+  function renderDidYouMean(q, dish) {
+    var res = $("result");
+    res.className = "subcard";
+    res.innerHTML = "<div class=\"verdict ask\">Did you mean " + esc(dish.en) + " (" + esc(dish.zh) + ")?</div>" +
+      "<p>You typed “" + esc(q.trim()) + "” — the closest match on my list is this one.</p>" +
+      '<p><button type="button" class="big" id="dymYesBtn">Yes — check this dish</button></p>' +
+      '<p><button type="button" class="ghost" id="dymNoBtn">No — show me similar dishes</button></p>';
+    $("dymYesBtn").onclick = function () { deliverDish(dish); };
+    $("dymNoBtn").onclick = function () { renderNoMatch(q); };
+  }
+  // No match at all: never a dead end. Closest dishes to tap, Bun (LLM)
+  // as the fallback, the full 110 list, and one honest tip.
+  function renderNoMatch(q) {
+    var res = $("result");
+    var cands = suggestDishes(q, 3);
+    var html = "<div class=\"verdict ask\">Hmm, not on my list yet</div>" +
+      "<p>I know " + D.dishes.length + " dishes — and “" + esc(q.trim()) + "” isn't one of them. Yet.</p>" +
+      "<p>I saved it on your phone, and we'll add it.</p>";
+    if (cands.length) {
+      html += "<p><b>Did you mean…</b></p><p>";
+      cands.forEach(function (d) {
+        html += '<button type="button" class="chip" data-cand="' + esc(d.id) + '">' + esc(d.en) + " (" + esc(d.zh) + ")</button> ";
+      });
+      html += "</p>";
+    } else {
+      html += "<p>Try another name for it — 番茄 is also 西红柿, 馄饨 is also 抄手. Or snap the menu photo and I'll read it.</p>";
+    }
+    html += '<p><button type="button" class="big" id="askBunBtn2">Ask Bun — he\'ll check with AI</button></p>' +
+      '<p><button type="button" class="ghost" id="browseAllBtn">Browse all 110 dishes</button></p>';
+    res.className = "subcard";
+    res.innerHTML = html;
+    Array.prototype.forEach.call(res.querySelectorAll("[data-cand]"), function (b) {
+      b.onclick = function () {
+        var d = dishByIdLocal(b.getAttribute("data-cand"));
+        if (d) { $("dishInput").value = d.zh; deliverDish(d); }
+      };
+    });
+    $("askBunBtn2").onclick = function () { askBunAbout(q); };
+    $("browseAllBtn").onclick = function () {
+      var p = $("dishPicker");
+      if (p) { p.open = true; p.scrollIntoView({ behavior: "smooth", block: "start" }); }
+    };
+  }
+  // "Ask Bun" from the decoder: open the chat, pre-fill the question and
+  // send it — the chat tries the LLM first (sendToAssistant in chat.js)
+  // and falls back to the local bot. No second LLM client is written here.
+  function askBunAbout(q) {
+    showView("chat");
+    var inp = $("chatInput"), btn = $("chatSendBtn");
+    if (inp && btn) {
+      inp.value = "Can I eat " + q.trim() + "?";
+      btn.click();
+    }
+  }
   $("decodeBtn").onclick = decode;
   $("dishInput").addEventListener("keydown", function (e) { if (e.key === "Enter") decode(); });
+  // Live suggestions while typing: up to 3 dishes, tap one to check it.
+  // Debounced so typing stays smooth; hidden on empty input and on decode.
+  var suggestTimer = null;
+  function hideSuggestions() {
+    var s = $("decodeSuggest");
+    if (s) { s.innerHTML = ""; s.classList.add("hidden"); }
+  }
+  function showSuggestions() {
+    var q = $("dishInput").value;
+    var box = $("decodeSuggest");
+    if (!box) return;
+    if (!q.trim()) { hideSuggestions(); return; }
+    var list = suggestDishes(q, 3);
+    if (!list.length) { hideSuggestions(); return; }
+    box.classList.remove("hidden");
+    box.innerHTML = "";
+    list.forEach(function (d) {
+      var b = document.createElement("button");
+      b.className = "chip"; b.type = "button";
+      b.textContent = d.en + " (" + d.zh + ")";
+      b.onclick = function () { $("dishInput").value = d.zh; hideSuggestions(); decode(); };
+      box.appendChild(b);
+    });
+  }
+  $("dishInput").addEventListener("input", function () {
+    clearTimeout(suggestTimer);
+    suggestTimer = setTimeout(showSuggestions, 150);
+  });
+  $("dishInput").addEventListener("blur", function () {
+    // Let the tap on a suggestion land before the list disappears.
+    setTimeout(hideSuggestions, 200);
+  });
+  // "Type" is one of the three ways in — it just focuses the input.
+  var typeBtn = $("typeBtn");
+  if (typeBtn) typeBtn.onclick = function () { $("dishInput").focus(); };
 
   // Quick-pick dish list (110) — Uber Eats-style rows, English first.
   // Re-rendered by the top search bar and the category chips (v3.2).
@@ -350,7 +646,7 @@
     var shown = 0;
     D.dishes.forEach(function (d) {
       if (!dishInCat(d, currentCat)) return;
-      if (q && d.en.toLowerCase().indexOf(q) < 0 && d.zh.indexOf(q) < 0 && (d.py || "").toLowerCase().indexOf(q) < 0) return;
+      if (q && !dishMatchesQuery(d, q)) return;
       shown++;
       var b = document.createElement("button");
       b.className = "dish"; b.type = "button";
@@ -512,7 +808,8 @@
         var d = D.dishes.find(function (dd) { return dd.id === x.id; });
         total += d.price * x.qty;
         return "<p>• " + esc(d.en) + " (" + esc(d.zh) + ") × " + x.qty + " — ¥" + (d.price * x.qty) + "</p>";
-      }).join("") + "<p><b>Total: ¥" + total + " · ≈$" + usd(total) + "</b> · " + state.order.length + (state.order.length === 1 ? " dish" : " dishes") + "</p>";
+      }).join("") + "<p><b>Total: ¥" + total + " · ≈$" + usd(total) + "</b> · " + state.order.length + (state.order.length === 1 ? " dish" : " dishes") + "</p>" +
+        "<p class=\"small price-note\">" + esc(PRICE_BASIS_SHORT) + " — the total is a guide, not the bill.</p>";
     }
     renderSlip();
   }
@@ -1187,7 +1484,10 @@
   }
   window.ChinaBite = {
     D: D, DEV_MODE: DEV_MODE,
-    findDish: findDish, verdictFor: verdictFor, renderResult: renderResult,
+    findDish: findDish, findDishBest: findDishBest, suggestDishes: suggestDishes,
+    dishMatchesQuery: dishMatchesQuery, askBunAbout: askBunAbout,
+    PRICE_BASIS: PRICE_BASIS, PRICE_BASIS_SHORT: PRICE_BASIS_SHORT, CITY_TIER: CITY_TIER,
+    verdictFor: verdictFor, renderResult: renderResult,
     checkDish: window.checkDish, gotoSection: gotoSection, showView: showView, openFaq: openFaq,
     addToOrder: addToOrder, speakInto: speakInto, recognizePhoto: recognizePhoto,
     usd: usd, esc: esc, containsEn: containsEn, spiceLabel: spiceLabel,
