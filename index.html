@@ -1619,7 +1619,7 @@
 <section id="chatView" aria-label="Chat with Bun">
 <div class="chat-head">
 <img src="assets/china-bite-mascot-dumpling-288.webp" alt="Bun — your food friend in China" width="44" height="44">
-<div class="chat-head-text"><h1>Can I <em>eat this?</em></h1><p id="chatAiStatus">Bun answers from my 110-dish list · AI coming soon</p></div>
+<div class="chat-head-text"><p class="chat-name">Bun</p><p id="chatAiStatus">AI coming soon</p></div>
 <button type="button" class="ghost chat-tastes" id="chatTastesBtn">My tastes</button>
 </div>
 <div id="chatLog" class="chat-log" aria-live="polite"></div>
@@ -1664,13 +1664,10 @@
 <details class="card" id="qrSection">
 <summary><span class="card-head"><h2>QR Order · 扫码点餐</h2><span class="card-sub">Scan, order, or show the slip — if the QR code won't open, use the order slip</span></span><span class="chev" aria-hidden="true">▾</span></summary>
 <div class="card-body">
-<p>80%+ restaurants: scan, order, pay.</p>
-<p>Pay first. Then they cook.</p>
 <h3>Route A — Mini-program opens</h3>
-<p>Pick dishes here first. Then follow the buttons.</p>
 <div id="qrTable"></div>
 <h3>Route B — Won't open? Asks for +86?</h3>
-<p>Don't wait. Show this slip to staff.</p>
+<p>Show this slip to staff.</p>
 <label for="tableNo">Table · 桌号</label>
 <input type="text" id="tableNo" placeholder="e.g. 12">
 <label for="peopleNo">People · 人数</label>
@@ -1731,8 +1728,6 @@
 <details class="card" id="citiesSection">
 <summary><span class="card-head"><h2>Cities · 10 城</h2><span class="card-sub">10 cities, 3 must-eat dishes each</span></span><span class="chev" aria-hidden="true">▾</span></summary>
 <div class="card-body">
-<p>10 cities.</p>
-<p>Sample only. Address not verified.</p>
 <div id="cityList"></div>
 </div>
 </details>
@@ -1742,7 +1737,6 @@
 <div class="count-slim">
 <p id="countText">Left today: 3 of 3</p>
 <div class="progress"><div id="countBar" style="width:100%"></div></div>
-<p class="small">Free: 3 a day. A friend's link gets you 6. Watch an ad, +3 — up to 5 a day.</p>
 </div>
 <p><b>Step 1 — Your diet</b></p>
 <div class="chips" id="profiles"></div>
@@ -1778,41 +1772,15 @@
 
 
 <details class="card" id="meituanSection">
-<summary><span class="card-head"><h2>Meituan · Dianping · Delivery</h2><span class="card-sub">Dianping to choose, Meituan for delivery, hotel address card</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<summary><span class="card-head"><h2>Hotel Card · 酒店地址卡</h2><span class="card-sub">Fill it once, copy it whenever you order</span></span><span class="chev" aria-hidden="true">▾</span></summary>
 <div class="card-body">
-<p><b>Dianping = choose.</b> Score, photos, price per person, Must-Eat List.</p>
-<p><b>Meituan = get.</b> Delivery to your hotel. Groceries too.</p>
-<p>Same company. Same shop data. Two jobs.</p>
-<p><b>No +86? You can still:</b> browse lists, see photos, check price, save offline.</p>
-<p><b>Need login / +86:</b> order delivery, take a queue number, buy a group voucher.</p>
-<p><b>English?</b> Buttons can switch to English. Names, menus, reviews stay Chinese.</p>
-<p>Mini-program in WeChat / Alipay: no new account. WeChat can translate the page.</p>
-<p><b>How to jump:</b> copy the Chinese dish name from any decode result. Paste it in Dianping search.</p>
-<p><b>Read a listing:</b> score out of 5. 人均 = spend per person. Photos first, not the cover.</p>
-<p>必吃榜 = Must-Eat List. Good sign, not a guarantee.</p>
-<p><b>Queue:</b> take a number in Dianping before you go. Show it at the door.</p>
-<p><b>Voucher:</b> 团购 = set menu, often cheaper. Read the rules first. Show QR before ordering.</p>
-<p><b>QR at the table?</b> It opens the restaurant's own mini-program, not Dianping.</p>
-<p>Pay first in fast food. Pay after in sit-down. Tableware often ¥1–5 per person, extra.</p>
-<p><b>Delivery · 外卖 — when:</b> late night, no food nearby, sick, kids asleep.</p>
-<p><b>Best route:</b> Alipay mini-program → 淘宝闪购 (was Ele.me). Meituan mini-program second.</p>
-<p>No separate sign-up. Alipay already knows you and your card.</p>
-<p><b>Address:</b> Chinese only. Copy from your booking. Add hotel name + room number.</p>
-<p>Pin the map. Check the tower. Wrong pin, cold food.</p>
-<p><b>Rider can't call you?</b> Foreign numbers often don't connect. Use the front-desk note.</p>
-<p class="bigzh">您好，我是外国人，请放在前台，不要打电话，发信息即可。谢谢！</p>
-<p>Contact number: hotel front desk, not a fake number.</p>
-<p><b>Pickup:</b> riders stop at the lobby. Front desk or delivery shelf. Check when it says delivered.</p>
-<p class="small">You can't order from here — prices and times show at checkout, and they change.</p>
-<h3>Hotel card · 酒店地址卡</h3>
-<p>Fill it once, copy it whenever you order.</p>
+<p>Stays on your phone only.</p>
 <label for="hotelName">Hotel · 酒店中文名 <button type="button" class="mic-btn" id="hotelNameVoiceBtn" aria-label="Say the hotel name">🎙 说酒店名</button></label>
 <input type="text" id="hotelName" placeholder="e.g. 上海外滩华尔道夫酒店" autocomplete="off" lang="zh-CN">
 <label for="hotelRoom">Room · 房号 <button type="button" class="mic-btn" id="hotelRoomVoiceBtn" aria-label="Say the room number">🎙 说房号</button></label>
 <input type="text" id="hotelRoom" placeholder="e.g. 1204房" autocomplete="off" lang="zh-CN">
 <p class="small" id="hotelVoiceStatus" role="status"></p>
 <p><button type="button" id="copyHotelBtn">Copy hotel card · 复制地址卡</button></p>
-<p class="small">Stays on your phone only.</p>
 </div>
 </details>
 
@@ -1834,18 +1802,9 @@
 <p><button type="button" id="copyRefBtn">Copy link</button></p>
 <p id="refNote"></p>
 <p>Friends invited: <span id="inviteCount">0</span></p>
-<p class="small"><b>Note:</b> No server here. Invites not verified. Sharing ≠ invite.</p>
 </div>
 </details>
 
-<details class="card" id="socialSearch">
-<summary><span class="card-head"><h2>Find us · 搜我们</h2><span class="card-sub">#ChinaBite — search dish names on IG / TikTok / X</span></span><span class="chev" aria-hidden="true">▾</span></summary>
-<div class="card-body">
-<p>Search a dish name on IG / TikTok / X.</p>
-<p><b>#ChinaBite</b></p>
-<p class="small">Every dish has its own link: chinabite.chinavisacheck.com/#/dish/map-o-tofu</p>
-</div>
-</details>
 
 <details class="card" id="subscribe">
 <summary><span class="card-head"><h2 id="subTitle">New dishes first.</h2><span class="card-sub">New dishes first — one email when we add dishes</span></span><span class="chev" aria-hidden="true">▾</span></summary>
@@ -1876,10 +1835,60 @@
 </div>
 </details>
 
-<footer>
-<p class="small">China Bite — Discover China, One Bite at a Time.<br>Prices are rough guides, 2026-11-26, rate ~7.1.<br>Hero photo: Marion Pintaux / Pexels (free licence).</p>
-<p class="small"><a href="README.md">README</a></p>
-</footer>
+<details class="card" id="faqSection">
+<summary><span class="card-head"><h2>Questions? · 常见问题</h2><span class="card-sub">Short answers, no fluff — ask Bun and he'll answer these too</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<div class="card-body">
+<details class="faq-item" id="faq-qr">
+<summary>How do I order with a QR code?</summary>
+<p>Scan the code on the table, pick your dishes, pay first — then they cook. Most restaurants work this way, 80%+ of them.</p>
+</details>
+<details class="faq-item" id="faq-qr-fail">
+<summary>What if the QR code won't open?</summary>
+<p>Don't wait. Show the waiter the order slip — they'll order on their phone and you pay at the counter.</p>
+</details>
+<details class="faq-item" id="faq-dianping">
+<summary>Dianping or Meituan — what's the difference?</summary>
+<p>Same company, two jobs. <b>Dianping = choose</b> — scores, photos, price per person, the Must-Eat List. <b>Meituan = get</b> — delivery to your hotel, groceries too. The QR code at your table opens the restaurant's own mini-program, not Dianping.</p>
+</details>
+<details class="faq-item" id="faq-delivery">
+<summary>How do I get food delivered to my hotel?</summary>
+<p>Best route: the Alipay mini-program → 淘宝闪购 (was Ele.me). Meituan second. The address has to be in Chinese — copy it from your booking, hotel name + room number. Riders stop at the lobby, so ask them to leave it at the front desk. Your hotel card is in the app — fill it once, copy it whenever you order.</p>
+</details>
+<details class="faq-item" id="faq-phone">
+<summary>Do I need a Chinese phone number?</summary>
+<p>Not to look around. Without a +86 number you can still browse lists, see photos, check prices and save places offline. You need a login for delivery, queue numbers and group vouchers. Buttons can switch to English — names, menus and reviews stay Chinese.</p>
+</details>
+<details class="faq-item" id="faq-pay">
+<summary>How do I pay?</summary>
+<p>WeChat Pay or Alipay first. Cash at the counter works too. Fast food: pay first. Sit-down: pay after. Tableware is often ¥1–5 per person, extra.</p>
+</details>
+<details class="faq-item" id="faq-free">
+<summary>How many free checks do I get?</summary>
+<p>3 free checks a day. A friend's link gets you 6. Watch a 5-second ad for +3 more, up to 5 ads a day. The Kit is $6.99 for 90 days, unlimited, no ads.</p>
+</details>
+<details class="faq-item" id="faq-kit">
+<summary>What's in the Kit, and how much is it?</summary>
+<p>$6.99, one time, 90 days. 110 dishes with photos and prices, 12 diet cards, 10 cities, QR ordering help. No ads, no subscription.</p>
+</details>
+<details class="faq-item" id="faq-invite">
+<summary>How does inviting friends work?</summary>
+<p>Share your link — friends get 6 free checks, and you get +3 for each friend who finishes their first check. Honest note: there's no server checking this yet, so sharing isn't the same as a verified invite.</p>
+</details>
+<details class="faq-item" id="faq-address">
+<summary>Are the restaurant addresses verified?</summary>
+<p>No. The city lists show the type of place and the area — not a verified street address. Dianping has the real one.</p>
+</details>
+<details class="faq-item" id="faq-find">
+<summary>Where can I find you?</summary>
+<p>We're #ChinaBite on Instagram, TikTok and X — search any dish name there. Every dish has its own link too: chinabite.chinavisacheck.com/#/dish/map-o-tofu</p>
+</details>
+<details class="faq-item" id="faq-prices">
+<summary>Are the prices exact?</summary>
+<p>No — rough guides from 2026-11-26, about ¥7.1 to the dollar. Menus change, so treat them as a ballpark.</p>
+</details>
+</div>
+</details>
+
 </main>
 
 <div id="chatComposer" class="chat-composer">

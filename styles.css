@@ -197,7 +197,7 @@ footer{padding:8px 4px;border-top:1px solid var(--line)}
 .chat-head{display:flex;align-items:center;gap:12px;padding:4px 4px 0}
 .chat-head img{width:44px;height:44px;border-radius:50%;object-fit:cover;display:block;flex:0 0 44px;border:1px solid var(--line)}
 .chat-head-text{flex:1;min-width:0}
-.chat-head-text h1{font-size:18px;line-height:1.2;margin:0}
+.chat-name{font-family:var(--font-display);font-size:18px;font-weight:600;line-height:1.2;margin:0}
 .chat-head-text p{font-size:13px;color:var(--muted);margin:2px 0 0;line-height:1.4}
 .chat-tastes{flex:0 0 auto;min-height:40px;padding:8px 14px;font-size:14px;margin:0}
 .chat-log{display:flex;flex-direction:column;gap:12px;padding:16px 4px 8px;min-height:52vh}
@@ -236,4 +236,11 @@ footer{padding:8px 4px;border-top:1px solid var(--line)}
 .chat-dish .cd-actions{display:flex;gap:6px;margin-top:10px}
 .chat-dish .cd-actions button{flex:1;min-height:40px;padding:6px 4px;font-size:13px;margin:0;box-shadow:none}
 .next-row{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+/* ---- v4.1: FAQ — read-only answers live here, nowhere else ---- */
+.faq-item{border-bottom:1px solid var(--line);padding:12px 0}
+.faq-item:last-child{border-bottom:0}
+.faq-item summary{cursor:pointer;list-style:none;font-size:15px;font-weight:600;line-height:1.5}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item p{font-size:15px;color:var(--muted);line-height:1.6;margin:8px 0 4px}
+.faq-item p b{color:var(--ink)}
 .next-row button{margin:0;text-align:left}

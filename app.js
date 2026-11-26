@@ -167,7 +167,7 @@
     $("shareDishBtn").onclick = function () { shareDish(dish, v); };
     $("nextDianpingBtn").onclick = function () {
       if (navigator.clipboard) navigator.clipboard.writeText(dish.zh);
-      gotoSection("meituanSection");
+      openFaq("faq-dianping");
     };
     $("nextQrBtn").onclick = function () { gotoSection("qrSection"); };
     $("nextCardBtn").onclick = function () { gotoSection("dietSection"); };
@@ -751,19 +751,18 @@
   // Bun opens them via gotoSection() when the conversation needs them.
   // Views are show/hide only — all sections stay in the DOM, so decode,
   // deep links (#/dish/, #/diet/) and the order slip keep working.
-  var VIEW_SECTIONS = ["chatView", "chatComposer", "searchBar", "catChips", "decoder", "storyDishes", "qrSection", "dietSection", "adSection", "kitPreview", "citiesSection", "meituanSection", "kitSection", "referral", "socialSearch", "subscribe"];
+  var VIEW_SECTIONS = ["chatView", "chatComposer", "searchBar", "catChips", "decoder", "storyDishes", "qrSection", "dietSection", "adSection", "kitPreview", "citiesSection", "meituanSection", "kitSection", "referral", "faqSection", "subscribe"];
   var VIEWS = {
     chat: ["chatView", "chatComposer"],
     dishes: ["searchBar", "catChips", "decoder", "storyDishes"],
     cities: ["citiesSection"],
     diet: ["dietSection"],
-    account: ["kitPreview", "kitSection", "subscribe", "referral"],
+    account: ["kitPreview", "kitSection", "subscribe", "referral", "faqSection"],
     qr: ["qrSection"],
     meituan: ["meituanSection"],
     subscribe: ["subscribe"],
-    more: ["referral", "socialSearch"]
   };
-  var SECTION_VIEW = { chatView: "chat", chatComposer: "chat", searchBar: "dishes", catChips: "dishes", decoder: "dishes", storyDishes: "dishes", qrSection: "qr", dietSection: "diet", adSection: "dishes", kitPreview: "account", citiesSection: "cities", meituanSection: "meituan", kitSection: "account", referral: "account", socialSearch: "more", subscribe: "subscribe" };
+  var SECTION_VIEW = { chatView: "chat", chatComposer: "chat", searchBar: "dishes", catChips: "dishes", decoder: "dishes", storyDishes: "dishes", qrSection: "qr", dietSection: "diet", adSection: "dishes", kitPreview: "account", citiesSection: "cities", meituanSection: "meituan", kitSection: "account", referral: "account", faqSection: "account", subscribe: "subscribe" };
   var currentView = "chat";
   function showView(name) {
     var ids = VIEWS[name] || VIEWS.home;
@@ -791,6 +790,13 @@
     showView(SECTION_VIEW[id] || "chat");
     if (el.tagName === "DETAILS") el.open = true;
     el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+  // v4.1: open the FAQ card and one answer inside it.
+  function openFaq(id) {
+    gotoSection("faqSection");
+    if (!id) return;
+    var f = $(id);
+    if (f) { f.open = true; f.scrollIntoView({ behavior: "smooth", block: "start" }); }
   }
   // Homepage order v3.0: signature dishes first, decoder last.
   // Tapping a dish anywhere (signature card, city must-eat, deep link)
@@ -911,7 +917,7 @@
   window.ChinaBite = {
     D: D, DEV_MODE: DEV_MODE,
     findDish: findDish, verdictFor: verdictFor, renderResult: renderResult,
-    checkDish: window.checkDish, gotoSection: gotoSection, showView: showView,
+    checkDish: window.checkDish, gotoSection: gotoSection, showView: showView, openFaq: openFaq,
     addToOrder: addToOrder, speakInto: speakInto, recognizePhoto: recognizePhoto,
     usd: usd, esc: esc, containsEn: containsEn, spiceLabel: spiceLabel,
     dishInCat: dishInCat, SIGNATURE_IDS: SIGNATURE_IDS, HALAL_IDS: HALAL_IDS,

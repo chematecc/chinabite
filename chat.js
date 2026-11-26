@@ -155,7 +155,7 @@
     mk("Search on Dianping", function () {
       if (navigator.clipboard) navigator.clipboard.writeText(dish.zh);
       addBun("Copied “" + esc(dish.zh) + "” — paste it in Dianping search. Scores, photos, price per person, that's how you pick a place.");
-      CB.gotoSection("meituanSection");
+      if (CB.openFaq) CB.openFaq("faq-dianping"); else CB.gotoSection("faqSection");
     });
     mk("How to order by QR", function () {
       addBun("Scan the table QR, pick dishes, pay first — then they cook. If it won't open, I have a slip the waiter can use. Opening the guide now.");
@@ -250,10 +250,16 @@
     { id: "soy", keys: ["soy allergy", "大豆过敏"] }
   ];
   var FAQ = [
-    { keys: ["qr", "扫码", "won't open", "wont open", "how do i order", "how to order", "order"], a: "Scan the table QR, pick dishes, pay first — then they cook. If it won't open, show the waiter the order slip and they'll order on their phone. Want me to open the QR guide?" },
-    { keys: ["alipay", "wechat", "pay", "支付", "cash"], a: "WeChat Pay or Alipay first. Cash at the counter works too." },
-    { keys: ["delivery", "外卖", "takeaway", "deliver", "meituan", "美团"], a: "Dianping finds restaurants — scores, photos, price per person. Meituan delivers to your hotel: address in Chinese, and ask the rider to leave it at the front desk. Your hotel card lives in the Meituan section — want me to open it?" },
-    { keys: ["free", "免费", "price", "cost", "kit", "$6.99", "how much"], a: "3 free checks a day. Watch a 5-second ad for +3 more. The Kit is $6.99 for 90 days, unlimited — want a peek at what's inside?" },
+    { keys: ["qr", "扫码", "won't open", "wont open", "how do i order", "how to order", "order"], a: "Scan the table QR, pick dishes, pay first — then they cook. If it won't open, show the waiter the order slip and they'll order on their phone. Want me to open the QR guide?", faqId: "faq-qr" },
+    { keys: ["alipay", "wechat", "pay", "支付", "cash"], a: "WeChat Pay or Alipay first. Cash at the counter works too.", faqId: "faq-pay" },
+    { keys: ["delivery", "外卖", "takeaway", "deliver", "meituan", "美团"], a: "Dianping finds restaurants — scores, photos, price per person. Meituan delivers to your hotel: address in Chinese, and ask the rider to leave it at the front desk. Your hotel card is in the app — want me to open it?", faqId: "faq-delivery" },
+    { keys: ["free", "免费", "price", "cost", "kit", "$6.99", "how much"], a: "3 free checks a day. Watch a 5-second ad for +3 more. The Kit is $6.99 for 90 days, unlimited — want a peek at what's inside?", faqId: "faq-free" },
+    { keys: ["how does this work", "how does bun work", "how do i use", "what can you do", "faq", "frequently asked", "help"], a: "You ask, I answer — snap the menu, say a dish, or type it. I check it and tell you straight if you can eat it. The longer answers live in the FAQ — want me to open it?", openFaqCard: true },
+    { keys: ["find you", "instagram", "tiktok", "where can i find", "social", "follow"], a: "We're #ChinaBite on Instagram, TikTok and X — search any dish name there. Every dish has its own link too.", faqId: "faq-find" },
+    { keys: ["invite", "friend", "referral", "share my link"], a: "Share your link — friends get 6 free checks, and you get +3 for each friend who finishes their first check.", faqId: "faq-invite" },
+    { keys: ["address", "verified", "where is", "location of"], a: "I don't make up addresses — the city lists show the type of place and the area, not a verified street address. Dianping has the real one.", faqId: "faq-address" },
+    { keys: ["hotel card", "hotel address"], a: "Fill it once and copy it whenever you order — hotel name in Chinese plus your room number.", section: "meituanSection" },
+    { keys: ["are the prices", "prices exact", "price guide"], a: "Rough guides from 2026-11-26, about ¥7.1 to the dollar. Menus change, so treat them as a ballpark.", faqId: "faq-prices" },
     { keys: ["spicy", "辣", "spice", "hot"], a: "Spice runs 0–3: 0 not spicy, 3 very spicy. If you can't take heat, say so before you order — I'll tell you the number on every dish." },
     { keys: ["halal", "清真"], a: "Look for the green 清真 sign on the door. Ask staff “这是清真吗?” — want me to show you the halal card?" },
     { keys: ["peanut", "花生"], a: "Peanuts hide in Sichuan dishes, noodles and hot pot sauce. Tell the waiter before you order — want the peanut card?" },
@@ -296,7 +302,7 @@
     if (city) return { kind: "city", city: city };
     var s = q.toLowerCase();
     for (var i = 0; i < FAQ.length; i++) {
-      if (FAQ[i].keys.some(function (k) { return s.indexOf(k) >= 0; })) return { kind: "faq", text: FAQ[i].a };
+      if (FAQ[i].keys.some(function (k) { return s.indexOf(k) >= 0; })) return { kind: "faq", text: FAQ[i].a, faqId: FAQ[i].faqId, openFaqCard: FAQ[i].openFaqCard, section: FAQ[i].section };
     }
     if (cardId) return { kind: "card", cardId: cardId };
     if (city) return { kind: "city", city: city };
@@ -319,7 +325,14 @@
         "<br><br><b>Getting there:</b> " + esc(c.transport), { cards: dishes });
       suggestChips();
     } else if (res.kind === "faq") {
-      addBun(esc(res.text));
+      var btn = res.faqId ? '<p><button type="button" class="ghost" id="chatFaqBtn">See the full answer →</button></p>'
+        : res.openFaqCard ? '<p><button type="button" class="ghost" id="chatFaqBtn">Open the FAQ →</button></p>'
+        : res.section ? '<p><button type="button" class="ghost" id="chatFaqBtn">Open it →</button></p>' : "";
+      var row = addBun(esc(res.text) + btn);
+      var fb = row.querySelector("#chatFaqBtn");
+      if (fb && res.faqId) fb.onclick = function () { if (CB.openFaq) CB.openFaq(res.faqId); else CB.gotoSection("faqSection"); };
+      else if (fb && res.openFaqCard) fb.onclick = function () { CB.gotoSection("faqSection"); };
+      else if (fb && res.section) fb.onclick = function () { CB.gotoSection(res.section); };
       suggestChips();
     } else {
       var sug = recommendDishes(3);
@@ -553,7 +566,7 @@
       llmReady = ready;
       el.textContent = ready
         ? "Bun · AI connected — ask me anything"
-        : "Bun answers from my 110-dish list · AI coming soon";
+        : "AI coming soon";
     };
     try {
       var ctrl = new AbortController();
