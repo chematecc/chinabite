@@ -280,10 +280,11 @@
   }
   var currentCat = "all";
   var listEl = $("dishList");
-  function renderDishList(cat, q) {
+  function renderDishList(cat, q, targetEl) {
     currentCat = cat || "all";
     q = (q || "").trim().toLowerCase();
-    listEl.innerHTML = "";
+    var el = targetEl || listEl;
+    el.innerHTML = "";
     var shown = 0;
     D.dishes.forEach(function (d) {
       if (!dishInCat(d, currentCat)) return;
@@ -292,17 +293,66 @@
       var b = document.createElement("button");
       b.className = "dish"; b.type = "button";
       b.innerHTML = '<span class="en">' + esc(d.en) + '</span><br><span class="zh">' + esc(d.zh) + " · ¥" + d.price + " · ≈$" + usd(d.price) + " · Spice " + d.spicy + "/3</span>";
-      b.onclick = function () { $("dishInput").value = d.zh; decode(); $("decoder").scrollIntoView(); };
-      listEl.appendChild(b);
+      // Same verdict path as the chat: checkDish -> decode -> renderResult.
+      b.onclick = function () { window.checkDish(d.zh); };
+      el.appendChild(b);
     });
-    if (!shown) listEl.innerHTML = "<p class=\"muted\">Nothing matches that — try All, or just say it out loud.</p>";
+    if (!shown) el.innerHTML = "<p class=\"muted\">Nothing matches that — try All, or just say it out loud.</p>";
     return shown;
   }
   renderDishList("all", "");
 
-  // ---- Top search bar + category chips (v3.2, Uber Eats-style) ----
+  // ---- v5.0: Home — Signature big-image cards + 10-city entry ----
+  // The 9 signature dishes are exactly the 9 dishes with photo assets
+  // (assets/dish-<id-without-dashes>.webp), so the cards are image-led.
+  function renderHomeSignature() {
+    var wrap = $("homeSignatureList");
+    if (!wrap) return;
+    SIGNATURE_IDS.forEach(function (id) {
+      var d = D.dishes.find(function (x) { return x.id === id; });
+      if (!d) return;
+      var b = document.createElement("button");
+      b.className = "story"; b.type = "button";
+      b.innerHTML = '<span class="thumb"><img src="assets/dish-' + d.id.replace(/-/g, "") + '.webp" alt="' + esc(d.en) + '" width="120" height="120" loading="lazy"></span><span><span class="en">' + esc(d.en) + '</span><span class="zh">' + esc(d.zh) + '</span><span class="price">¥' + d.price + ' · ≈$' + usd(d.price) + '</span><span class="spice">Spicy ' + d.spicy + '/3</span></span>';
+      b.onclick = function () { window.checkDish(d.zh); };
+      wrap.appendChild(b);
+    });
+  }
+  renderHomeSignature();
+  function renderHomeCities() {
+    var wrap = $("homeCityRow");
+    if (!wrap) return;
+    D.cities.forEach(function (c) {
+      var b = document.createElement("button");
+      b.className = "chip"; b.type = "button";
+      b.textContent = c.en + " · " + (c.mustEat || []).length + " must-eats";
+      b.setAttribute("aria-pressed", "false");
+      b.onclick = function () { gotoSection("citiesSection"); };
+      wrap.appendChild(b);
+    });
+  }
+  renderHomeCities();
+
+  // ---- Top search bar + category chips (v3.2, Uber Eats-style; v5.0: they
+  // filter the Home results list in place — the browse blocks hide while
+  // a filter is active, and come back when it is cleared.) ----
   var CATS = [["all", "All"], ["signature", "Signature"], ["noodles", "Noodles"], ["dumplings", "Dumplings"], ["spicy", "Spicy"], ["veg", "Veg"], ["halal", "Halal"], ["soup", "Soup"], ["rice", "Rice"]];
   var chipsEl = $("catChips");
+  var homeResults = $("homeResults");
+  var homeDishList = $("homeDishList");
+  function updateHomeFilter() {
+    var q = ($("topSearch") || { value: "" }).value.trim();
+    var active = q !== "" || currentCat !== "all";
+    var hv = $("homeView");
+    if (hv) hv.classList.toggle("filtering", active);
+    if (homeResults) homeResults.classList.toggle("hidden", !active);
+    if (active && homeDishList) {
+      var n = renderDishList(currentCat, q, homeDishList);
+      var t = $("homeResultsTitle");
+      if (t) t.textContent = n + (n === 1 ? " match" : " matches");
+    }
+    return active;
+  }
   if (chipsEl) {
     CATS.forEach(function (c) {
       var b = document.createElement("button");
@@ -312,24 +362,29 @@
         Array.prototype.forEach.call(chipsEl.children, function (x) { x.setAttribute("aria-pressed", "false"); });
         b.setAttribute("aria-pressed", "true");
         if (c[0] === "signature") {
-          showView("dishes");
-          var sd = $("storyDishes"); if (sd) { sd.open = true; sd.scrollIntoView({ behavior: "smooth", block: "start" }); }
+          // Signature lives as big cards on Home — clear the filter and
+          // scroll to them instead of filtering the quick list.
+          currentCat = "all";
+          if ($("topSearch")) $("topSearch").value = "";
+          updateHomeFilter();
+          var hs = $("homeSignature");
+          if (hs) hs.scrollIntoView({ behavior: "smooth", block: "start" });
           return;
         }
-        renderDishList(c[0], ($("topSearch") || { value: "" }).value);
-        showView("dishes");
-        var pk = $("dishPicker"); if (pk) { pk.open = true; pk.scrollIntoView({ behavior: "smooth", block: "start" }); }
+        currentCat = c[0];
+        updateHomeFilter();
+        if (homeResults) homeResults.scrollIntoView({ behavior: "smooth", block: "start" });
       };
       chipsEl.appendChild(b);
     });
   }
   var topSearch = $("topSearch");
   if (topSearch) {
-    topSearch.addEventListener("input", function () { renderDishList(currentCat, topSearch.value); });
+    topSearch.addEventListener("input", function () { updateHomeFilter(); });
     topSearch.addEventListener("keydown", function (e) {
       if (e.key !== "Enter") return;
       var d = findDish(topSearch.value);
-      if (d) { $("dishInput").value = d.zh; showView("dishes"); decode(); }
+      if (d) window.checkDish(d.zh);
     });
   }
 
@@ -791,16 +846,20 @@
     });
   }
 
-  // ---- App mode nav: views (v4.0 — homepage IS the chat) ----
-  // v4.0: homepage = chat with Bun. No hero, no card-list homepage.
-  // Old sections stay in the DOM as the function layer behind the chat;
-  // Bun opens them via gotoSection() when the conversation needs them.
-  // Views are show/hide only — all sections stay in the DOM, so decode,
-  // deep links (#/dish/, #/diet/) and the order slip keep working.
-  var VIEW_SECTIONS = ["chatView", "chatComposer", "searchBar", "catChips", "decoder", "storyDishes", "qrSection", "dietSection", "adSection", "kitPreview", "citiesSection", "meituanSection", "kitSection", "referral", "faqSection", "subscribe"];
+  // ---- App mode nav: views (v5.0 — homepage IS the Uber Eats browse;
+  // chat is a feature behind the Bun button / Ask Bun, not the homepage) ----
+  // v5.0: Home = search + chips + hero + Ask Bun + Signature + cities +
+  // decode teaser. Search = the decoder (type / voice / camera / 110
+  // quick-pick). Orders = QR order slip. Account = Kit on top, then
+  // subscribe / share / FAQ. Views are show/hide only — all sections stay
+  // in the DOM, so decode, deep links (#/dish/, #/diet/) and the order
+  // slip keep working.
+  var VIEW_SECTIONS = ["homeView", "chatView", "chatComposer", "decoder", "qrSection", "dietSection", "adSection", "kitPreview", "citiesSection", "meituanSection", "kitSection", "referral", "faqSection", "subscribe"];
   var VIEWS = {
+    home: ["homeView"],
     chat: ["chatView", "chatComposer"],
-    dishes: ["searchBar", "catChips", "decoder", "storyDishes"],
+    search: ["decoder"],
+    orders: ["qrSection"],
     cities: ["citiesSection"],
     diet: ["dietSection"],
     account: ["kitPreview", "kitSection", "subscribe", "referral", "faqSection"],
@@ -808,7 +867,7 @@
     meituan: ["meituanSection"],
     subscribe: ["subscribe"],
   };
-  var SECTION_VIEW = { chatView: "chat", chatComposer: "chat", searchBar: "dishes", catChips: "dishes", decoder: "dishes", storyDishes: "dishes", qrSection: "qr", dietSection: "diet", adSection: "dishes", kitPreview: "account", citiesSection: "cities", meituanSection: "meituan", kitSection: "account", referral: "account", faqSection: "account", subscribe: "subscribe" };
+  var SECTION_VIEW = { homeView: "home", chatView: "chat", chatComposer: "chat", decoder: "search", qrSection: "orders", dietSection: "diet", adSection: "search", kitPreview: "account", citiesSection: "cities", meituanSection: "meituan", kitSection: "account", referral: "account", faqSection: "account", subscribe: "subscribe" };
   var currentView = "chat";
   function showView(name) {
     var ids = VIEWS[name] || VIEWS.home;
@@ -820,9 +879,6 @@
       if (id === "adSection" && DEV_MODE) { el.classList.add("hidden"); return; }
       el.classList.toggle("hidden", ids.indexOf(id) < 0);
     });
-    // Dishes view: signature dishes open so the list shows them.
-    var story = $("storyDishes");
-    if (story) story.open = (name === "dishes");
     // Account view: Kit sits at the top, already open — no extra tap.
     if (name === "account") {
       var kp = $("kitPreview"); if (kp) kp.open = true;
@@ -850,12 +906,13 @@
     if (f) { f.open = true; f.scrollIntoView({ behavior: "smooth", block: "start" }); }
   }
   // Homepage order v3.0: signature dishes first, decoder last.
-  // Tapping a dish anywhere (signature card, city must-eat, deep link)
-  // must switch to the decode view FIRST, otherwise the verdict would
-  // render inside the hidden decoder and the user would see nothing.
+  // Tapping a dish anywhere (signature card, city must-eat, deep link,
+  // search result) must switch to the Search view FIRST, otherwise the
+  // verdict would render inside the hidden decoder and the user would
+  // see nothing.
   window.checkDish = function (zh) {
     $("dishInput").value = zh;
-    showView("dishes");
+    showView("search");
     decode();
     var sec = $("decoder");
     if (sec) sec.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -874,16 +931,16 @@
   });
   var appTitle = $("appTitle");
   if (appTitle) {
-    var goHome = function () { showView("chat"); };
+    var goHome = function () { showView("home"); };
     appTitle.addEventListener("click", goHome);
     appTitle.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); goHome(); } });
   }
-  // First paint: chat, unless a deep link asked for a dish or diet card.
+  // First paint: home, unless a deep link asked for a dish or diet card.
   (function initView() {
     var h = location.hash || "";
     if (/^#\/diet\//.test(h)) showView("diet");
-    else if (/^#\/dish\//.test(h)) showView("dishes");
-    else showView("chat");
+    else if (/^#\/dish\//.test(h)) showView("search");
+    else showView("home");
   })();
 
   // ---- Paid preview toggle (no real payment) ----
@@ -943,9 +1000,10 @@
     var kitSub = $("kitPreviewSub");
     if (kitSub) kitSub.textContent = "Dev mode: Kit preview fully open — 110 dishes · 12 cards · 10 cities visible.";
   }
-    // ---- v4.0: minimal public API for the chat layer (chat.js) ----
-  // The chat is the homepage now; it answers through these, so the
-  // verdict / order / voice / OCR logic stays in one place (here).
+    // ---- v5.0: minimal public API for the chat layer (chat.js) ----
+  // The chat is a feature now (Bun button / Ask Bun open it); it answers
+  // through these, so the verdict / order / voice / OCR logic stays in
+  // one place (here).
   // LLM hook lives in chat.js (sendToAssistant -> Worker /api/chat);
   // this file only exposes the local tools the chat needs.
   function recognizePhoto(file) {

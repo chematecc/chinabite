@@ -1,4 +1,17 @@
-/* China Bite — v4.2 English-only UI + smaller app frame.
+/* China Bite — v5.0 Uber Eats home (Oliver: "Go back to uber eats style
+   design", "Change hero", "With chat button").
+   - Home is a browse-first Uber Eats page: search + chips + hero +
+     Ask Bun + Signature big-image cards + 10 cities + decode teaser.
+   - Chat is a feature, not the homepage: Bun avatar button beside the
+     search bar + a full-width Ask Bun button under the hero.
+   - Bottom nav is Home / Search / Orders / Account (v3.2 naming).
+   - Kept from v4.1–v4.4: Cormorant Garamond + Inter, small sizes
+     (h1 26px/600, dish names 16px/600, body 15px), English-only UI,
+     400px frame, FAQ, Kit at top of Account, diet multi-select,
+     human copy, system-follow theme, electric purple, warm colours 0.
+   - Not back: 40px/900 titles, grey-blue corporate palette, fat cards,
+     grey pill nav, hero text wall.
+   v4.2 English-only UI + smaller app frame (see below for the v4.2 note). */
    v4.2 (Oliver: "不要中英文交叉使用", "页面框架偏大，感官非 app 模式", "Kit 直接放 Account"):
    - UI copy is English only. Chinese stays only where it has to be read in the real
      world: dish names + the big waiter sentences (diet cards, order slip, hotel card).
@@ -201,17 +214,39 @@ footer{padding:8px 4px;border-top:1px solid var(--line)}
 .voice-row{display:flex;align-items:center;gap:10px;margin:8px 0 0}
 .voice-lang{flex:0 0 auto;min-height:36px;padding:6px 14px;font-size:14px;font-weight:600;background:var(--card2);color:var(--ink);border:1px solid var(--line);box-shadow:none;margin:0}
 .mic-btn{display:inline-block;min-height:32px;padding:4px 12px;font-size:14px;font-weight:600;background:var(--card2);color:var(--accent);border:1px solid var(--line);box-shadow:none;margin:0 0 0 6px;vertical-align:middle}
-/* ---- v4.0: the chat IS the homepage (Mindtrip-style assistant) ---- */
+/* ---- v5.0: Uber Eats home — search row + Bun button, Ask Bun, cities ---- */
+.search-row{display:flex;gap:10px;align-items:center}
+.search-row .searchbar{flex:1;min-width:0}
+.bun-btn{flex:0 0 48px;width:48px;height:48px;min-height:48px;padding:0;margin:0;border-radius:50%;background:var(--card);border:1.5px solid var(--line-strong);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center}
+.bun-btn img{width:34px;height:34px;border-radius:50%;object-fit:cover;display:block}
+.ask-bun{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;text-align:left;padding:12px 16px;border-radius:20px;margin:0}
+.ask-bun img{width:32px;height:32px;border-radius:50%;object-fit:cover;display:block;flex:0 0 32px}
+.ask-bun span{flex:1;min-width:0}
+.ask-bun small{display:block;font-weight:500;font-size:13px;opacity:.85;line-height:1.4}
+.home-sec{margin:6px 0 0}
+.home-sec .block-sub{margin:6px 0 12px}
+.city-row{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 6px;scrollbar-width:none}
+.city-row::-webkit-scrollbar{display:none}
+.city-row .chip{flex:0 0 auto;margin:0}
+.decode-teaser p{margin:10px 0}
+.decode-teaser button{margin:4px 0 0}
+/* While a search / chip filter is active, Home shows only the results. */
+#homeView.filtering .browse-block{display:none}
+.back-home{margin:0 0 4px;min-height:40px;padding:8px 14px;font-size:14px}
+.story .spice{font-size:14px;color:var(--muted);display:block;margin-top:4px}
+
+/* ---- v5.0: chat is a feature now — Bun button / Ask Bun open it ---- */
 .chat-head{display:flex;align-items:center;gap:12px;padding:4px 4px 0}
-/* v4.4: compact chat hero — ONE image only, no headline, no slogan, no
-   stats, no buttons. Pexels photo by Iren Fedo (young woman eating noodles
-   at a café, 2022), pre-cropped in-file to the 800x320 banner band
-   (face + chopsticks + lifted noodles, warm red/gold café light — the
-   photogenic check-in feel), 17,604B WebP. File aspect already matches the
-   160px banner, so object-position is neutral. Night brightness comes from
+/* v5.0: compact home hero — ONE image only, no headline, no slogan, no
+   stats, no buttons. Pexels photo by cottonbro studio (young woman in a
+   cheongsam eating noodles with chopsticks under a red lantern in a
+   Chinese restaurant, 2020), pre-cropped in-file to the 800x320 banner
+   band (face + lifted noodles + red lantern, warm light — the photogenic
+   check-in feel), 22,686B WebP. File aspect already matches the 160px
+   banner, so object-position is neutral. Night brightness comes from
    the global dark-theme img rule (0.92). */
-.chat-hero{margin:0 0 12px;border-radius:20px;overflow:hidden;box-shadow:var(--shadow)}
-.chat-hero img{display:block;width:100%;height:160px;object-fit:cover;object-position:center}
+.hero-banner{margin:0;border-radius:20px;overflow:hidden;box-shadow:var(--shadow)}
+.hero-banner img{display:block;width:100%;height:160px;object-fit:cover;object-position:center}
 .chat-head img{width:40px;height:40px;border-radius:50%;object-fit:cover;display:block;flex:0 0 40px;border:1px solid var(--line)}
 .chat-head-text{flex:1;min-width:0}
 .chat-name{font-family:var(--font-display);font-size:18px;font-weight:600;line-height:1.2;margin:0}

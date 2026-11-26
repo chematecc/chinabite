@@ -1616,8 +1616,40 @@
 </div>
 </header>
 <main>
+<!-- v5.0: Uber Eats-style home — search, chips, hero, Ask Bun, Signature, cities, decode teaser. Chat lives behind the Bun button / Ask Bun. -->
+<section id="homeView" aria-label="Home">
+<div class="search-row">
+<div class="searchbar" id="searchBar" role="search">
+<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></svg>
+<input type="search" id="topSearch" placeholder="Search dishes — try Mapo Tofu" autocomplete="off" lang="en" aria-label="Search dishes">
+</div>
+<button type="button" class="bun-btn" id="homeChatBtn" data-view="chat" aria-label="Chat with Bun"><img src="assets/china-bite-mascot-dumpling-288.webp" alt="Bun" width="34" height="34"></button>
+</div>
+<div class="cat-chips" id="catChips" aria-label="Browse by category"></div>
+<div id="homeResults" class="hidden">
+<p class="sec-kicker" id="homeResultsTitle">Matches</p>
+<div class="grid" id="homeDishList"></div>
+</div>
+<div class="hero-banner browse-block"><img src="assets/china-bite-hero-v5.webp" alt="A young woman in a cheongsam eating noodles with chopsticks under a red lantern in a Chinese restaurant" width="800" height="320" fetchpriority="high"></div>
+<button type="button" class="ask-bun browse-block" id="askBunBtn" data-view="chat"><img src="assets/china-bite-mascot-dumpling-288.webp" alt="Bun" width="32" height="32"><span><b>Ask Bun</b><small>Not sure what to eat? Chat with Bun — 3 quick questions.</small></span></button>
+<div class="home-sec browse-block" id="homeSignature">
+<h2>Signature Dishes</h2>
+<p class="block-sub">9 signature dishes — the ones locals would order first.</p>
+<div class="story-grid" id="homeSignatureList"></div>
+</div>
+<div class="home-sec browse-block" id="homeCities">
+<h2>10 Cities</h2>
+<p class="block-sub">3 must-eat dishes in each city.</p>
+<div class="city-row" id="homeCityRow"></div>
+</div>
+<section class="card decode-teaser browse-block" id="homeDecodeTeaser">
+<h2>Can't read the menu?</h2>
+<p>Snap a photo, say it, or type it — Bun tells you in 3 seconds.</p>
+<p><button type="button" data-view="search">Decode a dish</button></p>
+</section>
+</section>
 <section id="chatView" aria-label="Chat with Bun">
-<div class="chat-hero"><img src="assets/china-bite-hero.webp" alt="A young woman eating noodles with chopsticks at a cozy café" width="800" height="320" fetchpriority="high"></div>
+<button type="button" class="ghost back-home" id="backHomeBtn" data-view="home">← Home</button>
 <div class="chat-head">
 <img src="assets/china-bite-mascot-dumpling-288.webp" alt="Bun — your food friend in China" width="44" height="44">
 <div class="chat-head-text"><p class="chat-name">Bun</p><p id="chatAiStatus">AI coming soon</p></div>
@@ -1627,40 +1659,12 @@
 <div id="chatChips" class="chat-chips" aria-label="Quick replies"></div>
 </section>
 
-<!-- Uber Eats-style search: grey pill bar + category chips, home view only. -->
-<div class="searchbar" id="searchBar" role="search">
-<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></svg>
-<input type="search" id="topSearch" placeholder="Search dishes — try Mapo Tofu" autocomplete="off" lang="en" aria-label="Search dishes">
-</div>
-<div class="cat-chips" id="catChips" aria-label="Browse by category"></div>
 
 
 
 
-<details class="card" id="storyDishes">
-<summary><span class="card-head"><h2>Signature Dishes</h2><span class="card-sub">9 signature dishes — 3 per city, the ones locals would order first.</span></span><span class="chev" aria-hidden="true">▾</span></summary>
-<div class="card-body">
-<p class="story-city">Chengdu</p>
-<div class="story-grid">
-<button type="button" class="story" onclick="checkDish('担担面')"><span class="thumb"><img src="assets/dish-dandanmian.webp" alt="Dan Dan Noodles" width="64" height="64" loading="lazy"></span><span><span class="en">Dan Dan Noodles</span><span class="zh">担担面</span><span class="price">¥20 · ≈$2.82</span><span class="how">Morning in Chengdu, a street stall. The owner tosses the noodles fresh — you finish standing up.</span></span></button>
-<button type="button" class="story" onclick="checkDish('麻婆豆腐')"><span class="thumb"><img src="assets/dish-mapodoufu.webp" alt="Mapo Tofu" width="64" height="64" loading="lazy"></span><span><span class="en">Mapo Tofu</span><span class="zh">麻婆豆腐</span><span class="price">¥28 · ≈$3.94</span><span class="how">One bowl of white rice, one spoonful on top — that's dinner.</span></span></button>
-<button type="button" class="story" onclick="checkDish('回锅肉')"><span class="thumb"><img src="assets/dish-huiguorou.webp" alt="Twice-Cooked Pork" width="64" height="64" loading="lazy"></span><span><span class="en">Twice-Cooked Pork</span><span class="zh">回锅肉</span><span class="price">¥38 · ≈$5.35</span><span class="how">Order it with rice. The garlic sprouts hit the wok and the whole place smells amazing.</span></span></button>
-</div>
-<p class="story-city">Guangzhou</p>
-<div class="story-grid">
-<button type="button" class="story" onclick="checkDish('烧鹅')"><span class="thumb"><img src="assets/dish-shaoe.webp" alt="Roast Goose" width="64" height="64" loading="lazy"></span><span><span class="en">Roast Goose</span><span class="zh">烧鹅</span><span class="price">¥52 · ≈$7.32</span><span class="how">Queue at noon for roast goose. Half a goose to go, crispy skin.</span></span></button>
-<button type="button" class="story" onclick="checkDish('虾饺')"><span class="thumb"><img src="assets/dish-xiajiao.webp" alt="Shrimp Dumplings" width="64" height="64" loading="lazy"></span><span><span class="en">Shrimp Dumplings</span><span class="zh">虾饺</span><span class="price">¥28 · ≈$3.94</span><span class="how">Sit down for morning dim sum — har gow first, while it's hot.</span></span></button>
-<button type="button" class="story" onclick="checkDish('肠粉')"><span class="thumb"><img src="assets/dish-changfen.webp" alt="Rice Noodle Roll" width="64" height="64" loading="lazy"></span><span><span class="en">Rice Noodle Roll</span><span class="zh">肠粉</span><span class="price">¥20 · ≈$2.82</span><span class="how">Morning cheung fun. Add soy sauce to your taste.</span></span></button>
-</div>
-<p class="story-city">Shanghai</p>
-<div class="story-grid">
-<button type="button" class="story" onclick="checkDish('生煎包')"><span class="thumb"><img src="assets/dish-shengjianbao.webp" alt="Pan-Fried Buns" width="64" height="64" loading="lazy"></span><span><span class="en">Pan-Fried Buns</span><span class="zh">生煎包</span><span class="price">¥16 · ≈$2.25</span><span class="how">Queue in the morning for shengjian. Bite a small hole first, drink the soup — careful, it's hot.</span></span></button>
-<button type="button" class="story" onclick="checkDish('蟹粉小笼')"><span class="thumb"><img src="assets/dish-xiefenxiaolong.webp" alt="Crab Roe Soup Dumplings" width="64" height="64" loading="lazy"></span><span><span class="en">Crab Roe Soup Dumplings</span><span class="zh">蟹粉小笼</span><span class="price">¥38 · ≈$5.35</span><span class="how">Eat with ginger and vinegar, while it's hot. Lots of soup inside.</span></span></button>
-<button type="button" class="story" onclick="checkDish('红烧肉')"><span class="thumb"><img src="assets/dish-hongshaorou.webp" alt="Red-Braised Pork" width="64" height="64" loading="lazy"></span><span><span class="en">Red-Braised Pork</span><span class="zh">红烧肉</span><span class="price">¥45 · ≈$6.34</span><span class="how">White rice with red-braised pork. The sauce on the rice is the best part.</span></span></button>
-</div>
-<p class="small">Tap a signature dish to check it.</p>
-</div>
-</details>
+
+
 
 <details class="card" id="qrSection">
 <summary><span class="card-head"><h2>QR Order</h2><span class="card-sub">Scan, order, or show the slip — if the QR code won't open, use the order slip</span></span><span class="chev" aria-hidden="true">▾</span></summary>
@@ -1900,9 +1904,9 @@
 <input type="file" id="chatPhotoInput" accept="image/*" capture="environment" class="hidden" aria-label="Menu photo">
 </div>
 <nav class="bottomnav" aria-label="Bottom navigation">
-<a href="#chatView" data-view="chat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4V5z"/></svg><span>Chat</span></a>
-<a href="#decoder" data-view="dishes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Dishes</span></a>
-<a href="#citiesSection" data-view="cities"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span>Cities</span></a>
+<a href="#homeView" data-view="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/></svg><span>Home</span></a>
+<a href="#decoder" data-view="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></svg><span>Search</span></a>
+<a href="#qrSection" data-view="orders"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3z"/><path d="M9 8h6M9 12h6"/></svg><span>Orders</span></a>
 <a href="#kitPreview" data-view="account"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg><span>Account</span></a>
 </nav>
 
