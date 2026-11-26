@@ -768,7 +768,7 @@
     document.documentElement.setAttribute("data-theme", t);
     try { localStorage.setItem("chinabite_theme", t); } catch (e) {}
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute("content", t === "dark" ? "#0b0f14" : "#ffffff");
+    if (meta) meta.setAttribute("content", t === "dark" ? "#0A0E14" : "#ffffff");
     if (themeBtn) themeBtn.textContent = t === "dark" ? "\u2600" : "\uD83C\uDF19";
   }
   if (themeBtn) {
