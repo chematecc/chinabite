@@ -1616,27 +1616,23 @@
 </div>
 </header>
 <main>
+<section id="chatView" aria-label="Chat with Bun">
+<div class="chat-head">
+<img src="assets/china-bite-mascot-dumpling-288.webp" alt="Bun — your food friend in China" width="44" height="44">
+<div class="chat-head-text"><h1>Can I <em>eat this?</em></h1><p id="chatAiStatus">Bun answers from my 110-dish list · AI coming soon</p></div>
+<button type="button" class="ghost chat-tastes" id="chatTastesBtn">My tastes</button>
+</div>
+<div id="chatLog" class="chat-log" aria-live="polite"></div>
+<div id="chatChips" class="chat-chips" aria-label="Quick replies"></div>
+</section>
+
 <!-- Uber Eats-style search: grey pill bar + category chips, home view only. -->
 <div class="searchbar" id="searchBar" role="search">
 <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></svg>
 <input type="search" id="topSearch" placeholder="Search dishes — try Mapo Tofu" autocomplete="off" lang="en" aria-label="Search dishes">
 </div>
 <div class="cat-chips" id="catChips" aria-label="Browse by category"></div>
-<header class="hero" id="hero">
-<div class="hero-body">
-<img class="logo" src="assets/china-bite-mascot-dumpling-288.webp" alt="China Bite mascot — a cheerful dumpling holding chopsticks" width="56" height="56">
-<p class="hero-kicker">China Bite · 110 dishes · 10 cities · 12 diet cards</p>
-<h1>Can I <em>eat this?</em></h1>
-<p class="hero-zh">这道菜，我能吃吗？</p>
-<p class="slogan">Discover China, One Bite at a Time.</p>
-<p class="hero-hook">One photo. One tap. Dinner, sorted. — 拍一张，点一下，今晚吃什么就定了。</p>
-<img class="hero-img" src="assets/china-bite-hero-vertical.webp" alt="A cook prepares fresh noodles at a Shanghai street food stall" width="500" height="750" fetchpriority="high">
-<p class="pain">You just sat down. The waiter hands you a menu — all in Chinese. Even the QR code doesn't help.</p>
-<p class="pain-en">3 seconds to tell you if you can eat this dish. · 3 秒，告诉你这道菜能不能吃。</p>
-<p><button type="button" class="big" onclick="document.getElementById('storyDishes').scrollIntoView()">See signature dishes ↓</button></p>
-<div class="hero-stats"><span><b>110</b>dishes</span><span><b>10</b>cities</span><span><b>12</b>diet cards</span></div>
-</div>
-</header>
+
 
 
 
@@ -1775,24 +1771,9 @@
 <p class="small">Just a guide, not medical advice.<br>If you're not sure, don't eat it.</p>
 </section>
 
-<section class="card decoder-teaser" id="decoderTeaser">
-<h2>Not sure what to order?</h2>
-<p class="small">See a dish on the menu? Snap it and check if you can eat it.</p>
-<p><a class="btn-link" href="#decoder" data-goto="decoder">Snap the menu →</a></p>
-</section>
 
-<section class="card explore-card" id="exploreCard">
-<h2>Explore</h2>
-<p class="block-sub">Everything, in one place — no menu button needed.</p>
-<div class="explore-links">
-<a href="#qrSection" data-goto="qrSection">QR Order · 扫码点餐</a>
-<a href="#dietSection" data-goto="dietSection">Diet Cards · 饮食卡</a>
-<a href="#citiesSection" data-goto="citiesSection">Cities · 10 城</a>
-<a href="#meituanSection" data-goto="meituanSection">Meituan · 美团 / 点评</a>
-<a href="#kitPreview" data-goto="kitPreview">Kit Preview · 预览</a>
-<a href="#subscribe" data-goto="subscribe">Subscribe · 新菜先知道</a>
-</div>
-</section>
+
+
 
 
 
@@ -1900,10 +1881,18 @@
 <p class="small"><a href="README.md">README</a></p>
 </footer>
 </main>
+
+<div id="chatComposer" class="chat-composer">
+<button type="button" class="icon-ghost" id="chatCameraBtn" aria-label="Snap the menu">📷</button>
+<button type="button" class="icon-ghost" id="chatVoiceBtn" aria-label="Say it out loud">🎙</button>
+<input type="text" id="chatInput" placeholder="Ask Bun anything…" autocomplete="off" enterkeyhint="send" aria-label="Message Bun">
+<button type="button" id="chatSendBtn" aria-label="Send">➤</button>
+<input type="file" id="chatPhotoInput" accept="image/*" capture="environment" class="hidden" aria-label="Menu photo">
+</div>
 <nav class="bottomnav" aria-label="底部导航">
-<a href="#hero" data-view="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/></svg><span>Home</span></a>
-<a href="#decoder" data-view="decode"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></svg><span>Search</span></a>
-<a href="#qrSection" data-view="qr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5L6 21V3z"/><path d="M9 8h6M9 12h6"/></svg><span>Orders</span></a>
+<a href="#chatView" data-view="chat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4V5z"/></svg><span>Chat</span></a>
+<a href="#decoder" data-view="dishes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Dishes</span></a>
+<a href="#citiesSection" data-view="cities"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span>Cities</span></a>
 <a href="#kitPreview" data-view="account"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg><span>Account</span></a>
 </nav>
 
@@ -1930,6 +1919,7 @@
 
 <script src="data.js"></script>
 <script src="app.js"></script>
+<script src="chat.js"></script>
 <script>
 // Slip overlay mirrors the live slip preview.
 document.getElementById('showSlipBtn').addEventListener('click', function () {

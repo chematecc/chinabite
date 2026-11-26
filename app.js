@@ -266,12 +266,12 @@
         Array.prototype.forEach.call(chipsEl.children, function (x) { x.setAttribute("aria-pressed", "false"); });
         b.setAttribute("aria-pressed", "true");
         if (c[0] === "signature") {
-          showView("home");
+          showView("dishes");
           var sd = $("storyDishes"); if (sd) { sd.open = true; sd.scrollIntoView({ behavior: "smooth", block: "start" }); }
           return;
         }
         renderDishList(c[0], ($("topSearch") || { value: "" }).value);
-        showView("decode");
+        showView("dishes");
         var pk = $("dishPicker"); if (pk) { pk.open = true; pk.scrollIntoView({ behavior: "smooth", block: "start" }); }
       };
       chipsEl.appendChild(b);
@@ -283,7 +283,7 @@
     topSearch.addEventListener("keydown", function (e) {
       if (e.key !== "Enter") return;
       var d = findDish(topSearch.value);
-      if (d) { $("dishInput").value = d.zh; showView("decode"); decode(); }
+      if (d) { $("dishInput").value = d.zh; showView("dishes"); decode(); }
     });
   }
 
@@ -460,7 +460,8 @@
         $("cardOverlay").classList.remove("hidden");
       }
     }
-  })();
+
+})();
 
   // ---- Hotel address card (delivery) — saved on this device only ----
   (function hotelCard() {
@@ -744,20 +745,16 @@
     });
   }
 
-  // ---- App mode nav: views (v2.9 follow-up — homepage shows main content only) ----
-  // Homepage (v3.0) = Hero + Signature Dishes + 10-city entry + a small
-  // "拍菜单 · 去解码" teaser only. Decoder is NOT first — Oliver felt
-  // nothing from it as the homepage hero. It lives in its own decode view
-  // (bottom nav 解码) as the full decoder, plus the small teaser at the
-  // bottom of the homepage. Everything else lives in its own view, reached
-  // from the bottom nav or the menu; nothing is stacked into one long
-  // homepage anymore.
+  // ---- App mode nav: views (v4.0 — homepage IS the chat) ----
+  // v4.0: homepage = chat with Bun. No hero, no card-list homepage.
+  // Old sections stay in the DOM as the function layer behind the chat;
+  // Bun opens them via gotoSection() when the conversation needs them.
   // Views are show/hide only — all sections stay in the DOM, so decode,
   // deep links (#/dish/, #/diet/) and the order slip keep working.
-  var VIEW_SECTIONS = ["searchBar", "catChips", "hero", "decoder", "decoderTeaser", "storyDishes", "qrSection", "dietSection", "adSection", "kitPreview", "citiesSection", "meituanSection", "kitSection", "referral", "socialSearch", "subscribe", "exploreCard"];
+  var VIEW_SECTIONS = ["chatView", "chatComposer", "searchBar", "catChips", "decoder", "storyDishes", "qrSection", "dietSection", "adSection", "kitPreview", "citiesSection", "meituanSection", "kitSection", "referral", "socialSearch", "subscribe"];
   var VIEWS = {
-    home: ["searchBar", "catChips", "hero", "storyDishes", "citiesSection", "decoderTeaser"],
-    decode: ["decoder"],
+    chat: ["chatView", "chatComposer"],
+    dishes: ["searchBar", "catChips", "decoder", "storyDishes"],
     cities: ["citiesSection"],
     diet: ["dietSection"],
     account: ["kitPreview", "kitSection", "subscribe", "referral"],
@@ -766,8 +763,8 @@
     subscribe: ["subscribe"],
     more: ["referral", "socialSearch"]
   };
-  var SECTION_VIEW = { searchBar: "home", catChips: "home", hero: "home", decoder: "decode", decoderTeaser: "home", storyDishes: "home", qrSection: "qr", dietSection: "diet", adSection: "decode", kitPreview: "account", citiesSection: "cities", meituanSection: "meituan", kitSection: "account", referral: "account", socialSearch: "more", subscribe: "subscribe", exploreCard: "home" };
-  var currentView = "home";
+  var SECTION_VIEW = { chatView: "chat", chatComposer: "chat", searchBar: "dishes", catChips: "dishes", decoder: "dishes", storyDishes: "dishes", qrSection: "qr", dietSection: "diet", adSection: "dishes", kitPreview: "account", citiesSection: "cities", meituanSection: "meituan", kitSection: "account", referral: "account", socialSearch: "more", subscribe: "subscribe" };
+  var currentView = "chat";
   function showView(name) {
     var ids = VIEWS[name] || VIEWS.home;
     currentView = name;
@@ -778,10 +775,9 @@
       if (id === "adSection" && DEV_MODE) { el.classList.add("hidden"); return; }
       el.classList.toggle("hidden", ids.indexOf(id) < 0);
     });
-    // Home: signature dishes open so the homepage shows them; cities stay
-    // collapsed as an entry card (tap to expand the 10 cities).
+    // Dishes view: signature dishes open so the list shows them.
     var story = $("storyDishes");
-    if (story) story.open = (name === "home");
+    if (story) story.open = (name === "dishes");
     window.scrollTo(0, 0);
     document.querySelectorAll(".bottomnav a").forEach(function (x) {
       x.classList.toggle("active", x.getAttribute("data-view") === name);
@@ -792,7 +788,7 @@
   function gotoSection(id) {
     var el = $(id);
     if (!el) return;
-    showView(SECTION_VIEW[id] || "home");
+    showView(SECTION_VIEW[id] || "chat");
     if (el.tagName === "DETAILS") el.open = true;
     el.scrollIntoView({ behavior: "smooth", block: "start" });
   }
@@ -802,7 +798,7 @@
   // render inside the hidden decoder and the user would see nothing.
   window.checkDish = function (zh) {
     $("dishInput").value = zh;
-    showView("decode");
+    showView("dishes");
     decode();
     var sec = $("decoder");
     if (sec) sec.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -821,16 +817,16 @@
   });
   var appTitle = $("appTitle");
   if (appTitle) {
-    var goHome = function () { showView("home"); };
+    var goHome = function () { showView("chat"); };
     appTitle.addEventListener("click", goHome);
     appTitle.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); goHome(); } });
   }
-  // First paint: homepage, unless a deep link asked for a dish or diet card.
+  // First paint: chat, unless a deep link asked for a dish or diet card.
   (function initView() {
     var h = location.hash || "";
     if (/^#\/diet\//.test(h)) showView("diet");
-    else if (/^#\/dish\//.test(h)) showView("decode");
-    else showView("home");
+    else if (/^#\/dish\//.test(h)) showView("dishes");
+    else showView("chat");
   })();
 
   // ---- Paid preview toggle (no real payment) ----
@@ -890,4 +886,41 @@
     var kitSub = $("kitPreviewSub");
     if (kitSub) kitSub.textContent = "开发模式：Kit 全开预览 — 110 道菜 · 12 张卡 · 10 城全部可见。";
   }
+    // ---- v4.0: minimal public API for the chat layer (chat.js) ----
+  // The chat is the homepage now; it answers through these, so the
+  // verdict / order / voice / OCR logic stays in one place (here).
+  // LLM hook lives in chat.js (sendToAssistant -> Worker /api/chat);
+  // this file only exposes the local tools the chat needs.
+  function recognizePhoto(file) {
+    return new Promise(function (resolve) {
+      var reader = new FileReader();
+      reader.onload = function () {
+        loadOCR().then(function (ok) {
+          if (!ok || !window.Tesseract) return resolve({ dish: null, confidence: 0, reason: "no-ocr" });
+          return window.Tesseract.recognize(reader.result, "eng+chi_sim", { logger: function () {} }).then(function (res) {
+            var conf = res && res.data ? res.data.confidence : 0;
+            var dish = matchOcrText(res && res.data ? res.data.text : "");
+            resolve({ dish: dish || null, confidence: conf, reason: dish ? "ok" : "no-match" });
+          }).catch(function () { resolve({ dish: null, confidence: 0, reason: "ocr-error" }); });
+        });
+      };
+      reader.onerror = function () { resolve({ dish: null, confidence: 0, reason: "read-error" }); };
+      reader.readAsDataURL(file);
+    });
+  }
+  window.ChinaBite = {
+    D: D, DEV_MODE: DEV_MODE,
+    findDish: findDish, verdictFor: verdictFor, renderResult: renderResult,
+    checkDish: window.checkDish, gotoSection: gotoSection, showView: showView,
+    addToOrder: addToOrder, speakInto: speakInto, recognizePhoto: recognizePhoto,
+    usd: usd, esc: esc, containsEn: containsEn, spiceLabel: spiceLabel,
+    dishInCat: dishInCat, SIGNATURE_IDS: SIGNATURE_IDS, HALAL_IDS: HALAL_IDS,
+    getProfile: function () { return profile; },
+    setProfile: function (id) {
+      var i = -1;
+      D.profiles.forEach(function (p, idx) { if (p.id === id) i = idx; });
+      if (i >= 0 && profEl.children[i]) profEl.children[i].click();
+    }
+  };
+
 })();
