@@ -61,8 +61,8 @@ a{color:var(--accent)}
 .appbar-title{font-size:20px;font-weight:800;letter-spacing:-.01em;flex:1;min-width:0}
 .theme-btn{flex:0 0 auto;width:44px;min-height:44px;padding:0;font-size:20px;line-height:1;border-radius:50%;background:var(--card2);color:var(--ink);border:1px solid var(--line);box-shadow:none;margin:0}
 .appbar-inner button#menuBtn{margin:0}
-.app-menu{padding:4px 0 12px}
-.app-menu a{display:block;padding:12px 4px;font-size:16px;font-weight:700;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line)}
+.app-menu{position:fixed;left:50%;transform:translateX(-50%);bottom:76px;width:100%;max-width:480px;background:var(--card);border:1px solid var(--line);border-bottom:0;border-radius:22px 22px 0 0;box-shadow:0 -4px 24px rgba(15,23,42,.18);padding:8px 20px calc(12px + env(safe-area-inset-bottom));z-index:45}
+.app-menu a{display:block;padding:14px 4px;font-size:16px;font-weight:700;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line);min-height:48px}
 .app-menu a:last-child{border-bottom:0}
 
 /* ---- Bottom nav (fixed) ---- */
@@ -169,3 +169,13 @@ footer{padding:8px 4px;border-top:1px solid var(--line)}
 .kit{font-size:19px;font-weight:800}
 .city-img{width:100%;height:200px;object-fit:cover;display:block;margin:10px 0;border-radius:14px}
 .btn-link{display:block;text-align:center;background:var(--accent);color:var(--accent-ink);font-weight:800;padding:14px 20px;font-size:18px;min-height:56px;text-decoration:none;margin:4px 0;border-radius:12px}
+
+/* ---- One-handed: thumb cluster (theme + menu), bottom-right above bottom nav ---- */
+.thumb-cluster{position:fixed;right:12px;bottom:76px;display:flex;flex-direction:column;gap:10px;z-index:45}
+.thumb-cluster .theme-btn{width:52px;height:52px;min-height:52px;font-size:22px;border-radius:50%;background:var(--card);color:var(--ink);border:1px solid var(--line-strong);box-shadow:var(--shadow);margin:0;padding:0}
+.thumb-cluster #menuBtn{font-size:20px}
+/* ---- Camera-first decode ---- */
+.camera-btn{background:var(--accent)}
+#photoPreview img{margin-top:4px}
+#manualInput summary{cursor:pointer;font-weight:700;list-style:none}
+#manualInput summary::-webkit-details-marker{display:none}

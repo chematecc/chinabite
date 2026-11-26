@@ -426,6 +426,35 @@
   // PLACEHOLDER — no server, invites not verified.
   $("inviteCount").textContent = "0 (placeholder)";
 
+
+  // ---- 相机查菜 (v2.7 补充：相机是主入口，文字输入只是折叠备用) ----
+  // web 版只有前端入口 + 流程：拍照后在下面出预览，并如实说明 OCR 未接通。
+  // 真 OCR（拍菜单 -> 识别菜名 -> 出 verdict）是 App 阶段的原生功能，
+  // 不要编造已接通。拍完后自动展开 110 道菜快选，点一道就能出结论。
+  var cameraBtn = $("cameraBtn"), photoInput = $("photoInput");
+  if (cameraBtn && photoInput) {
+    cameraBtn.onclick = function () { photoInput.click(); };
+    photoInput.addEventListener("change", function () {
+      var f = photoInput.files && photoInput.files[0];
+      if (!f) return;
+      var reader = new FileReader();
+      reader.onload = function () {
+        var prev = $("photoPreview"), st = $("photoStatus");
+        if (prev) {
+          prev.classList.remove("hidden");
+          prev.innerHTML = '<img src="' + reader.result + '" alt="菜单照片" style="width:100%;border-radius:14px;display:block">';
+        }
+        if (st) {
+          st.classList.remove("hidden");
+          st.textContent = "照片已拍好，存在本机，不上传。OCR 识别是 App 阶段的原生功能，web 版暂未接通 — 点下面任意一道菜，马上出结论；也可以展开「手动输入」打字查。";
+        }
+        var picker = $("dishPicker");
+        if (picker) picker.open = true;
+      };
+      reader.readAsDataURL(f);
+    });
+  }
+
   // ---- Counts ----
   function updateCounts() {
     // PAYWALL：DEV_MODE 下显示无限，不显示剩余次数/广告进度。
