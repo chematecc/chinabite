@@ -145,7 +145,7 @@
           "name": "Is it free?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "3 free checks a day. Watch a 5s ad: +3. Paid unlock $6.99, 90 days."
+            "text": "3 free checks a day. Watch a 5s ad: +3. Paid unlock $6.99 for 90 days — details in Account."
           }
         },
         {
@@ -1631,7 +1631,19 @@
 <div class="grid" id="homeDishList"></div>
 <p class="small price-note">Prices are reference only — mid-range local restaurant, Tier-1 city.</p>
 </div>
-<div class="hero-banner browse-block"><img src="assets/china-bite-hero-v55.webp" alt="A round table of elegant Chinese banquet dishes — bamboo steamers of dim sum, soups and greens on dark wood" width="800" height="320" fetchpriority="high"></div>
+<!-- v6.2: hero is a 3-photo carousel (banquet / Peking duck / flat-lay feast), auto-rotates every 4.5s, dots + swipe, pauses 12s after any interaction. All 3 slides are plain <img> in the DOM so they preload — no white flash on switch. No video, no sound. -->
+<div class="hero-banner browse-block" id="heroCarousel" role="region" aria-roledescription="carousel" aria-label="Chinese food photos">
+<div class="hero-slides">
+<img class="hero-slide is-active" src="assets/china-bite-hero-v55.webp" alt="A round table of elegant Chinese banquet dishes — bamboo steamers of dim sum, soups and greens on dark wood" width="800" height="320" fetchpriority="high" decoding="async">
+<img class="hero-slide" src="assets/china-bite-hero-v62-duck.webp" alt="Peking duck with pancakes, cucumber, scallion and sauces, seen from above" width="800" height="320" decoding="async">
+<img class="hero-slide" src="assets/china-bite-hero-v62-flatlay.webp" alt="A wooden table covered with Chinese dishes — roast chicken, soups, greens and rice" width="800" height="320" decoding="async">
+</div>
+<div class="hero-dots" role="group" aria-label="Choose hero photo">
+<button type="button" class="hero-dot is-active" data-hero-dot="0" aria-label="Photo 1: banquet table" aria-current="true"></button>
+<button type="button" class="hero-dot" data-hero-dot="1" aria-label="Photo 2: Peking duck"></button>
+<button type="button" class="hero-dot" data-hero-dot="2" aria-label="Photo 3: family-style dishes"></button>
+</div>
+</div>
 <p class="value-prop browse-block">The menu is in Chinese. Bun tells you what it is, if you can eat it, and how to order it — in 3 seconds.</p>
 <button type="button" class="ask-bun browse-block" id="askBunBtn" data-view="chat"><img src="assets/china-bite-mascot-dumpling-288.webp" alt="Bun" width="32" height="32"><span><b>Ask Bun</b></span></button>
 <details class="home-sec browse-block" id="homeSignature" open>
@@ -1644,7 +1656,7 @@
 <summary><span class="card-head"><h2>10 Cities</h2><span class="card-sub">3 must-eats per city.</span></span><span class="chev" aria-hidden="true">▾</span></summary>
 <div class="city-row" id="homeCityRow"></div>
 </details>
-<p class="browse-block home-drinks-link"><button type="button" class="ghost" data-goto="drinksSection">🍺 Drinks &amp; beer</button></p>
+<p class="browse-block home-drinks-link"><button type="button" class="ghost" data-goto="drinksSection">🍺 Drinks &amp; beer — how to order it iced</button></p>
 </section>
 <section id="chatView" aria-label="Chat with Bun">
 <button type="button" class="ghost back-home" id="backHomeBtn" data-view="home">← Home</button>
@@ -1711,6 +1723,7 @@
 <p><b>No Chinese?</b> The slip below is big Chinese text — show the screen, no talking needed.</p>
 <p><b>Pay at the counter</b> — Alipay, WeChat, or cash. The slip says how you'll pay.</p>
 <p><b>Want more?</b> Add another dish the same way — the total updates by itself.</p>
+<p><b>Thirsty?</b> Drinks come room temp in China — beer, Coke, water. The Drinks section shows how to ask for them iced.</p>
 </div>
 <h3>Before your first meal</h3>
 <p class="small" id="payProgress" role="status">0 of 4 ready</p>
@@ -1792,23 +1805,9 @@
 <p>Up to 5 a day — that's 15 extra.</p>
 <p class="small">Just a demo — no real money here.</p>
 <p><button type="button" id="watchAdBtn">Watch ad · +3</button></p>
-<p><button type="button" class="ghost" data-goto="paySection">Go ad-free — unlock for $6.99</button></p>
+<p><button type="button" class="ghost" data-view="account">Remove ads — register in Account</button></p>
 <p><label><input type="checkbox" id="paidToggle"> Preview paid (no ads)</label></p>
 <p class="small" id="paidNote">Free version. Demo ads on.</p>
-</div>
-</details>
-
-<!-- v6.1: Account no longer says "Kit" — this is the paid unlock card.
-     Payment is NOT connected yet (no Stripe product): the button below
-     goes to the sign-up form, it does not fake a checkout. -->
-<details class="card" id="paySection" open>
-<summary><span class="card-head"><h2>Unlock — $6.99</h2><span class="card-sub">90 days · unlimited · no ads</span></span><span class="chev" aria-hidden="true">▾</span></summary>
-<div class="card-body">
-<p><b>110 dishes, with photos and prices. 12 diet cards. 10 cities.</b></p>
-<p>Unlimited checks, no ads. One payment, 90 days — no subscription.</p>
-<p><b>Paid — no ads.</b> Free users see ads; paying removes them everywhere.</p>
-<p class="small" id="payStatus">Payments aren't open yet — we're still connecting Stripe. Leave your email below and we'll tell you the moment you can pay. No charge until then.</p>
-<p><button type="button" class="big" data-goto="subscribe">Leave your email — tell me when payments open</button></p>
 </div>
 </details>
 
@@ -1873,26 +1872,30 @@
 </div>
 </details>
 
-<details class="card" id="subscribe">
-<summary><span class="card-head"><h2 id="subTitle">Sign up.</h2><span class="card-sub">Your email is your account — no password</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<!-- v6.1: Account is one clean page — Register on top, then Share, Invite,
+     FAQ. No Kit zone, no separate paid zone: the unlock line lives inside
+     this Register card (paid — no ads, written next to it). -->
+<details class="card" id="subscribe" open>
+<summary><span class="card-head"><h2 id="subTitle">Register.</h2><span class="card-sub">Free — no password, nothing to install</span></span><span class="chev" aria-hidden="true">▾</span></summary>
 <div class="card-body">
 <img class="sub-mascot" src="assets/china-bite-mascot-dumpling-288.webp" alt="China Bite mascot — a cheerful dumpling holding chopsticks" width="56" height="56" loading="lazy">
-<p id="subLine">Your email is your account — no password. One email when there's something new, nothing else.</p>
+<p id="subLine">Your email is your account. We email you when there's something new — nothing else.</p>
 <form id="subscribeForm" novalidate>
 <label for="subscribeEmail">Email</label>
 <input type="email" id="subscribeEmail" class="blink-input" placeholder="you@example.com" autocomplete="email" required>
 <label for="subscribeLang">Language</label>
 <select id="subscribeLang">
 <option value="en" selected>English</option>
-<option value="zh">中文</option>
-<option value="ja">日本語</option>
-<option value="ko">한국어</option>
-<option value="de">Deutsch</option>
-<option value="fr">Français</option>
+<option value="zh">Chinese</option>
+<option value="ja">Japanese</option>
+<option value="ko">Korean</option>
+<option value="de">German</option>
+<option value="fr">French</option>
 </select>
 <p><button type="submit" class="big" id="subscribeBtn">Subscribe</button></p>
 </form>
 <p class="small" id="subPrivacy">Only China Bite updates. No marketing. Unsubscribe anytime.</p>
+<p><b>Unlock — $6.99, one time, 90 days:</b> 110 dishes with photos and prices, 12 diet cards, 10 cities. Unlimited checks, no ads. Payments aren't open yet — leave your email above and we'll tell you the moment you can pay. No charge until then.</p>
 <p class="small hidden" id="subscribeMsg" role="status"></p>
 <div id="subscribeDone" class="hidden">
 <img class="sub-mascot" src="assets/china-bite-mascot-dumpling-288.webp" alt="China Bite mascot — a cheerful dumpling holding chopsticks" width="56" height="56" loading="lazy">
@@ -1903,21 +1906,28 @@
 </details>
 
 
+<details class="card" id="shareSection">
+<summary><span class="card-head"><h2>Share</h2><span class="card-sub">Tap one — it opens that app with your link ready to send</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<div class="card-body">
+<div class="share-row" id="shareRow">
+<a class="share-btn" id="shareXBtn" href="#" target="_blank" rel="noopener">X</a>
+<a class="share-btn" id="shareFbBtn" href="#" target="_blank" rel="noopener">Facebook</a>
+<a class="share-btn" id="shareWaBtn" href="#" target="_blank" rel="noopener">WhatsApp</a>
+</div>
+<p class="small">Direct share — X, Facebook, WhatsApp. Instagram and TikTok have no web share link, so they're not here.</p>
+</div>
+</details>
+
 <details class="card" id="referral">
-<summary><span class="card-head"><h2>Share &amp; Invite</h2><span class="card-sub">Share your link — friends get 6 free decodes</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<summary><span class="card-head"><h2>Invite</h2><span class="card-sub">Your link — friends get 6 free decodes</span></span><span class="chev" aria-hidden="true">▾</span></summary>
 <div class="card-body">
 <p>Code: <code id="myRef">—</code></p>
 <p>Link: <code id="refLink">—</code></p>
 <p><button type="button" id="copyRefBtn">Copy link</button></p>
 <p id="refNote"></p>
 <p>Friends invited: <span id="inviteCount">0</span></p>
-<p><b>Share it directly:</b></p>
-<div class="share-row" id="shareRow">
-<a class="share-btn" id="shareXBtn" href="#" target="_blank" rel="noopener">X</a>
-<a class="share-btn" id="shareFbBtn" href="#" target="_blank" rel="noopener">Facebook</a>
-<a class="share-btn" id="shareWaBtn" href="#" target="_blank" rel="noopener">WhatsApp</a>
 </div>
-<p class="small">Tap one — it opens that app with your link ready to send.</p>
+</details>
 </div>
 </details>
 
@@ -1950,15 +1960,15 @@
 </details>
 <details class="faq-item" id="faq-free">
 <summary>How many free checks do I get?</summary>
-<p>3 free checks a day. A friend's link gets you 6. Watch a 5-second ad for +3 more, up to 5 ads a day. Paid unlock is $6.99 for 90 days: unlimited checks, no ads.</p>
+<p>3 free checks a day. A friend's link gets you 6. Watch a 5-second ad for +3 more, up to 5 ads a day. Paid unlock — see Register above.</p>
 </details>
 <details class="faq-item" id="faq-kit">
 <summary>What do I get when I pay $6.99?</summary>
-<p>$6.99, one time, 90 days. 110 dishes with photos and prices, 12 diet cards, 10 cities, QR ordering help. No ads, no subscription.</p>
+<p>One payment, 90 days — what's included and the payment status are in Register at the top of this page.</p>
 </details>
 <details class="faq-item" id="faq-invite">
 <summary>How does inviting friends work?</summary>
-<p>Share your link — friends get 6 free checks, and you get +3 for each friend who finishes their first check. Honest note: there's no server checking this yet, so sharing isn't the same as a verified invite.</p>
+<p>Your link gives friends 6 free checks, and you get +3 for each friend who finishes their first check. Honest note: there's no server checking this yet, so sharing isn't the same as a verified invite.</p>
 </details>
 <details class="faq-item" id="faq-address">
 <summary>Are the restaurant addresses verified?</summary>
@@ -2023,5 +2033,6 @@
 <script src="drinks.js"></script>
 <script src="app.js"></script>
 <script src="chat.js"></script>
+<script src="hero.js"></script>
 </body>
 </html>
