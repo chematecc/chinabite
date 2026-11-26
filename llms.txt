@@ -14,6 +14,11 @@
 - QR ordering help: 80%+ of Chinese restaurants use QR ordering in WeChat.
 - 12 big Chinese diet cards to show the waiter. Works offline.
 
+## Drinks (21)
+
+- Beer: Tsingtao 青岛啤酒 ¥10 · Snow 雪花啤酒 ¥8 · Yanjing 燕京啤酒 ¥8 · Harbin 哈尔滨啤酒 ¥10 · Budweiser 百威啤酒 ¥12. Soft drinks: Coca-Cola 可口可乐 ¥8 · Sprite 雪碧 ¥8 · Fanta 芬达 ¥8 · Mineral Water 矿泉水 ¥3 · Coconut Water 椰汁 ¥10. Tea: Green Tea 绿茶 ¥15 · Jasmine Tea 茉莉花茶 ¥15 · Black Tea 红茶 ¥15 · Iced Black Tea 冰红茶 ¥8. Juice & traditional: Orange Juice 橙汁 ¥12 · Fresh Orange Juice 现榨橙汁 ¥18 · Sour Plum Drink 酸梅汤 ¥10 · Soy Milk 豆浆 ¥6. Spirits: Baijiu 白酒 from ¥30 · Red Wine 红酒 from ¥88 · Yellow Wine 黄酒 ¥25.
+- Prices are reference only — same basis as dishes (mid-range local restaurant, Tier-1 city, ¥→$ at 7.1).
+
 ## Dishes (110)
 
 - 麻婆豆腐 (Má pó dòufu) — Mapo Tofu: Tofu, minced pork, chili bean paste. Spice 3/3. ¥28

@@ -1192,11 +1192,14 @@
   // dishes — no second ordering system).
   var drinkCat = "all";
   var drinkTemp = {}; // drink id -> picked temp key (default = drink.defaultTemp)
+  // Temp chips are user-facing UI, so they read English only — the
+  // Chinese temp word lives in the big order sentence below, which is
+  // what the waiter sees.
   function tempLabel(dr, t) {
-    if (t === "iced") return "Iced · " + (dr.icedWord || "冰");
-    if (t === "room") return "Room temp · 常温";
-    if (t === "hot") return "Hot · 热";
-    return "Warm · 温";
+    if (t === "iced") return "Iced";
+    if (t === "room") return "Room temp";
+    if (t === "hot") return "Hot";
+    return "Warm";
   }
   function drinkOrderSentence(dr, temp) {
     var w = temp === "iced" ? (dr.icedWord || "冰") : temp === "room" ? "常温" : temp === "hot" ? "热" : "温";
@@ -1297,7 +1300,7 @@
     res.className = "subcard";
     res.innerHTML =
       '<div class="verdict ok">Drink — ' + esc(dr.en) + " (" + esc(dr.zh) + ")</div>" +
-      "<p><b>Heads up:</b> drinks come room temp in China unless you ask. Pick iced below and the order line says so in Chinese.</p>" +
+      "<p>Pick iced below — the order line says so in Chinese.</p>" +
       "<p><b>About:</b> ¥" + dr.price + " · ≈$" + usd(dr.price) + "</p>" +
       '<p class="small price-note">' + esc(PRICE_BASIS) + "</p>" +
       drinkCardHTML(dr, "res") +
