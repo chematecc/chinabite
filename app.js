@@ -588,6 +588,26 @@
     updateCounts();
   };
 
+
+  // ---- 白天 / 黑夜模式 (v2.7) ----
+  // 默认跟随系统 (prefers-color-scheme)，用户手动切换后记在 localStorage；
+  // <head> 里的内联脚本在 CSS 加载前就按同一规则定好 data-theme，避免闪烁。
+  var themeBtn = $("themeBtn");
+  function applyTheme(t) {
+    document.documentElement.setAttribute("data-theme", t);
+    try { localStorage.setItem("chinabite_theme", t); } catch (e) {}
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute("content", t === "dark" ? "#0b0f14" : "#ffffff");
+    if (themeBtn) themeBtn.textContent = t === "dark" ? "\u2600" : "\uD83C\uDF19";
+  }
+  if (themeBtn) {
+    themeBtn.onclick = function () {
+      var cur = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+      applyTheme(cur === "dark" ? "light" : "dark");
+    };
+    applyTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light");
+  }
+
   // ---- DEV MODE 初始化：页面标记 + 解锁展示（付费逻辑本身不动，只绕过） ----
   // 角标 #devBadge、锁文案 .paywall-lock、Kit 全开提示 #kitDevNote 都在 index.html；
   // DEV_MODE=false 时角标隐藏、锁文案恢复显示、广告区恢复显示。

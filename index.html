@@ -9,7 +9,7 @@
 <link rel="canonical" href="https://chinabite.chinavisacheck.com/">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="author" content="China Bite · Leapsun Partners Pte. Ltd.">
-<meta name="theme-color" content="#14110d">
+<meta name="theme-color" content="#ffffff">
 <link rel="icon" type="image/webp" href="assets/china-bite-mascot-dumpling-288.webp">
 <link rel="apple-touch-icon" href="assets/china-bite-mascot-dumpling-288.webp">
 <link rel="alternate" hreflang="x-default" href="https://chinabite.chinavisacheck.com/">
@@ -38,6 +38,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="China Bite">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
+<script>try{var _t=localStorage.getItem('chinabite_theme');if(!_t)_t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';document.documentElement.setAttribute('data-theme',_t);}catch(e){document.documentElement.setAttribute('data-theme','light');}</script>
 <link rel="stylesheet" href="styles.css">
 <script type="application/ld+json">
 {
@@ -1608,11 +1609,12 @@
 <img src="assets/china-bite-mascot-dumpling-288.webp" alt="Bun — China Bite mascot" width="32" height="32">
 <span class="appbar-title">China Bite</span>
 <span class="dev-badge hidden" id="devBadge" title="开发模式：全部功能解锁。最终交付时把 app.js 里 DEV_MODE 设 false">DEV · 开发模式</span>
+<button type="button" id="themeBtn" class="theme-btn" aria-label="切换白天 / 黑夜模式" title="白天 / 黑夜">🌙</button>
 <button type="button" id="menuBtn" aria-expanded="false" aria-controls="appMenu">☰ 菜单</button>
 </div>
 <nav id="appMenu" class="app-menu hidden" aria-label="全部内容">
 <a href="#decoder" data-goto="decoder">解码 · 查菜</a>
-<a href="#storyDishes" data-goto="storyDishes">每城 3 道 · 故事菜</a>
+<a href="#storyDishes" data-goto="storyDishes">招牌菜 · Signature Dishes</a>
 <a href="#qrSection" data-goto="qrSection">扫码点餐</a>
 <a href="#dietSection" data-goto="dietSection">饮食卡</a>
 <a href="#citiesSection" data-goto="citiesSection">10 城</a>
@@ -1638,9 +1640,9 @@
 </div>
 </header>
 
-<section class="block block-decoder" id="decoder">
-<p class="sec-kicker">01 — The main event</p>
+<section class="card card-decoder" id="decoder">
 <h2>Decode · 查菜</h2>
+
 <div class="count-slim">
 <p id="countText">Left today: 3 of 3</p>
 <div class="progress"><div id="countBar" style="width:100%"></div></div>
@@ -1661,9 +1663,9 @@
 <p class="small">Guide only. Not medical advice.<br>Can't confirm? Don't eat it.</p>
 </section>
 
-<section class="block" id="storyDishes">
-<h2>Stories · 每城 3 道</h2>
-<p class="block-sub">朋友先带你吃的菜 — a friend in China would take you to these first.</p>
+<details class="card" id="storyDishes">
+<summary><span class="card-head"><h2>Signature Dishes · 招牌菜</h2><span class="card-sub">9 道招牌菜 — 每城 3 道，都是当地人先带你吃的菜</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<div class="card-body">
 <p class="swipe-hint">Swipe sideways to see more &rarr; 左右滑动看更多</p>
 <p class="story-city">成都 Chengdu</p>
 <div class="story-grid">
@@ -1683,12 +1685,13 @@
 <button type="button" class="story" onclick="document.getElementById('dishInput').value='蟹粉小笼';document.getElementById('decodeBtn').click();document.getElementById('decoder').scrollIntoView()"><span class="thumb"><img src="assets/dish-xiefenxiaolong.webp" alt="Crab Roe Soup Dumplings" width="64" height="64" loading="lazy"></span><span><span class="zh">蟹粉小笼</span><span class="en">Crab Roe Soup Dumplings</span><span class="how">你配一碟姜丝醋，趁热吃，汤多小心烫。</span></span></button>
 <button type="button" class="story" onclick="document.getElementById('dishInput').value='红烧肉';document.getElementById('decodeBtn').click();document.getElementById('decoder').scrollIntoView()"><span class="thumb"><img src="assets/dish-hongshaorou.webp" alt="Red-Braised Pork" width="64" height="64" loading="lazy"></span><span><span class="zh">红烧肉</span><span class="en">Red-Braised Pork</span><span class="how">你一碗白饭配红烧肉，汤汁拌饭最香。</span></span></button>
 </div>
-<p class="small">Tap a dish to check it. 1 free decode each.</p>
-</section>
+<p class="small">Tap a signature dish to check it. 点一道招牌菜，直接出结论。</p>
+</div>
+</details>
 
-<section class="block" id="qrSection">
-<h2>QR Order · 扫码点餐</h2>
-<p class="block-sub">扫码、代点单、清单</p>
+<details class="card" id="qrSection">
+<summary><span class="card-head"><h2>QR Order · 扫码点餐</h2><span class="card-sub">扫码、代点单、清单 — 扫码打不开就用代点单</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<div class="card-body">
 <p>80%+ restaurants: scan, order, pay.</p>
 <p>Pay first. Then they cook.</p>
 <h3>Route A — Mini-program opens</h3>
@@ -1713,30 +1716,34 @@
 <div id="orderList"></div>
 <h3>Before your first meal · 准备</h3>
 <div id="payChecks"></div>
-</section>
+</div>
+</details>
 
-<section class="block" id="dietSection">
-<h2>Diet Cards · 饮食卡</h2>
-<p class="block-sub">12 张，给服务员看</p>
+<details class="card" id="dietSection">
+<summary><span class="card-head"><h2>Diet Cards · 饮食卡</h2><span class="card-sub">12 张饮食卡 — 给服务员看，不用说话</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<div class="card-body">
 <img class="mascot-mini" src="assets/china-bite-mascot-dumpling-288.webp" alt="China Bite mascot — a cheerful dumpling holding chopsticks" width="32" height="32" loading="lazy">
 <p>Tap to show big. No talking needed.</p>
 <p>Works offline.</p>
 <div id="dietCards"></div>
-</section>
+</div>
+</details>
 
-<section class="block block-ad" id="adSection">
-<p class="sec-kicker">Free decodes</p>
-<h2>赚次数 · Free Decodes</h2>
+<details class="card" id="adSection">
+<summary><span class="card-head"><h2>赚次数 · Free Decodes</h2><span class="card-sub">看 5 秒广告 +3 次 — 开发模式下已隐藏</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<div class="card-body">
 <p><b>Watch 5s. Get +3.</b></p>
 <p>Max 5/day. +15 total.</p>
 <p class="small">Demo ad only. No real revenue.</p>
 <p><button type="button" id="watchAdBtn">Watch ad · +3</button></p>
 <p><label><input type="checkbox" id="paidToggle"> Preview paid (no ads)</label></p>
 <p class="small" id="paidNote">Free version. Demo ads on.</p>
-</section>
+</div>
+</details>
 
-<section class="block" id="kitPreview">
-<h2>Kit Preview · 预览</h2>
+<details class="card" id="kitPreview">
+<summary><span class="card-head"><h2>Kit Preview · 预览</h2><span class="card-sub">1 道菜、1 张卡、1 城样本 — 其余 Kit 解锁</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<div class="card-body">
 <p class="block-sub" id="kitPreviewSub">1 dish, 1 card, 1 city. Rest locked.</p>
 <p><b>1 dish, full.</b> 麻婆豆腐 — verdict, inside, hidden, spice, price.</p>
 <p><b>1 card, full.</b> Peanut allergy — 3 lines, big Chinese.</p>
@@ -1746,19 +1753,21 @@
 <p class="paywall-lock">110 dishes · 12 cards · 10 cities — Kit only.</p>
 <p><a class="btn-link" href="mailto:hello@chinavisacheck.com?subject=China%20Bite%20Kit%20—%20notify%20me%20at%20launch&body=Hi%2C%20please%20tell%20me%20when%20the%20China%20Bite%20Kit%20is%20ready.">Kit $6.99 · 90 days</a></p>
 <p class="small">No payment here. Email only.</p>
-</section>
+</div>
+</details>
 
-<section class="block" id="citiesSection">
-<h2>Cities · 10 城</h2>
-<p class="block-sub">10 城，每城 3 道</p>
+<details class="card" id="citiesSection">
+<summary><span class="card-head"><h2>Cities · 10 城</h2><span class="card-sub">10 城，每城 3 道必吃</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<div class="card-body">
 <p>10 cities.</p>
 <p>Sample only. Address not verified.</p>
 <div id="cityList"></div>
-</section>
+</div>
+</details>
 
-<section class="block" id="meituanSection">
-<h2>Meituan · Dianping · Delivery</h2>
-<p class="block-sub">Find it. Then order it.</p>
+<details class="card" id="meituanSection">
+<summary><span class="card-head"><h2>Meituan · Dianping · Delivery</h2><span class="card-sub">点评选店、美团外卖、酒店地址卡</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<div class="card-body">
 <p><b>Dianping = choose.</b> Score, photos, price per person, Must-Eat List.</p>
 <p><b>Meituan = get.</b> Delivery to your hotel. Groceries too.</p>
 <p>Same company. Same shop data. Two jobs.</p>
@@ -1791,37 +1800,44 @@
 <input type="text" id="hotelRoom" placeholder="e.g. 1204房" autocomplete="off" lang="zh-CN">
 <p><button type="button" id="copyHotelBtn">Copy hotel card · 复制地址卡</button></p>
 <p class="small">Saved on this device only.</p>
-</section>
+</div>
+</details>
 
-<section class="block block-kit" id="kitSection">
-<p class="sec-kicker">Kit — $6.99 · 90 days</p>
-<h2>Kit · $6.99</h2>
+<details class="card" id="kitSection">
+<summary><span class="card-head"><h2>Kit · $6.99</h2><span class="card-sub">110 道菜 · 12 张卡 · 10 城 — $6.99 / 90 天</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<div class="card-body">
 <p class="kit">110 dishes. 12 cards. 10 cities.</p>
 <p>90 days. No ads.</p>
 <p><a class="btn-link" href="mailto:hello@chinavisacheck.com?subject=China%20Bite%20Kit%20—%20notify%20me%20at%20launch&body=Hi%2C%20please%20tell%20me%20when%20the%20China%20Bite%20Kit%20is%20ready.">Notify me · 上线通知我</a></p>
 <p class="small">No payment here. Email only.</p>
-</section>
+</div>
+</details>
 
-<section class="block" id="referral">
-<h2>Share &amp; Invite · 分享</h2>
+<details class="card" id="referral">
+<summary><span class="card-head"><h2>Share &amp; Invite · 分享</h2><span class="card-sub">分享链接，好友多得 3 次</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<div class="card-body">
 <p>Code: <code id="myRef">—</code></p>
 <p>Link: <code id="refLink">—</code></p>
 <p><button type="button" id="copyRefBtn">Copy link</button></p>
 <p id="refNote"></p>
 <p>Friends invited: <span id="inviteCount">0</span></p>
 <p class="small"><b>Note:</b> No server here. Invites not verified. Sharing ≠ invite.</p>
-</section>
+</div>
+</details>
 
-<section class="block" id="socialSearch">
-<h2>Find us · 搜我们</h2>
+<details class="card" id="socialSearch">
+<summary><span class="card-head"><h2>Find us · 搜我们</h2><span class="card-sub">#ChinaBite — 在 IG / TikTok / X 搜菜名</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<div class="card-body">
 <p>Search a dish name on IG / TikTok / X.</p>
 <p><b>#ChinaBite</b></p>
 <p class="small">Every dish has its own link: chinabite.chinavisacheck.com/#/dish/map-o-tofu</p>
-</section>
+</div>
+</details>
 
-<section class="block block-subscribe" id="subscribe">
+<details class="card" id="subscribe">
+<summary><span class="card-head"><h2>New dishes first.</h2><span class="card-sub">新菜先知道 — 加菜才发一封</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<div class="card-body">
 <img class="sub-mascot" src="assets/china-bite-mascot-dumpling-288.webp" alt="China Bite mascot — a cheerful dumpling holding chopsticks" width="56" height="56" loading="lazy">
-<h2 id="subTitle">New dishes first.</h2>
 <p id="subLine">One email when we add dishes. Nothing else.</p>
 <form id="subscribeForm" novalidate>
 <label for="subscribeEmail">Email · 邮箱</label>
@@ -1844,7 +1860,8 @@
 <div class="verdict ok" id="subDoneTitle">You're in.</div>
 <p id="subDoneLine">New dishes, in your inbox. First.</p>
 </div>
-</section>
+</div>
+</details>
 
 <footer>
 <p class="small">China Bite · Leapsun Partners Pte. Ltd.<br>Prices are estimates. 2026-11-26. Rate ~7.1.</p>
