@@ -206,7 +206,7 @@
       else CB.gotoSection("qrSection");
     });
     mk("How to order by QR", function () {
-      addBun("Scan the table QR, pick dishes, pay first — then they cook. If it won't open, I have a slip the waiter can use. Opening the guide now.");
+      addBun("The QR guide walks you through it — and there's a slip for the waiter if the code won't open. Opening it now.");
       CB.gotoSection("qrSection");
     });
     mk("Show diet card to waiter", function () {
@@ -308,7 +308,7 @@
     { id: "soy", keys: ["soy allergy", "大豆过敏"] }
   ];
   var FAQ = [
-    { keys: ["qr", "扫码", "won't open", "wont open", "how do i order", "how to order", "order"], a: "Scan the table QR, pick dishes, pay first — then they cook. If it won't open, show the waiter the order slip and they'll order on their phone. Want me to open the QR guide?", faqId: "faq-qr" },
+    { keys: ["qr", "扫码", "won't open", "wont open", "how do i order", "how to order", "order"], a: "The QR Order card in Orders walks you through it — and it has a backup slip if the code won't open. Want me to open the QR guide?", faqId: "faq-qr" },
     { keys: ["alipay", "wechat", "pay", "支付", "cash"], a: "WeChat Pay or Alipay first. Cash at the counter works too.", faqId: "faq-pay" },
     { keys: ["delivery", "外卖", "takeaway", "deliver", "meituan", "美团"], a: "Delivery lives in Orders → Delivery — the steps, the Meituan / Dianping buttons, and your hotel card are all there. Want me to open it?", faqId: "faq-delivery" },
     { keys: ["free", "免费", "price", "cost", "kit", "$6.99", "how much"], a: "Paid unlock is $6.99 for 90 days. The Register card in Account has what's included — and whether payments are open yet.", faqId: "faq-free" },
@@ -316,7 +316,7 @@
     { keys: ["find you", "instagram", "tiktok", "where can i find", "social", "follow"], a: "We're #ChinaBite on Instagram, TikTok and X — search any dish name there. Every dish has its own link too.", faqId: "faq-find" },
     { keys: ["invite", "friend", "referral", "share my link"], a: "Your link gives friends 6 free checks. Your Invite card in Account has the link — the FAQ has the full details.", faqId: "faq-invite" },
     { keys: ["address", "verified", "where is", "location of"], a: "I don't make up addresses — the city lists show the type of place and the area, not a verified street address. Dianping has the real one.", faqId: "faq-address" },
-    { keys: ["hotel card", "hotel address"], a: "Fill it once and copy it whenever you order — hotel name in Chinese plus your room number.", section: "meituanSection" },
+    { keys: ["hotel card", "hotel address"], a: "The hotel card holds it — hotel name in Chinese plus your room number.", section: "meituanSection" },
     { keys: ["are the prices", "prices exact", "price guide"], a: "Rough guides from 2026-11-26, about ¥7.1 to the dollar. Menus change, so treat them as a ballpark.", faqId: "faq-prices" },
     { keys: ["spicy", "辣", "spice", "hot"], a: "Spice runs 0–3: 0 not spicy, 3 very spicy. If you can't take heat, say so before you order — I'll tell you the number on every dish." },
     { keys: ["halal", "清真"], a: "Look for the green 清真 sign on the door. Ask staff “这是清真吗?” — want me to show you the halal card?" },
