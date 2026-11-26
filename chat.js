@@ -125,11 +125,38 @@
 
   // ---- Rich dish cards (horizontal scroll, inside a Bun bubble) ----
   var DISH_IMG = {
-    "dandan-mian": "assets/dish-dandanmian.webp", "mapo-tofu": "assets/dish-mapodoufu.webp",
-    "huiguo-pork": "assets/dish-huiguorou.webp", "shao-e": "assets/dish-shaoe.webp",
-    "xiajiao": "assets/dish-xiajiao.webp", "changfen": "assets/dish-changfen.webp",
-    "shengjian-bao": "assets/dish-shengjianbao.webp", "xiefen-xiaolong": "assets/dish-xiefenxiaolong.webp",
-    "hongshao-rou": "assets/dish-hongshaorou.webp"
+  "baiqie-chicken": "assets/dish-baiqiechicken.webp", "bingfen": "assets/dish-bingfen.webp", "blanched-shrimp": "assets/dish-blanchedshrimp.webp",
+  "bobo-chicken": "assets/dish-bobochicken.webp", "changfen": "assets/dish-changfen.webp", "chaoshan-beef-balls": "assets/dish-chaoshanbeefballs.webp",
+  "chashao-bao": "assets/dish-chashaobao.webp", "chengdu-zhongshuijiao": "assets/dish-chengduzhongshuijiao.webp", "chizhi-fengzhua": "assets/dish-chizhifengzhua.webp",
+  "chongqing-noodles": "assets/dish-chongqingnoodles.webp", "congyou-bing": "assets/dish-congyoubing.webp", "dahu-mian": "assets/dish-dahumian.webp",
+  "dandan-mian": "assets/dish-dandanmian.webp", "daoxiao-mian": "assets/dish-daoxiaomian.webp", "dapanji": "assets/dish-dapanji.webp",
+  "disanxian": "assets/dish-disanxian.webp", "doufunao": "assets/dish-doufunao.webp", "douhua": "assets/dish-douhua.webp",
+  "doujiang": "assets/dish-doujiang.webp", "fanqie-danhua-tang": "assets/dish-fanqiedanhuatang.webp", "fanqie-huoguo": "assets/dish-fanqiehuoguo.webp",
+  "fuqi-feipian": "assets/dish-fuqifeipian.webp", "furu-tongcai": "assets/dish-furutongcai.webp", "ganbian-sijidou": "assets/dish-ganbiansijidou.webp",
+  "guangzhou-wonton": "assets/dish-guangzhouwonton.webp", "guilin-mifen": "assets/dish-guilinmifen.webp", "guoqiao-mixian": "assets/dish-guoqiaomixian.webp",
+  "guotie": "assets/dish-guotie.webp", "hangzhou-dongporou": "assets/dish-hangzhoudongporou.webp", "hongshao-rou": "assets/dish-hongshaorou.webp",
+  "hot-sour-soup": "assets/dish-hotsoursoup.webp", "hotpot": "assets/dish-hotpot.webp", "huiguo-pork": "assets/dish-huiguorou.webp",
+  "jian-bing": "assets/dish-jian-bing.webp", "jianbing": "assets/dish-jianbing.webp", "jiangzhuang-nai": "assets/dish-jiangzhuangnai.webp",
+  "jiaozi": "assets/dish-jiaozi.webp", "jidi-zhou": "assets/dish-jidizhou.webp", "kao-baozi": "assets/dish-kaobaozi.webp",
+  "kao-hongshu": "assets/dish-kaohongshu.webp", "kao-shenghao": "assets/dish-kaoshenghao.webp", "kao-yangrou-chuan": "assets/dish-kaoyangrouchuan.webp",
+  "kao-yumi": "assets/dish-kaoyumi.webp", "koushui-chicken": "assets/dish-koushuichicken.webp", "kung-pao": "assets/dish-kungpao.webp",
+  "lanzhou": "assets/dish-lanzhou.webp", "lazi-chicken": "assets/dish-lazichicken.webp", "liangban-cucumber": "assets/dish-liangbancucumber.webp",
+  "liangfen": "assets/dish-liangfen.webp", "liusha-bao": "assets/dish-liushabao.webp", "liuzhou-luoshifen": "assets/dish-liuzhouluoshifen.webp",
+  "luobo-gao": "assets/dish-luobogao.webp", "luohan-zhai": "assets/dish-luohanzhai.webp", "mala-gao": "assets/dish-malagao.webp",
+  "mala-xiangguo": "assets/dish-malaxiangguo.webp", "malatang": "assets/dish-malatang.webp", "maoxuewang": "assets/dish-maoxuewang.webp",
+  "mapo-tofu": "assets/dish-mapodoufu.webp", "mapo-tofu-veg": "assets/dish-mapotofuveg.webp", "nang": "assets/dish-nang.webp",
+  "nanjing-yaxue-fensi": "assets/dish-nanjingyaxuefensi.webp", "niurou-mian": "assets/dish-niuroumian.webp", "peking-duck": "assets/dish-pekingduck.webp",
+  "qingchao-shishu": "assets/dish-qingchaoshishu.webp", "qingtang-huoguo": "assets/dish-qingtanghuoguo.webp", "regan-mian": "assets/dish-reganmian.webp",
+  "roujiamo": "assets/dish-roujiamo.webp", "shao-e": "assets/dish-shaoe.webp", "shaxian-bianrou": "assets/dish-shaxianbianrou.webp",
+  "shengjian-bao": "assets/dish-shengjianbao.webp", "shizitou": "assets/dish-shizitou.webp", "shouzhuafan": "assets/dish-shouzhuafan.webp",
+  "shuangpi-nai": "assets/dish-shuangpinai.webp", "shuizhu-beef": "assets/dish-shuizhubeef.webp", "shuizhu-fish": "assets/dish-shuizhufish.webp",
+  "songshu-guiyu": "assets/dish-songshuguiyu.webp", "steamed-bass": "assets/dish-steamedbass.webp", "suancai-fish": "assets/dish-suancaifish.webp",
+  "sweet-sour-ribs": "assets/dish-sweetsourribs.webp", "tangcu-xiaopai": "assets/dish-tangcuxiaopai.webp", "tingzai-zhou": "assets/dish-tingzaizhou.webp",
+  "tomato-egg": "assets/dish-tomatoegg.webp", "xiajiao": "assets/dish-xiajiao.webp", "xian-liangpi": "assets/dish-xianliangpi.webp",
+  "xianggu-qingcai": "assets/dish-xiangguqingcai.webp", "xiangyou-shanhu": "assets/dish-xiangyoushanhu.webp", "xiaolongbao": "assets/dish-xiaolongbao.webp",
+  "xiefen-xiaolong": "assets/dish-xiefenxiaolong.webp", "yangrou-chuan": "assets/dish-yangrouchuan.webp", "yangrou-paomo": "assets/dish-yangroupaomo.webp",
+  "yangrou-tang": "assets/dish-yangroutang.webp", "yangzhi-ganlu": "assets/dish-yangzhiganlu.webp", "yangzhou-rice": "assets/dish-yangzhourice.webp",
+  "youpo-mian": "assets/dish-youpomian.webp", "yuxiang": "assets/dish-yuxiang.webp", "zhajiang": "assets/dish-zhajiang.webp"
   };
   function dishCardEl(dish) {
     var v = CB.verdictFor(dish);

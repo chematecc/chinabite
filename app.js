@@ -30,6 +30,11 @@
     kitPreviewPerSection: 1 // Kit 预览每区恰好 1 个样本
   };
   var D = window.CHINABITE_DATA;
+  // v5.8: drinks live in drinks.js — same shape as the dishes, separate
+  // file so the 110-dish data is never touched. DR.drinks, DR.aliases.
+  var DR = window.CHINABITE_DRINKS || { drinks: [], aliases: {} };
+  var TEMP_EN = { iced: "Iced", room: "Room temp", hot: "Hot", warm: "Warm" };
+  var TEMP_ZH = { iced: "冰镇", room: "常温", hot: "热", warm: "温" };
   var $ = function (id) { return document.getElementById(id); };
   var KEY = "chinabite_state_v1";
   var LEGACY_KEY = "eatchina_state_v1"; // 迁移用：旧名 key 只读一次，下版可删
@@ -467,6 +472,13 @@
     // Instant feedback: the user sees work happening, never a dead tap.
     showStatus("Looking it up…");
     var best = findDishBest(q);
+    // v5.8: drinks. Dishes are checked first — a drink only wins when
+    // no dish matches, or the dish hit is fuzzy (an exact drink name
+    // beats a fuzzy dish guess). 豆浆 still decodes to the dish.
+    if (!best.dish || best.how === "fuzzy") {
+      var drink = findDrink(q);
+      if (drink) { hideStatus(); renderDrinkResult(drink); return; }
+    }
     if (!best.dish) {
       if (q.trim()) {
         state.unknown.push({ q: q.trim(), at: new Date().toISOString() });
@@ -616,11 +628,38 @@
   // Anything not in this map gets a no-photo tile (first Chinese
   // character) — never another dish's photo.
   var DISH_IMG = {
-    "dandan-mian": "assets/dish-dandanmian.webp", "mapo-tofu": "assets/dish-mapodoufu.webp",
-    "huiguo-pork": "assets/dish-huiguorou.webp", "shao-e": "assets/dish-shaoe.webp",
-    "xiajiao": "assets/dish-xiajiao.webp", "changfen": "assets/dish-changfen.webp",
-    "shengjian-bao": "assets/dish-shengjianbao.webp", "xiefen-xiaolong": "assets/dish-xiefenxiaolong.webp",
-    "hongshao-rou": "assets/dish-hongshaorou.webp"
+  "baiqie-chicken": "assets/dish-baiqiechicken.webp", "bingfen": "assets/dish-bingfen.webp", "blanched-shrimp": "assets/dish-blanchedshrimp.webp",
+  "bobo-chicken": "assets/dish-bobochicken.webp", "changfen": "assets/dish-changfen.webp", "chaoshan-beef-balls": "assets/dish-chaoshanbeefballs.webp",
+  "chashao-bao": "assets/dish-chashaobao.webp", "chengdu-zhongshuijiao": "assets/dish-chengduzhongshuijiao.webp", "chizhi-fengzhua": "assets/dish-chizhifengzhua.webp",
+  "chongqing-noodles": "assets/dish-chongqingnoodles.webp", "congyou-bing": "assets/dish-congyoubing.webp", "dahu-mian": "assets/dish-dahumian.webp",
+  "dandan-mian": "assets/dish-dandanmian.webp", "daoxiao-mian": "assets/dish-daoxiaomian.webp", "dapanji": "assets/dish-dapanji.webp",
+  "disanxian": "assets/dish-disanxian.webp", "doufunao": "assets/dish-doufunao.webp", "douhua": "assets/dish-douhua.webp",
+  "doujiang": "assets/dish-doujiang.webp", "fanqie-danhua-tang": "assets/dish-fanqiedanhuatang.webp", "fanqie-huoguo": "assets/dish-fanqiehuoguo.webp",
+  "fuqi-feipian": "assets/dish-fuqifeipian.webp", "furu-tongcai": "assets/dish-furutongcai.webp", "ganbian-sijidou": "assets/dish-ganbiansijidou.webp",
+  "guangzhou-wonton": "assets/dish-guangzhouwonton.webp", "guilin-mifen": "assets/dish-guilinmifen.webp", "guoqiao-mixian": "assets/dish-guoqiaomixian.webp",
+  "guotie": "assets/dish-guotie.webp", "hangzhou-dongporou": "assets/dish-hangzhoudongporou.webp", "hongshao-rou": "assets/dish-hongshaorou.webp",
+  "hot-sour-soup": "assets/dish-hotsoursoup.webp", "hotpot": "assets/dish-hotpot.webp", "huiguo-pork": "assets/dish-huiguorou.webp",
+  "jian-bing": "assets/dish-jian-bing.webp", "jianbing": "assets/dish-jianbing.webp", "jiangzhuang-nai": "assets/dish-jiangzhuangnai.webp",
+  "jiaozi": "assets/dish-jiaozi.webp", "jidi-zhou": "assets/dish-jidizhou.webp", "kao-baozi": "assets/dish-kaobaozi.webp",
+  "kao-hongshu": "assets/dish-kaohongshu.webp", "kao-shenghao": "assets/dish-kaoshenghao.webp", "kao-yangrou-chuan": "assets/dish-kaoyangrouchuan.webp",
+  "kao-yumi": "assets/dish-kaoyumi.webp", "koushui-chicken": "assets/dish-koushuichicken.webp", "kung-pao": "assets/dish-kungpao.webp",
+  "lanzhou": "assets/dish-lanzhou.webp", "lazi-chicken": "assets/dish-lazichicken.webp", "liangban-cucumber": "assets/dish-liangbancucumber.webp",
+  "liangfen": "assets/dish-liangfen.webp", "liusha-bao": "assets/dish-liushabao.webp", "liuzhou-luoshifen": "assets/dish-liuzhouluoshifen.webp",
+  "luobo-gao": "assets/dish-luobogao.webp", "luohan-zhai": "assets/dish-luohanzhai.webp", "mala-gao": "assets/dish-malagao.webp",
+  "mala-xiangguo": "assets/dish-malaxiangguo.webp", "malatang": "assets/dish-malatang.webp", "maoxuewang": "assets/dish-maoxuewang.webp",
+  "mapo-tofu": "assets/dish-mapodoufu.webp", "mapo-tofu-veg": "assets/dish-mapotofuveg.webp", "nang": "assets/dish-nang.webp",
+  "nanjing-yaxue-fensi": "assets/dish-nanjingyaxuefensi.webp", "niurou-mian": "assets/dish-niuroumian.webp", "peking-duck": "assets/dish-pekingduck.webp",
+  "qingchao-shishu": "assets/dish-qingchaoshishu.webp", "qingtang-huoguo": "assets/dish-qingtanghuoguo.webp", "regan-mian": "assets/dish-reganmian.webp",
+  "roujiamo": "assets/dish-roujiamo.webp", "shao-e": "assets/dish-shaoe.webp", "shaxian-bianrou": "assets/dish-shaxianbianrou.webp",
+  "shengjian-bao": "assets/dish-shengjianbao.webp", "shizitou": "assets/dish-shizitou.webp", "shouzhuafan": "assets/dish-shouzhuafan.webp",
+  "shuangpi-nai": "assets/dish-shuangpinai.webp", "shuizhu-beef": "assets/dish-shuizhubeef.webp", "shuizhu-fish": "assets/dish-shuizhufish.webp",
+  "songshu-guiyu": "assets/dish-songshuguiyu.webp", "steamed-bass": "assets/dish-steamedbass.webp", "suancai-fish": "assets/dish-suancaifish.webp",
+  "sweet-sour-ribs": "assets/dish-sweetsourribs.webp", "tangcu-xiaopai": "assets/dish-tangcuxiaopai.webp", "tingzai-zhou": "assets/dish-tingzaizhou.webp",
+  "tomato-egg": "assets/dish-tomatoegg.webp", "xiajiao": "assets/dish-xiajiao.webp", "xian-liangpi": "assets/dish-xianliangpi.webp",
+  "xianggu-qingcai": "assets/dish-xiangguqingcai.webp", "xiangyou-shanhu": "assets/dish-xiangyoushanhu.webp", "xiaolongbao": "assets/dish-xiaolongbao.webp",
+  "xiefen-xiaolong": "assets/dish-xiefenxiaolong.webp", "yangrou-chuan": "assets/dish-yangrouchuan.webp", "yangrou-paomo": "assets/dish-yangroupaomo.webp",
+  "yangrou-tang": "assets/dish-yangroutang.webp", "yangzhi-ganlu": "assets/dish-yangzhiganlu.webp", "yangzhou-rice": "assets/dish-yangzhourice.webp",
+  "youpo-mian": "assets/dish-youpomian.webp", "yuxiang": "assets/dish-yuxiang.webp", "zhajiang": "assets/dish-zhajiang.webp"
   };
   var HALAL_IDS = ["lanzhou", "yangrou-chuan", "kao-baozi", "shouzhuafan", "halal-beef-noodles", "yangrou-tang", "ziran-yangrou", "nang", "dapanji", "yangrou-paomo"];
   var MEAT_FLAGS = ["pork", "beef", "chicken", "duck", "fish", "shrimp", "frog", "goose", "lamb"];
@@ -784,17 +823,46 @@
     topSearch.addEventListener("input", function () { updateHomeFilter(); });
     topSearch.addEventListener("keydown", function (e) {
       if (e.key !== "Enter") return;
+      var dr = findDrink(topSearch.value);
+      if (dr) { showDrink(dr); return; }
       var d = findDish(topSearch.value);
       if (d) window.checkDish(d.zh);
     });
   }
 
   // ---- Order list + slip (B route) ----
+  // v5.8: order items are dishes ({id, qty}) or drinks
+  // ({id: "drink:<id>", qty, temp}). One lookup for both, so the
+  // total, the slip and Share all stay in one place.
+  function drinkById(id) {
+    for (var i = 0; i < DR.drinks.length; i++) if (DR.drinks[i].id === id) return DR.drinks[i];
+    return null;
+  }
+  function itemById(id) {
+    if (!id) return null;
+    if (id.indexOf("drink:") === 0) {
+      var dr = drinkById(id.slice(6));
+      return dr ? { id: id, en: dr.en, zh: dr.zh, price: dr.price, kind: "drink" } : null;
+    }
+    var d = D.dishes.find(function (dd) { return dd.id === id; });
+    return d ? { id: d.id, en: d.en, zh: d.zh, price: d.price, kind: "dish" } : null;
+  }
   function addToOrder(dish) {
     var item = state.order.find(function (x) { return x.id === dish.id; });
     if (item) item.qty++; else state.order.push({ id: dish.id, qty: 1 });
     save(); renderOrder();
     alert("Got it — " + dish.en + " is on your list.");
+  }
+  // v5.8: drinks join the same order list — same slip, same total, no
+  // second ordering system. Temp travels with the item so the slip can
+  // say 冰镇, not just the drink name.
+  function addDrinkToOrder(dr) {
+    var temp = drinkTemp[dr.id] || dr.defaultTemp;
+    var key = "drink:" + dr.id;
+    var item = state.order.find(function (x) { return x.id === key && x.temp === temp; });
+    if (item) item.qty++; else state.order.push({ id: key, qty: 1, temp: temp });
+    save(); renderOrder();
+    alert("Got it — " + dr.en + " (" + TEMP_EN[temp] + ") is on your list.");
   }
   function renderOrder() {
     var el = $("orderList");
@@ -805,9 +873,11 @@
     } else {
       var total = 0;
       el.innerHTML = state.order.map(function (x) {
-        var d = D.dishes.find(function (dd) { return dd.id === x.id; });
+        var d = itemById(x.id);
+        if (!d) return "";
         total += d.price * x.qty;
-        return "<p>• " + esc(d.en) + " (" + esc(d.zh) + ") × " + x.qty + " — ¥" + (d.price * x.qty) + "</p>";
+        var temp = (d.kind === "drink" && x.temp) ? " · " + TEMP_ZH[x.temp] : "";
+        return "<p>• " + esc(d.en) + " (" + esc(d.zh) + temp + ") × " + x.qty + " — ¥" + (d.price * x.qty) + "</p>";
       }).join("") + "<p><b>Total: ¥" + total + " · ≈$" + usd(total) + "</b> · " + state.order.length + (state.order.length === 1 ? " dish" : " dishes") + "</p>" +
         "<p class=\"small price-note\">" + esc(PRICE_BASIS_SHORT) + " — the total is a guide, not the bill.</p>";
     }
@@ -819,11 +889,15 @@
     var pay = document.querySelector('input[name="payMethod"]:checked');
     var payText = pay ? pay.value : "支付宝 / 现金在柜台付款";
     var lines = state.order.map(function (x, i) {
-      var d = D.dishes.find(function (dd) { return dd.id === x.id; });
-      return (i + 1) + ". " + d.zh + " ×" + x.qty;
-    });
+      var d = itemById(x.id);
+      if (!d) return "";
+      // Drinks carry their temp on the slip — 青岛啤酒（冰镇）— so the
+      // waiter can't bring it warm by default.
+      var temp = (d.kind === "drink" && x.temp) ? "（" + TEMP_ZH[x.temp] + "）" : "";
+      return (i + 1) + ". " + d.zh + temp + " ×" + x.qty;
+    }).filter(Boolean);
     var slipTotal = state.order.reduce(function (s, x) {
-      var d = D.dishes.find(function (dd) { return dd.id === x.id; });
+      var d = itemById(x.id);
       return s + (d ? d.price * x.qty : 0);
     }, 0);
     $("slipPreview").innerHTML =
@@ -839,9 +913,11 @@
   $("clearOrderBtn").onclick = function () { state.order = []; save(); renderOrder(); };
   $("shareOrderBtn").onclick = function () {
     var text = "My China order list:\n" + state.order.map(function (x) {
-      var d = D.dishes.find(function (dd) { return dd.id === x.id; });
-      return "- " + d.en + " (" + d.zh + ") ×" + x.qty;
-    }).join("\n") + "\nMade with China Bite: " + location.origin + location.pathname + "?ref=" + state.myRef;
+      var d = itemById(x.id);
+      if (!d) return "";
+      var temp = (d.kind === "drink" && x.temp) ? " (" + TEMP_EN[x.temp] + ")" : "";
+      return "- " + d.en + " (" + d.zh + ")" + temp + " ×" + x.qty;
+    }).filter(Boolean).join("\n") + "\nMade with China Bite: " + location.origin + location.pathname + "?ref=" + state.myRef;
     shareText("My China Bite order list", text);
   };
   renderOrder();
@@ -924,6 +1000,128 @@
   });
   $("closeCardBtn").onclick = function () { $("cardOverlay").classList.add("hidden"); };
 
+  // ---- Drinks & beer (v5.8) ----
+  // Same folding-card shape as Diet Cards; the culture note lives in the
+  // HTML (drinksSection), the list renders here. One card per drink:
+  // name, price, one-line note, temp chips, the big-Chinese order
+  // sentence for the picked temp, Add to order (same order list as
+  // dishes — no second ordering system).
+  var drinkCat = "all";
+  var drinkTemp = {}; // drink id -> picked temp key (default = drink.defaultTemp)
+  function tempLabel(dr, t) {
+    if (t === "iced") return "Iced · " + (dr.icedWord || "冰");
+    if (t === "room") return "Room temp · 常温";
+    if (t === "hot") return "Hot · 热";
+    return "Warm · 温";
+  }
+  function drinkOrderSentence(dr, temp) {
+    var w = temp === "iced" ? (dr.icedWord || "冰") : temp === "room" ? "常温" : temp === "hot" ? "热" : "温";
+    return "请给我一" + dr.unit + w + dr.zh + "，谢谢。";
+  }
+  function drinkCardHTML(dr, pfx) {
+    var temp = drinkTemp[dr.id] || dr.defaultTemp;
+    return '<div class="subcard drink-card" id="' + pfx + 'Card-' + dr.id + '">' +
+      "<h3>" + esc(dr.en) + " · " + esc(dr.zh) + "</h3>" +
+      '<p class="small">' + esc(dr.py) + " · ¥" + dr.price + " · ≈$" + usd(dr.price) + "</p>" +
+      "<p>" + esc(dr.note) + "</p>" +
+      '<div class="drink-temp" role="group" aria-label="Temperature">' +
+      dr.temps.map(function (t) {
+        return '<button type="button" class="chip" data-drink="' + dr.id + '" data-temp="' + t + '" aria-pressed="' + (t === temp) + '">' + esc(tempLabel(dr, t)) + "</button>";
+      }).join("") + "</div>" +
+      '<p><b>Show them this:</b></p><p class="bigzh" id="' + pfx + 'Order-' + dr.id + '">' + esc(drinkOrderSentence(dr, temp)) + "</p>" +
+      '<p><button type="button" data-drink-add="' + dr.id + '">Add to order</button></p>' +
+      "</div>";
+  }
+  // Wire one rendered card (temp chips + Add button). `root` is the
+  // container holding the card; `pfx` is the id prefix used above.
+  function bindDrinkCard(root, dr, pfx) {
+    Array.prototype.forEach.call(root.querySelectorAll('[data-drink="' + dr.id + '"][data-temp]'), function (b) {
+      b.onclick = function () {
+        drinkTemp[dr.id] = b.getAttribute("data-temp");
+        var line = $(pfx + "Order-" + dr.id);
+        if (line) line.textContent = drinkOrderSentence(dr, drinkTemp[dr.id]);
+        Array.prototype.forEach.call(root.querySelectorAll('[data-drink="' + dr.id + '"][data-temp]'), function (x) {
+          x.setAttribute("aria-pressed", x === b ? "true" : "false");
+        });
+      };
+    });
+    var add = root.querySelector('[data-drink-add="' + dr.id + '"]');
+    if (add) add.onclick = function () { addDrinkToOrder(dr); };
+  }
+  var DRINK_CATS = [["all", "All"], ["beer", "Beer"], ["soft", "Soft drinks"], ["tea", "Tea"], ["juice", "Juice & traditional"], ["spirit", "Spirits"]];
+  function renderDrinks() {
+    var list = $("drinkList");
+    if (!list) return;
+    var cc = $("drinkCatChips");
+    if (cc) {
+      cc.innerHTML = DRINK_CATS.map(function (c) {
+        return '<button type="button" class="chip" data-drink-cat="' + c[0] + '" aria-pressed="' + (c[0] === drinkCat) + '">' + esc(c[1]) + "</button>";
+      }).join("");
+      Array.prototype.forEach.call(cc.querySelectorAll("[data-drink-cat]"), function (b) {
+        b.onclick = function () { drinkCat = b.getAttribute("data-drink-cat"); renderDrinks(); };
+      });
+    }
+    var shown = DR.drinks.filter(function (dr) { return drinkCat === "all" || dr.cat === drinkCat; });
+    list.innerHTML = shown.map(function (dr) { return drinkCardHTML(dr, "dl"); }).join("");
+    shown.forEach(function (dr) { bindDrinkCard(list, dr, "dl"); });
+  }
+  renderDrinks();
+  // Open the drinks section on one drink (decoder hit, home search).
+  function showDrink(dr) {
+    drinkCat = "all";
+    renderDrinks();
+    gotoSection("drinksSection");
+    var card = $("dlCard-" + dr.id);
+    if (card) card.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+  // ---- Drink lookup for the decoder (v5.8) ----
+  // Aliases live ONLY in drinks.js (window.CHINABITE_DRINKS.aliases),
+  // matched after normStr() like the dish aliases. Dishes are checked
+  // FIRST in decode() — this runs only when no dish matches, or the
+  // dish hit is fuzzy — so 豆浆 still decodes to the dish, never here.
+  var DRINK_ALIAS_MAP = {};
+  (function buildDrinkIndex() {
+    var raw = DR.aliases || {};
+    Object.keys(raw).forEach(function (k) {
+      var nk = normStr(k);
+      if (nk) DRINK_ALIAS_MAP[nk] = raw[k];
+    });
+  })();
+  function findDrink(q) {
+    var n = normStr(q);
+    if (!n) return null;
+    if (DRINK_ALIAS_MAP[n]) return drinkById(DRINK_ALIAS_MAP[n]);
+    var found = null;
+    DR.drinks.forEach(function (dr) {
+      if (normStr(dr.zh) === n || normStr(dr.en) === n || normStr(stripParen(dr.py || "")) === n) found = dr;
+    });
+    if (found) return found;
+    // Contains, but only for queries of 2+ chars — a 1-char query like
+    // 水 must not grab the first drink with 水 in its name.
+    if (n.length >= 2) {
+      DR.drinks.forEach(function (dr) {
+        if (!found && (normStr(dr.zh).indexOf(n) >= 0 || normStr(dr.en).indexOf(n) >= 0)) found = dr;
+      });
+    }
+    return found;
+  }
+  // Decoder hit for a drink: no verdict, no free-count spent — drinks
+  // are guidance, not a dish check. Same card as the drinks section,
+  // plus a way into the full list.
+  function renderDrinkResult(dr) {
+    var res = $("result");
+    res.className = "subcard";
+    res.innerHTML =
+      '<div class="verdict ok">Drink — ' + esc(dr.en) + " (" + esc(dr.zh) + ")</div>" +
+      "<p><b>Heads up:</b> drinks come room temp in China unless you ask. Pick iced below and the order line says so in Chinese.</p>" +
+      "<p><b>About:</b> ¥" + dr.price + " · ≈$" + usd(dr.price) + "</p>" +
+      '<p class="small price-note">' + esc(PRICE_BASIS) + "</p>" +
+      drinkCardHTML(dr, "res") +
+      '<p><button type="button" class="ghost" id="drinkAllBtn">See all drinks &amp; beer</button></p>';
+    bindDrinkCard(res, dr, "res");
+    $("drinkAllBtn").onclick = function () { gotoSection("drinksSection"); };
+  }
+
   // ---- Cities (10 cities; sample only, address not verified) ----
   var cityEl = $("cityList");
   if (cityEl && D.cities) {
@@ -932,7 +1130,7 @@
     D.cities.forEach(function (c) {
       var div = document.createElement("div");
       div.className = "subcard";
-      var cityImg = { xian: "assets/city-xian.webp", chongqing: "assets/city-chongqing.webp", guilin: "assets/city-guilin.webp" }[c.id];
+      var cityImg = { beijing: "assets/city-beijing.webp", chengdu: "assets/city-chengdu.webp", chongqing: "assets/city-chongqing.webp", guangzhou: "assets/city-guangzhou.webp", guilin: "assets/city-guilin.webp", hangzhou: "assets/city-hangzhou.webp", kunming: "assets/city-kunming.webp", shanghai: "assets/city-shanghai.webp", shenzhen: "assets/city-shenzhen.webp", xian: "assets/city-xian.webp" }[c.id];
       var html = "<h3>" + esc(c.en) + " · " + esc(c.zh) + "</h3>" +
         (cityImg ? "<img class=\"city-img\" src=\"" + cityImg + "\" alt=\"" + esc(c.en) + " street scene\" width=\"491\" height=\"327\" loading=\"lazy\">" : "") +
         "<p>" + esc(c.scene) + "</p>" +
@@ -1303,7 +1501,7 @@
   // subscribe / share / FAQ. Views are show/hide only — all sections stay
   // in the DOM, so decode, deep links (#/dish/, #/diet/) and the order
   // slip keep working.
-  var VIEW_SECTIONS = ["homeView", "chatView", "chatComposer", "decoder", "qrSection", "dietSection", "adSection", "kitPreview", "citiesSection", "meituanSection", "kitSection", "referral", "faqSection", "subscribe"];
+  var VIEW_SECTIONS = ["homeView", "chatView", "chatComposer", "decoder", "qrSection", "dietSection", "drinksSection", "adSection", "kitPreview", "citiesSection", "meituanSection", "kitSection", "referral", "faqSection", "subscribe"];
   var VIEWS = {
     home: ["homeView"],
     chat: ["chatView", "chatComposer"],
@@ -1311,12 +1509,13 @@
     orders: ["qrSection"],
     cities: ["citiesSection"],
     diet: ["dietSection"],
+    drinks: ["drinksSection"],
     account: ["kitPreview", "kitSection", "subscribe", "referral", "faqSection"],
     qr: ["qrSection"],
     meituan: ["meituanSection"],
     subscribe: ["subscribe"],
   };
-  var SECTION_VIEW = { homeView: "home", chatView: "chat", chatComposer: "chat", decoder: "search", qrSection: "orders", dietSection: "diet", adSection: "search", kitPreview: "account", citiesSection: "cities", meituanSection: "meituan", kitSection: "account", referral: "account", faqSection: "account", subscribe: "subscribe" };
+  var SECTION_VIEW = { homeView: "home", chatView: "chat", chatComposer: "chat", decoder: "search", qrSection: "orders", dietSection: "diet", drinksSection: "drinks", adSection: "search", kitPreview: "account", citiesSection: "cities", meituanSection: "meituan", kitSection: "account", referral: "account", faqSection: "account", subscribe: "subscribe" };
   var currentView = "chat";
   function showView(name) {
     var ids = VIEWS[name] || VIEWS.home;
@@ -1484,6 +1683,7 @@
   }
   window.ChinaBite = {
     D: D, DEV_MODE: DEV_MODE,
+    DR: DR, findDrink: findDrink, showDrink: showDrink, addDrinkToOrder: addDrinkToOrder,
     findDish: findDish, findDishBest: findDishBest, suggestDishes: suggestDishes,
     dishMatchesQuery: dishMatchesQuery, askBunAbout: askBunAbout,
     PRICE_BASIS: PRICE_BASIS, PRICE_BASIS_SHORT: PRICE_BASIS_SHORT, CITY_TIER: CITY_TIER,
