@@ -190,3 +190,7 @@ footer{padding:8px 4px;border-top:1px solid var(--line)}
 #photoPreview img{margin-top:4px}
 #manualInput summary{cursor:pointer;font-weight:700;list-style:none}
 #manualInput summary::-webkit-details-marker{display:none}
+
+/* ---- v3.0: homepage decoder teaser (small entry at the bottom of home) ---- */
+.decoder-teaser{text-align:center}
+.decoder-teaser h2{margin-bottom:4px}

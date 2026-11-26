@@ -318,7 +318,7 @@
         (c.mustEat || []).map(function (m) {
           var d = dishById[m.id];
           if (!d) return "";
-          return "<p><button type=\"button\" onclick=\"document.getElementById('dishInput').value='" + esc(d.zh) + "';document.getElementById('decodeBtn').click();document.getElementById('decoder').scrollIntoView()\">" + esc(d.zh) + " · " + esc(d.en) + "</button><br><span class=\"small\">" + esc(m.note) + "</span></p>";
+          return "<p><button type=\"button\" onclick=\"checkDish('" + esc(d.zh) + "')\">" + esc(d.zh) + " · " + esc(d.en) + "</button><br><span class=\"small\">" + esc(m.note) + "</span></p>";
         }).join("") +
         "<p><b>Watch · 注意：</b>" + esc(c.tip) + "</p>" +
         "<p><b>Getting there · 交通：</b>" + esc(c.transport) + "</p>" +
@@ -567,14 +567,18 @@
   }
 
   // ---- App mode nav: views (v2.9 follow-up — homepage shows main content only) ----
-  // Homepage = Hero + Decoder + Signature Dishes + 10-city entry only.
-  // Everything else lives in its own view, reached from the bottom nav or
-  // the menu; nothing is stacked into one long homepage anymore.
+  // Homepage (v3.0) = Hero + Signature Dishes + 10-city entry + a small
+  // "拍菜单 · 去解码" teaser only. Decoder is NOT first — Oliver felt
+  // nothing from it as the homepage hero. It lives in its own decode view
+  // (bottom nav 解码) as the full decoder, plus the small teaser at the
+  // bottom of the homepage. Everything else lives in its own view, reached
+  // from the bottom nav or the menu; nothing is stacked into one long
+  // homepage anymore.
   // Views are show/hide only — all sections stay in the DOM, so decode,
   // deep links (#/dish/, #/diet/) and the order slip keep working.
-  var VIEW_SECTIONS = ["hero", "decoder", "storyDishes", "qrSection", "dietSection", "adSection", "kitPreview", "citiesSection", "meituanSection", "kitSection", "referral", "socialSearch", "subscribe"];
+  var VIEW_SECTIONS = ["hero", "decoder", "decoderTeaser", "storyDishes", "qrSection", "dietSection", "adSection", "kitPreview", "citiesSection", "meituanSection", "kitSection", "referral", "socialSearch", "subscribe"];
   var VIEWS = {
-    home: ["hero", "decoder", "storyDishes", "citiesSection"],
+    home: ["hero", "storyDishes", "citiesSection", "decoderTeaser"],
     decode: ["decoder"],
     cities: ["citiesSection"],
     diet: ["dietSection"],
@@ -584,7 +588,7 @@
     subscribe: ["subscribe"],
     more: ["referral", "socialSearch"]
   };
-  var SECTION_VIEW = { hero: "home", decoder: "decode", storyDishes: "home", qrSection: "qr", dietSection: "diet", adSection: "decode", kitPreview: "kit", citiesSection: "cities", meituanSection: "meituan", kitSection: "kit", referral: "more", socialSearch: "more", subscribe: "subscribe" };
+  var SECTION_VIEW = { hero: "home", decoder: "decode", decoderTeaser: "home", storyDishes: "home", qrSection: "qr", dietSection: "diet", adSection: "decode", kitPreview: "kit", citiesSection: "cities", meituanSection: "meituan", kitSection: "kit", referral: "more", socialSearch: "more", subscribe: "subscribe" };
   var currentView = "home";
   function showView(name) {
     var ids = VIEWS[name] || VIEWS.home;
@@ -618,6 +622,17 @@
     if (el.tagName === "DETAILS") el.open = true;
     el.scrollIntoView({ behavior: "smooth", block: "start" });
   }
+  // Homepage order v3.0: signature dishes first, decoder last.
+  // Tapping a dish anywhere (signature card, city must-eat, deep link)
+  // must switch to the decode view FIRST, otherwise the verdict would
+  // render inside the hidden decoder and the user would see nothing.
+  window.checkDish = function (zh) {
+    $("dishInput").value = zh;
+    showView("decode");
+    decode();
+    var sec = $("decoder");
+    if (sec) sec.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
   document.querySelectorAll("[data-goto]").forEach(function (a) {
     a.addEventListener("click", function (e) {
       e.preventDefault();
