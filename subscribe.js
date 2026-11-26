@@ -1,16 +1,16 @@
 // China Bite — POST /api/subscribe
-// Worker 模块（ESM）。部署路径：并入 Dashboard Worker `china-bite-dashboard`
-// 的 src/index.js（见本文件底部注释），不要改 Dashboard 目录之外的东西。
-// 开发站 ~/workspace/china-bite-dev/ 是纯静态 Pages，没有 Worker，
-// 所以本文件目前只随开发站一起部署为静态源码（供合入用），/api/subscribe
-// 在 chinabite.chinavisacheck.com 上还不存在；前端 app.js 直接 fetch
-// Dashboard Worker 的 https://china-bite-dashboard.cc-chemate.workers.dev/api/subscribe。
+// Worker 模块（ESM）。2026-11-26 已合入 Dashboard Worker `china-bite-dashboard`
+// 的 src/index.js 并部署上线（版本 4，c9b2783d），D1 chinabite_subscribers 已接通。
+// 生产地址：https://bite-api.chinavisacheck.com/api/subscribe（自定义域名路由；
+// workers.dev 生产域名 2026-11-26 14:38 起报 404 error code 1042，脚本本身正常，
+// 已改走 bite-api.chinavisacheck.com）。前端 app.js 直接 fetch 该地址。
+// 本文件保留为源码备份 + 合入说明；不要改 Dashboard 目录之外的东西。
 //
 // 状态（2026-11-26，实测）：
-// - Dashboard Worker china-bite-dashboard 在账号上不存在（API 查过，404 code 10007），
-//   /api/subscribe 未上线。前端 fetch 失败时走本机 localStorage 待同步队列，并如实提示。
-// - D1 未接：wrangler.toml 里没有 [[d1_databases]] 绑定。接上 env.CHINABITE_DB
-//   后自动走 D1，否则内存兜底（Worker 重启清零，与 Dashboard 现有事件/工单一致）。
+// - /api/subscribe 已上线：POST 201 写入 D1，重复邮箱 200 already_subscribed，
+//   OPTIONS 预检 204（CORS 头已加，前端跨域 POST 可读响应）。
+// - D1 已接：库 chinabite（f25b6ee5-46e2-492d-b0de-904ddd7e009d），
+//   wrangler.toml 有 [[d1_databases]] 绑定 CHINABITE_DB；建表 SQL 已执行。
 // - Resend 未接：确认邮件只生成模板，不发送（见 subscribeConfirmTemplate）。
 // - 订阅表独立：chinabite_subscribers，不混 chinavisacheck 的订阅表。
 //   建表 SQL 在 migrations/0001_chinabite_subscribers.sql。
@@ -195,17 +195,16 @@ export default {
   },
 };
 
-// 合入 Dashboard Worker 的部署路径（Dashboard 目录不动，本次不合入）：
+// 部署路径（已完成 2026-11-26）：见本文件顶部状态。合入步骤存档如下：
 // 1. wrangler.toml 加 D1 绑定：[[d1_databases]] binding = "CHINABITE_DB",
-//    database_name = "chinabite"，database_id 由 `wrangler d1 create chinabite` 给。
-// 2. 建表：`wrangler d1 execute chinabite --file migrations/0001_chinabite_subscribers.sql`
-//    （SQL 也在 ~/workspace/china-bite-dev/migrations/0001_chinabite_subscribers.sql）。
-// 3. 把本文件的 handleSubscribe / subscribeConfirmTemplate / 相关常量拷进
+//    database_name = "chinabite"，database_id f25b6ee5-46e2-492d-b0de-904ddd7e009d。
+// 2. 建表：D1 query API 执行 migrations/0001_chinabite_subscribers.sql（已执行）。
+// 3. handleSubscribe / subscribeConfirmTemplate / 相关常量已拷进
 //    ~/workspace/china-bite-dashboard/src/index.js，在 fetch() 里加路由：
 //    if (path === "/api/subscribe") return handleSubscribe(request, env);
-//    注意 Dashboard 现有 fetch(request) 签名没有 env，要改成 fetch(request, env)。
-// 4. `npx wrangler deploy`（在 china-bite-dashboard 目录）。部署后地址：
-//    https://china-bite-dashboard.cc-chemate.workers.dev/api/subscribe
-//    （子域名 cc-chemate 已实测；Worker 本身 2026-11-26 查过还不存在，需先部署）。
+//    另加 OPTIONS 预检 + CORS 头（subscribeCors），前端跨域 POST 才能读响应。
+// 4. 部署：python3 /tmp/worker-deploy.py（Cloudflare API 直连，wrangler 未登录）。
+//    生产地址：https://bite-api.chinavisacheck.com/api/subscribe
+//    （自定义域名路由；workers.dev 生产域名 2026-11-26 起报 404 error code 1042）。
 // 5. Resend 接入后：把 subscribeConfirmTemplate 的返回值发出去，
 //    再把 resend.connected / sent 改成 true，不要在未发送时写已发送。

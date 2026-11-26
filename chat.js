@@ -12,12 +12,16 @@
 // honestly in the chat status line — never pretend the AI answered.
 // To go live with the LLM: set the Worker secret, nothing else changes
 // in this file. Model is chosen server-side (Worker env LLM_MODEL).
+// API 域名用 bite-api.chinavisacheck.com（Worker 自定义域名路由）：
+// workers.dev 生产域名 2026-11-26 14:38 起全站报 404 error code 1042，
+// 脚本本身正常（版本预览 URL 200），是生产路由故障，改走自定义域名绕过。
+// /api/chat/status 由 CHAT_API 派生（见下），一起跟着走新域名。
 (function () {
   "use strict";
   var CB = window.ChinaBite;
   var D = window.CHINABITE_DATA;
   if (!CB || !D) return;
-  var CHAT_API = "https://china-bite-dashboard.cc-chemate.workers.dev/api/chat";
+  var CHAT_API = "https://bite-api.chinavisacheck.com/api/chat";
   var PROFILE_KEY = "chinabite_chat_profile_v1";
   var $ = function (id) { return document.getElementById(id); };
   var log = $("chatLog"), chipsBar = $("chatChips"), input = $("chatInput");

@@ -182,6 +182,46 @@
 
   function spiceLabel(n) { return ["Not spicy", "Mild", "Medium", "Very spicy"][n] + " (" + n + "/3)"; }
 
+  // ---- Meituan / Dianping deep links (single source of truth) ----
+  // Schemes come from public URL-scheme lists (e.g. xydida.com APP-URL-Scheme):
+  // Meituan Waimai = meituanwaimai:// , Dianping = dianping:// , Meituan = imeituan://
+  // NEITHER Meituan nor Dianping publishes official deep-link docs, so the
+  // search paths below are BEST-EFFORT: if the app ignores the path it still
+  // opens; the H5 fallback always lands on a working search page.
+  // H5 URLs verified 2026-11-26 by curl (mobile UA):
+  //   i.meituan.com/search?keyword=X -> 200, keyword preserved in final URL
+  //   h5.waimai.meituan.com/waimai/mindex/home -> 200
+  //   www.dianping.com/ -> 200 (bot-check page for curl; real phones pass)
+  //   apps.apple.com/cn/search?term=... -> 404, so NO App Store link is used;
+  //   the H5 page itself prompts to install the app when it isn't installed.
+  // TODO: verify scheme wake-up on a real phone — jsdom can only check the
+  // link format, never whether the app actually opens.
+  var MEITUAN_LINKS = {
+    waimaiScheme: function (kw) { return "meituanwaimai://waimai/search?keyword=" + encodeURIComponent(kw); },
+    waimaiSchemeHome: "meituanwaimai://",
+    waimaiH5: function (kw) { return "https://i.meituan.com/search?keyword=" + encodeURIComponent(kw); },
+    waimaiH5Home: "https://h5.waimai.meituan.com/waimai/mindex/home",
+    dianpingScheme: function (kw) { return "dianping://search?keyword=" + encodeURIComponent(kw); },
+    dianpingSchemeHome: "dianping://",
+    dianpingH5: "https://www.dianping.com/"
+  };
+  // Try to wake the app; if the page is still visible after 1.5s the app
+  // isn't installed (or ignored the scheme) -> go to the H5 fallback.
+  // Fallback uses location.href (not window.open) because a delayed
+  // window.open is blocked as a popup; this navigates away from China Bite.
+  function openDeepLink(schemeUrl, fallbackUrl) {
+    var done = false;
+    var t = setTimeout(function () { if (!done) { done = true; window.location.href = fallbackUrl; } }, 1500);
+    var onHide = function () { done = true; clearTimeout(t); };
+    document.addEventListener("visibilitychange", onHide, { once: true });
+    window.addEventListener("pagehide", onHide, { once: true });
+    var f = document.createElement("iframe");
+    f.style.display = "none";
+    f.src = schemeUrl;
+    document.body.appendChild(f);
+    setTimeout(function () { if (f.parentNode) f.parentNode.removeChild(f); }, 2000);
+  }
+
   function renderResult(dish) {
     lastDish = dish;
     var v = verdictFor(dish);
@@ -202,19 +242,19 @@
       "<p class=\"small\">" + esc(dish.py) + "</p>" +
       '<button type="button" id="addOrderBtn">Add to order</button> ' +
       '<button type="button" class="ghost" id="shareDishBtn">Share</button>' +
-      '<details class="subcard"><summary>Next · pick 1 of 3</summary>' +
+      '<details class="subcard"><summary>Next · pick one</summary>' +
       '<div class="next-steps">' +
-      '<button type="button" id="nextDianpingBtn">Search on Dianping</button>' +
+      '<button type="button" id="nextMeituanBtn">Search on Meituan</button>' +
+      '<button type="button" class="ghost" id="nextDianpingBtn">Search on Dianping</button>' +
       '<button type="button" class="ghost" id="nextQrBtn">How to order by QR</button>' +
       '<button type="button" class="ghost" id="nextCardBtn">Show diet card to waiter</button></div></details>' +
-      "<p><b>Dianping:</b> Tap \"Search on Dianping\" — I've copied the name for you. Just paste it in Dianping.</p>" +
-      "<p><b>Getting it delivered?</b> The name's already copied — paste it in Meituan. Your hotel card is waiting in the Meituan section.</p>";
+      "<p><b>Meituan:</b> Tap \"Search on Meituan\" — it opens Meituan Waimai search for this dish. You order and pay in Meituan, not here.</p>" +
+      "<p><b>Dianping:</b> Tap \"Search on Dianping\" — reviews and group deals for this dish, in the Dianping app or on the web.</p>" +
+      "<p><b>Getting it delivered?</b> Your hotel card is waiting in the Meituan section — the rider needs your address in Chinese.</p>";
     $("addOrderBtn").onclick = function () { addToOrder(dish); };
     $("shareDishBtn").onclick = function () { shareDish(dish, v); };
-    $("nextDianpingBtn").onclick = function () {
-      if (navigator.clipboard) navigator.clipboard.writeText(dish.zh);
-      openFaq("faq-dianping");
-    };
+    $("nextMeituanBtn").onclick = function () { openDeepLink(MEITUAN_LINKS.waimaiScheme(dish.zh), MEITUAN_LINKS.waimaiH5(dish.zh)); };
+    $("nextDianpingBtn").onclick = function () { openDeepLink(MEITUAN_LINKS.dianpingScheme(dish.zh), MEITUAN_LINKS.dianpingH5); };
     $("nextQrBtn").onclick = function () { gotoSection("qrSection"); };
     $("nextCardBtn").onclick = function () { gotoSection("dietSection"); };
     updateCounts();
@@ -431,7 +471,9 @@
           if ($("topSearch")) $("topSearch").value = "";
           updateHomeFilter();
           var hs = $("homeSignature");
-          if (hs) hs.scrollIntoView({ behavior: "smooth", block: "start" });
+          // v5.2: Signature is a <details> now — open it before scrolling,
+          // or the user lands on a closed header.
+          if (hs) { if (hs.tagName === "DETAILS") hs.open = true; hs.scrollIntoView({ behavior: "smooth", block: "start" }); }
           return;
         }
         currentCat = c[0];
@@ -460,12 +502,17 @@
   }
   function renderOrder() {
     var el = $("orderList");
-    if (!state.order.length) { el.innerHTML = "<p class=\"muted\">Nothing here yet — check a dish first, then add it.</p>"; }
-    else {
+    if (!state.order.length) {
+      el.innerHTML = "<p class=\"muted\">Nothing here yet — check a dish first, then add it.</p><p><button type=\"button\" id=\"orderEmptyGo\">Decode a dish</button></p>";
+      var go = $("orderEmptyGo");
+      if (go) go.onclick = function () { showView("search"); };
+    } else {
+      var total = 0;
       el.innerHTML = state.order.map(function (x) {
         var d = D.dishes.find(function (dd) { return dd.id === x.id; });
+        total += d.price * x.qty;
         return "<p>• " + esc(d.en) + " (" + esc(d.zh) + ") × " + x.qty + " — ¥" + (d.price * x.qty) + "</p>";
-      }).join("");
+      }).join("") + "<p><b>Total: ¥" + total + " · ≈$" + usd(total) + "</b> · " + state.order.length + (state.order.length === 1 ? " dish" : " dishes") + "</p>";
     }
     renderSlip();
   }
@@ -478,10 +525,14 @@
       var d = D.dishes.find(function (dd) { return dd.id === x.id; });
       return (i + 1) + ". " + d.zh + " ×" + x.qty;
     });
+    var slipTotal = state.order.reduce(function (s, x) {
+      var d = D.dishes.find(function (dd) { return dd.id === x.id; });
+      return s + (d ? d.price * x.qty : 0);
+    }, 0);
     $("slipPreview").innerHTML =
       "<p class=\"bigzh\">您好，请帮我用你们的手机下单，谢谢！</p>" +
       "<p class=\"bigzh\">桌号：" + esc(tableNo) + " &nbsp; 人数：" + esc(people) + "</p>" +
-      (lines.length ? "<p class=\"bigzh\">" + esc(lines.join("<br>")) + "</p>" : "<p class=\"muted\">(Add dishes to your list in the decoder first.)</p>") +
+      (lines.length ? "<p class=\"bigzh\">" + esc(lines.join("<br>")) + "</p><p class=\"bigzh\">总计：" + slipTotal + "元。</p>" : "<p class=\"muted\">(Add dishes to your list in the decoder first.)</p>") +
       "<p class=\"bigzh\">我用" + esc(payText) + "。</p>";
   }
   ["tableNo", "peopleNo"].forEach(function (id) { var el = $(id); if (el) el.addEventListener("input", renderSlip); });
@@ -501,6 +552,44 @@
   // ---- QR route A table ----
   $("qrTable").innerHTML = "<table><tr><th>Chinese</th><th>English</th><th>What it means</th></tr>" +
     D.qrButtons.map(function (b) { return "<tr><td><b>" + esc(b.zh) + "</b></td><td>" + esc(b.en) + "</td><td>" + esc(b.note) + "</td></tr>"; }).join("") + "</table>";
+
+  // ---- Orders tabs: Dine-in / Delivery (v5.2) ----
+  // Delivery is a guide only — ordering happens in Meituan / Ele.me,
+  // not here. All copy comes from the FAQ + hotel card (no invented
+  // restaurants, addresses, phone numbers, prices, or wait times).
+  function setOrderTab(which) {
+    var dine = $("tabDineIn"), del = $("tabDelivery"), dp = $("dineInPanel"), vp = $("deliveryPanel");
+    if (!dine || !del || !dp || !vp) return;
+    var isDel = which === "delivery";
+    dine.setAttribute("aria-selected", isDel ? "false" : "true");
+    del.setAttribute("aria-selected", isDel ? "true" : "false");
+    dp.classList.toggle("hidden", isDel);
+    vp.classList.toggle("hidden", !isDel);
+  }
+  if ($("tabDineIn")) $("tabDineIn").onclick = function () { setOrderTab("dinein"); };
+  if ($("tabDelivery")) $("tabDelivery").onclick = function () { setOrderTab("delivery"); };
+  if ($("deliveryMeituanBtn")) $("deliveryMeituanBtn").onclick = function () {
+    var note = $("deliveryDishNote");
+    if (lastDish) {
+      if (note) note.textContent = "Opening Meituan Waimai search for “" + lastDish.zh + "” — if the app isn't installed you'll land on the web search instead.";
+      openDeepLink(MEITUAN_LINKS.waimaiScheme(lastDish.zh), MEITUAN_LINKS.waimaiH5(lastDish.zh));
+    } else {
+      if (note) note.textContent = "Check a dish first — then this button searches it directly. Opening Meituan Waimai home for now.";
+      openDeepLink(MEITUAN_LINKS.waimaiSchemeHome, MEITUAN_LINKS.waimaiH5Home);
+    }
+  };
+  if ($("deliveryDianpingBtn")) $("deliveryDianpingBtn").onclick = function () {
+    var note = $("deliveryDishNote");
+    if (lastDish) {
+      if (note) note.textContent = "Opening Dianping search for “" + lastDish.zh + "” — reviews and group deals, in the app or on the web.";
+      openDeepLink(MEITUAN_LINKS.dianpingScheme(lastDish.zh), MEITUAN_LINKS.dianpingH5);
+    } else {
+      if (note) note.textContent = "Check a dish first — then this button searches it directly. Opening Dianping home for now.";
+      openDeepLink(MEITUAN_LINKS.dianpingSchemeHome, MEITUAN_LINKS.dianpingH5);
+    }
+  };
+  if ($("deliveryElemeBtn")) $("deliveryElemeBtn").onclick = function () { window.open("https://www.ele.me/", "_blank"); };
+  if ($("deliveryHotelBtn")) $("deliveryHotelBtn").onclick = function () { gotoSection("meituanSection"); };
 
   // ---- Payment checklist ----
   var checks = [
@@ -843,11 +932,11 @@
   $("closeAdBtn").onclick = function () { clearInterval(adTimer); $("adOverlay").classList.add("hidden"); };
 
   // ---- Subscribe ----
-  // 开发站是纯静态 Pages，没有 Worker。订阅接口在 Dashboard Worker
-  // china-bite-dashboard 的 /api/subscribe（见 subscribe.js 的部署路径说明）。
-  // 该 Worker 2026-11-26 查过还不存在：fetch 失败时如实提示，并把邮箱
-  // 存在本机待同步队列，不假装已订阅成功。
-  var SUBSCRIBE_API = "https://china-bite-dashboard.cc-chemate.workers.dev/api/subscribe";
+  // 订阅接口在 Dashboard Worker 的 /api/subscribe（见 subscribe.js）。
+  // API 域名用 bite-api.chinavisacheck.com（Worker 自定义域名路由）：
+  // workers.dev 生产域名 2026-11-26 14:38 起全站报 404 error code 1042，
+  // 脚本本身正常（版本预览 URL 200），是生产路由故障，改走自定义域名绕过。
+  var SUBSCRIBE_API = "https://bite-api.chinavisacheck.com/api/subscribe";
   var SUBSCRIBE_COPY = {
     en: { title: "New dishes first.", line: "One email when we add dishes. Nothing else.", btn: "Subscribe", privacy: "Only China Bite updates. No marketing. Unsubscribe anytime.", done: "You're in.", doneLine: "New dishes, in your inbox. First.", already: "Already subscribed.", bad: "That email doesn't look right.", pending: "Not live yet. Saved on this device." },
     zh: { title: "新菜先知道。", line: "加了新菜才发一封。别的没有。", btn: "订阅", privacy: "只收 China Bite 更新。不发营销。可随时退订。", done: "订好了。", doneLine: "有新菜，第一时间发你邮箱。", already: "已经订过了。", bad: "邮箱格式不对，再看一眼。", pending: "还没接通，先存在本机了。" },
@@ -991,6 +1080,16 @@
       e.preventDefault();
       showView(a.getAttribute("data-view"));
     });
+  });
+  // v5.2: keep aria-expanded in sync on every <details> summary.
+  // <summary> is natively keyboard-operable (Enter/Space); the attribute
+  // makes the open/closed state explicit for assistive tech.
+  document.querySelectorAll("details").forEach(function (d) {
+    var s = d.querySelector(":scope > summary");
+    if (!s) return;
+    function sync() { s.setAttribute("aria-expanded", d.open ? "true" : "false"); }
+    sync();
+    d.addEventListener("toggle", sync);
   });
   var appTitle = $("appTitle");
   if (appTitle) {
