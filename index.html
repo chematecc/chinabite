@@ -38,7 +38,10 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="China Bite">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<script>try{var _t=localStorage.getItem('chinabite_theme');if(!_t)_t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';document.documentElement.setAttribute('data-theme',_t);}catch(e){document.documentElement.setAttribute('data-theme','light');}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>try{document.documentElement.setAttribute('data-theme',(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light');}catch(e){document.documentElement.setAttribute('data-theme','light');}</script>
 <link rel="stylesheet" href="styles.css">
 <script type="application/ld+json">
 {
@@ -1610,17 +1613,6 @@
 <span class="appbar-title" id="appTitle" role="button" tabindex="0" title="回主页 · Home">China Bite</span>
 <span class="dev-badge hidden" id="devBadge" title="开发模式：全部功能解锁。最终交付时把 app.js 里 DEV_MODE 设 false">DEV · 开发模式</span>
 </div>
-<nav id="appMenu" class="app-menu hidden" aria-label="全部内容">
-<a href="#hero" data-view="home">Home · 主页</a>
-<a href="#decoder" data-goto="decoder">Search · 查菜</a>
-<a href="#storyDishes" data-goto="storyDishes">Signature Dishes · 招牌菜</a>
-<a href="#qrSection" data-goto="qrSection">QR Order · 扫码点餐</a>
-<a href="#dietSection" data-goto="dietSection">Diet Cards · 饮食卡</a>
-<a href="#citiesSection" data-goto="citiesSection">Cities · 10 城</a>
-<a href="#meituanSection" data-goto="meituanSection">美团 / 点评 / 外卖</a>
-<a href="#kitPreview" data-goto="kitPreview">Kit Preview · 预览</a>
-<a href="#subscribe" data-goto="subscribe">Subscribe · 新菜先知道</a>
-</nav>
 </div>
 </header>
 <main>
@@ -1631,14 +1623,14 @@
 </div>
 <div class="cat-chips" id="catChips" aria-label="Browse by category"></div>
 <header class="hero" id="hero">
-<img class="hero-img" src="assets/china-bite-hero-vertical.webp" alt="Bun helps a foreign visitor decode a Chinese menu" width="540" height="1080" fetchpriority="high">
 <div class="hero-body">
 <img class="logo" src="assets/china-bite-mascot-dumpling-288.webp" alt="China Bite mascot — a cheerful dumpling holding chopsticks" width="56" height="56">
 <p class="hero-kicker">China Bite · 110 dishes · 10 cities · 12 diet cards</p>
-<h1>CAN I<br>EAT THIS?</h1>
+<h1>Can I <em>eat this?</em></h1>
 <p class="hero-zh">这道菜，我能吃吗？</p>
 <p class="slogan">Discover China, One Bite at a Time.</p>
 <p class="hero-hook">One photo. One tap. Dinner, sorted. — 拍一张，点一下，今晚吃什么就定了。</p>
+<img class="hero-img" src="assets/china-bite-hero-vertical.webp" alt="A cook prepares fresh noodles at a Shanghai street food stall" width="500" height="750" fetchpriority="high">
 <p class="pain">You just sat down. The waiter hands you a menu — all in Chinese. Even the QR code doesn't help.</p>
 <p class="pain-en">3 seconds to tell you if you can eat this dish. · 3 秒，告诉你这道菜能不能吃。</p>
 <p><button type="button" class="big" onclick="document.getElementById('storyDishes').scrollIntoView()">See signature dishes ↓</button></p>
@@ -1716,9 +1708,9 @@
 <details class="card" id="adSection">
 <summary><span class="card-head"><h2>Free Decodes · 赚次数</h2><span class="card-sub">Watch a 5s ad, get +3 — hidden in dev mode</span></span><span class="chev" aria-hidden="true">▾</span></summary>
 <div class="card-body">
-<p><b>Watch 5s. Get +3.</b></p>
-<p>Max 5/day. +15 total.</p>
-<p class="small">Demo ad only. No real revenue.</p>
+<p><b>Watch 5 seconds, get 3 more checks.</b></p>
+<p>Up to 5 a day — that's 15 extra.</p>
+<p class="small">Just a demo — no real money here.</p>
 <p><button type="button" id="watchAdBtn">Watch ad · +3</button></p>
 <p><label><input type="checkbox" id="paidToggle"> Preview paid (no ads)</label></p>
 <p class="small" id="paidNote">Free version. Demo ads on.</p>
@@ -1726,9 +1718,9 @@
 </details>
 
 <details class="card" id="kitPreview">
-<summary><span class="card-head"><h2>Kit Preview · 预览</h2><span class="card-sub">1 dish, 1 card, 1 city sample — the rest unlocks with Kit</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<summary><span class="card-head"><h2>Kit Preview · 预览</h2><span class="card-sub">A little taste — one dish, one card, one city. The rest is in the Kit.</span></span><span class="chev" aria-hidden="true">▾</span></summary>
 <div class="card-body">
-<p class="block-sub" id="kitPreviewSub">1 dish, 1 card, 1 city. Rest locked.</p>
+<p class="block-sub" id="kitPreviewSub">One dish, one card, one city. The rest is in the Kit.</p>
 <p><b>1 dish, full.</b> 麻婆豆腐 — verdict, inside, hidden, spice, price.</p>
 <p><b>1 card, full.</b> Peanut allergy — 3 lines, big Chinese.</p>
 <p><b>1 city, sample.</b> Shanghai — 3 places. See Cities below.</p>
@@ -1754,13 +1746,17 @@
 <div class="count-slim">
 <p id="countText">Left today: 3 of 3</p>
 <div class="progress"><div id="countBar" style="width:100%"></div></div>
-<p class="small">Free: 3/day. Friend's link: 6/day. Ad: +3 each, max 5/day.</p>
+<p class="small">Free: 3 a day. A friend's link gets you 6. Watch an ad, +3 — up to 5 a day.</p>
 </div>
 <p><b>Step 1 — Your diet</b></p>
 <div class="chips" id="profiles"></div>
 <p class="muted" id="profileDesc">No restriction.</p>
-<p><b>Step 2 — Snap the menu</b></p>
-<p><button type="button" class="big camera-btn" id="cameraBtn">Snap the menu · 拍菜单</button></p>
+<p><b>Step 2 — Snap it, say it, or type it</b></p>
+<div class="input-row">
+<button type="button" class="camera-btn" id="cameraBtn">Snap the menu · 拍菜单</button>
+<button type="button" class="voice-btn" id="voiceBtn">🎙 Say the dish · 语音</button>
+</div>
+<p class="voice-row"><button type="button" class="voice-lang" id="voiceLangBtn" aria-label="Voice language">Voice: English</button><span class="small" id="voiceStatus" role="status"></span></p>
 <input type="file" id="photoInput" accept="image/*" capture="environment" class="hidden" aria-label="拍菜单照片">
 <div id="photoPreview" class="hidden"></div>
 <p id="photoStatus" class="small hidden" role="status"></p>
@@ -1773,16 +1769,29 @@
 <div id="result" class="hidden"></div>
 <details class="subcard" id="dishPicker">
 <summary>110 道菜 · 点一个直接查</summary>
-<p class="small">点一道菜，直接出结论。</p>
+<p class="small">Tap one — I'll tell you in 3 seconds.</p>
 <div class="grid" id="dishList"></div>
 </details>
-<p class="small">Guide only. Not medical advice.<br>Can't confirm? Don't eat it.</p>
+<p class="small">Just a guide, not medical advice.<br>If you're not sure, don't eat it.</p>
 </section>
 
 <section class="card decoder-teaser" id="decoderTeaser">
 <h2>Not sure what to order?</h2>
 <p class="small">See a dish on the menu? Snap it and check if you can eat it.</p>
 <p><a class="btn-link" href="#decoder" data-goto="decoder">Snap the menu →</a></p>
+</section>
+
+<section class="card explore-card" id="exploreCard">
+<h2>Explore</h2>
+<p class="block-sub">Everything, in one place — no menu button needed.</p>
+<div class="explore-links">
+<a href="#qrSection" data-goto="qrSection">QR Order · 扫码点餐</a>
+<a href="#dietSection" data-goto="dietSection">Diet Cards · 饮食卡</a>
+<a href="#citiesSection" data-goto="citiesSection">Cities · 10 城</a>
+<a href="#meituanSection" data-goto="meituanSection">Meituan · 美团 / 点评</a>
+<a href="#kitPreview" data-goto="kitPreview">Kit Preview · 预览</a>
+<a href="#subscribe" data-goto="subscribe">Subscribe · 新菜先知道</a>
+</div>
 </section>
 
 
@@ -1813,15 +1822,16 @@
 <p class="bigzh">您好，我是外国人，请放在前台，不要打电话，发信息即可。谢谢！</p>
 <p>Contact number: hotel front desk, not a fake number.</p>
 <p><b>Pickup:</b> riders stop at the lobby. Front desk or delivery shelf. Check when it says delivered.</p>
-<p class="small">No order here. Fees and time show at checkout. They vary.</p>
+<p class="small">You can't order from here — prices and times show at checkout, and they change.</p>
 <h3>Hotel card · 酒店地址卡</h3>
-<p>Fill once. Copy when you order delivery.</p>
-<label for="hotelName">Hotel · 酒店中文名</label>
+<p>Fill it once, copy it whenever you order.</p>
+<label for="hotelName">Hotel · 酒店中文名 <button type="button" class="mic-btn" id="hotelNameVoiceBtn" aria-label="Say the hotel name">🎙 说酒店名</button></label>
 <input type="text" id="hotelName" placeholder="e.g. 上海外滩华尔道夫酒店" autocomplete="off" lang="zh-CN">
-<label for="hotelRoom">Room · 房号</label>
+<label for="hotelRoom">Room · 房号 <button type="button" class="mic-btn" id="hotelRoomVoiceBtn" aria-label="Say the room number">🎙 说房号</button></label>
 <input type="text" id="hotelRoom" placeholder="e.g. 1204房" autocomplete="off" lang="zh-CN">
+<p class="small" id="hotelVoiceStatus" role="status"></p>
 <p><button type="button" id="copyHotelBtn">Copy hotel card · 复制地址卡</button></p>
-<p class="small">Saved on this device only.</p>
+<p class="small">Stays on your phone only.</p>
 </div>
 </details>
 
@@ -1857,7 +1867,7 @@
 </details>
 
 <details class="card" id="subscribe">
-<summary><span class="card-head"><h2>New dishes first.</h2><span class="card-sub">New dishes first — one email when we add dishes</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<summary><span class="card-head"><h2 id="subTitle">New dishes first.</h2><span class="card-sub">New dishes first — one email when we add dishes</span></span><span class="chev" aria-hidden="true">▾</span></summary>
 <div class="card-body">
 <img class="sub-mascot" src="assets/china-bite-mascot-dumpling-288.webp" alt="China Bite mascot — a cheerful dumpling holding chopsticks" width="56" height="56" loading="lazy">
 <p id="subLine">One email when we add dishes. Nothing else.</p>
@@ -1886,7 +1896,7 @@
 </details>
 
 <footer>
-<p class="small">China Bite — Discover China, One Bite at a Time.<br>Prices are estimates. 2026-11-26. Rate ~7.1.</p>
+<p class="small">China Bite — Discover China, One Bite at a Time.<br>Prices are rough guides, 2026-11-26, rate ~7.1.<br>Hero photo: Marion Pintaux / Pexels (free licence).</p>
 <p class="small"><a href="README.md">README</a></p>
 </footer>
 </main>
@@ -1895,8 +1905,6 @@
 <a href="#decoder" data-view="decode"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></svg><span>Search</span></a>
 <a href="#qrSection" data-view="qr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5L6 21V3z"/><path d="M9 8h6M9 12h6"/></svg><span>Orders</span></a>
 <a href="#kitPreview" data-view="account"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg><span>Account</span></a>
-<button type="button" id="themeBtn" class="nav-icon" aria-label="切换白天 / 黑夜模式" title="白天 / 黑夜">🌙</button>
-<button type="button" id="menuBtn" class="nav-icon" aria-expanded="false" aria-controls="appMenu" aria-label="菜单">☰</button>
 </nav>
 
 <div id="slipOverlay" class="overlay hidden">

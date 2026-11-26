@@ -88,50 +88,50 @@
   var FLAG_EN = { pork: "pork", lard: "lard", stock: "meat stock", peanut: "peanuts", shrimp: "shrimp", gluten: "wheat (gluten)", soy: "soy", egg: "egg", dairy: "dairy", beef: "beef", chicken: "chicken", fish: "fish", lamb: "lamb", duck: "duck", goose: "goose", frog: "frog", alcohol: "alcohol" };
   function containsEn(dish) {
     var f = (dish.flags || []).filter(function (x) { return FLAG_EN[x]; }).map(function (x) { return FLAG_EN[x]; });
-    if (!f.length) return "Nothing to watch for.";
-    return "Contains " + f.join(", ") + ".";
+    if (!f.length) return "Nothing sneaky in here.";
+    return "Has " + f.join(", ") + " in it.";
   }
   function verdictFor(dish) {
     var f = dish.flags || [];
     function has() { for (var i = 0; i < arguments.length; i++) if (f.indexOf(arguments[i]) >= 0) return true; return false; }
     var meat = has("pork", "beef", "chicken", "duck", "fish", "shrimp", "frog", "goose", "lamb");
     var animal = meat || has("egg", "dairy");
-    if (profile === "none") return { k: "ok", t: "You can eat it", why: containsEn(dish) };
+    if (profile === "none") return { k: "ok", t: "You're good", why: containsEn(dish) };
     if (profile === "vegetarian") {
-      if (meat) return { k: "no", t: "Avoid", why: "Meat. " + containsEn(dish) };
-      if (has("lard", "stock")) return { k: "ask", t: "Ask first", why: "Lard or stock. Ask first." };
-      if (has("egg")) return { k: "ok", t: "You can eat it", why: "Egg is OK. " + containsEn(dish) };
-      return { k: "ok", t: "You can eat it", why: containsEn(dish) };
+      if (meat) return { k: "no", t: "Skip this one", why: "It's got meat in it. " + containsEn(dish) };
+      if (has("lard", "stock")) return { k: "ask", t: "Ask them first", why: "Could be lard or meat stock in there — worth one quick question." };
+      if (has("egg")) return { k: "ok", t: "You're good", why: "Egg's fine for you. " + containsEn(dish) };
+      return { k: "ok", t: "You're good", why: containsEn(dish) };
     }
     if (profile === "vegan") {
-      if (animal || has("lard", "stock")) return { k: "no", t: "Avoid", why: "Animal product. " + containsEn(dish) };
-      return { k: "ok", t: "You can eat it", why: containsEn(dish) };
+      if (animal || has("lard", "stock")) return { k: "no", t: "Skip this one", why: "Animal product in there. " + containsEn(dish) };
+      return { k: "ok", t: "You're good", why: containsEn(dish) };
     }
     if (profile === "halal") {
-      if (has("pork", "lard", "alcohol")) return { k: "no", t: "Avoid", why: "Pork or lard. " + containsEn(dish) };
-      if (meat) return { k: "ask", t: "Ask first", why: "Meat. Ask: halal? Look for 清真." };
-      return { k: "ok", t: "You can eat it", why: containsEn(dish) };
+      if (has("pork", "lard", "alcohol")) return { k: "no", t: "Skip this one", why: "Pork or lard — not halal. " + containsEn(dish) };
+      if (meat) return { k: "ask", t: "Ask them first", why: "It's meat — ask if it's halal, or look for the green 清真 sign." };
+      return { k: "ok", t: "You're good", why: containsEn(dish) };
     }
     if (profile === "peanut") {
-      if (has("peanut")) return { k: "no", t: "Avoid", why: "Peanuts. Don't order." };
-      if (has("stock")) return { k: "ask", t: "Ask first", why: "No peanuts. Ask about sauce." };
-      return { k: "ok", t: "You can eat it", why: containsEn(dish) };
+      if (has("peanut")) return { k: "no", t: "Skip this one", why: "Peanuts are the whole point of this one. Don't risk it." };
+      if (has("stock")) return { k: "ask", t: "Ask them first", why: "No peanuts in the dish itself — but ask about the sauce, just in case." };
+      return { k: "ok", t: "You're good", why: containsEn(dish) };
     }
     if (profile === "shellfish") {
-      if (has("shrimp")) return { k: "no", t: "Avoid", why: "Shellfish. Don't order." };
-      if (has("stock")) return { k: "ask", t: "Ask first", why: "No shellfish. Ask about stock." };
-      return { k: "ok", t: "You can eat it", why: containsEn(dish) };
+      if (has("shrimp")) return { k: "no", t: "Skip this one", why: "Shellfish in there. Don't risk it." };
+      if (has("stock")) return { k: "ask", t: "Ask them first", why: "No shellfish in the dish — but the stock might have some. One quick question." };
+      return { k: "ok", t: "You're good", why: containsEn(dish) };
     }
     if (profile === "gluten") {
-      if (has("gluten")) return { k: "no", t: "Avoid", why: "Wheat (gluten). " + containsEn(dish) };
-      return { k: "ok", t: "You can eat it", why: containsEn(dish) };
+      if (has("gluten")) return { k: "no", t: "Skip this one", why: "Wheat in there. " + containsEn(dish) };
+      return { k: "ok", t: "You're good", why: containsEn(dish) };
     }
     if (profile === "nospicy") {
-      if (dish.spicy >= 2) return { k: "no", t: "Avoid", why: "Too spicy. Spice " + dish.spicy + "/3." };
-      if (dish.spicy === 1) return { k: "ask", t: "Ask first", why: "Mild spice. Ask: no chili." };
-      return { k: "ok", t: "You can eat it", why: "Not spicy. " + containsEn(dish) };
+      if (dish.spicy >= 2) return { k: "no", t: "Too hot for you", why: "Spice " + dish.spicy + "/3 — this one bites back." };
+      if (dish.spicy === 1) return { k: "ask", t: "Ask them first", why: "Just a little heat — ask them to hold the chili." };
+      return { k: "ok", t: "You're good", why: "No heat at all. " + containsEn(dish) };
     }
-    return { k: "ok", t: "You can eat it", why: containsEn(dish) };
+    return { k: "ok", t: "You're good", why: containsEn(dish) };
   }
 
   function spiceLabel(n) { return ["Not spicy", "Mild", "Medium", "Very spicy"][n] + " (" + n + "/3)"; }
@@ -146,13 +146,13 @@
     $("result").innerHTML =
       '<img class="mascot-mini" src="assets/china-bite-mascot-dumpling-288.webp" alt="China Bite mascot — a cheerful dumpling holding chopsticks" width="32" height="32" loading="lazy">' +
       '<div class="verdict ' + cls + '">' + esc(v.t) + " — " + esc(dish.en) + " (" + esc(dish.zh) + ")</div>" +
-      "<p><b>Why:</b> " + esc(v.why) + "</p>" +
-      "<p><b>Inside:</b> " + esc(dish.main) + "</p>" +
-      "<p><b>Watch out:</b> " + esc(containsEn(dish)) + "</p>" +
-      "<p><b>Spice:</b> " + esc(spiceLabel(dish.spicy)) + "</p>" +
+      "<p><b>Here's why:</b> " + esc(v.why) + "</p>" +
+      "<p><b>What's in it:</b> " + esc(dish.main) + "</p>" +
+      "<p><b>Heads up:</b> " + esc(containsEn(dish)) + "</p>" +
+      "<p><b>How hot:</b> " + esc(spiceLabel(dish.spicy)) + "</p>" +
       ((dish.flags && dish.flags.length) ? "<p><b>Watch:</b> " + esc(dish.flags.join(", ")) + "</p>" : "") +
-      "<p><b>Price:</b> ¥" + dish.price + " · ≈$" + usd(dish.price) + "</p>" +
-      "<p><b>Show waiter:</b></p><p class=\"bigzh\">" + esc(dish.waiter) + "</p>" +
+      "<p><b>About:</b> ¥" + dish.price + " · ≈$" + usd(dish.price) + "</p>" +
+      "<p><b>Show them this:</b></p><p class=\"bigzh\">" + esc(dish.waiter) + "</p>" +
       "<p class=\"small\">" + esc(dish.py) + "</p>" +
       '<button type="button" id="addOrderBtn">Add to order</button> ' +
       '<button type="button" class="ghost" id="shareDishBtn">Share</button>' +
@@ -161,8 +161,8 @@
       '<button type="button" id="nextDianpingBtn">Search on Dianping</button>' +
       '<button type="button" class="ghost" id="nextQrBtn">How to order by QR</button>' +
       '<button type="button" class="ghost" id="nextCardBtn">Show diet card to waiter</button></div></details>' +
-      "<p><b>Dianping:</b> Tap \"Search on Dianping\" — the dish name is copied. Paste it in Dianping search.</p>" +
-      "<p><b>Delivery?</b> The dish name is copied — paste it in Meituan search. Your hotel card is in the Meituan section.</p>";
+      "<p><b>Dianping:</b> Tap \"Search on Dianping\" — I've copied the name for you. Just paste it in Dianping.</p>" +
+      "<p><b>Getting it delivered?</b> The name's already copied — paste it in Meituan. Your hotel card is waiting in the Meituan section.</p>";
     $("addOrderBtn").onclick = function () { addToOrder(dish); };
     $("shareDishBtn").onclick = function () { shareDish(dish, v); };
     $("nextDianpingBtn").onclick = function () {
@@ -191,19 +191,19 @@
         save();
       }
       $("result").className = "subcard";
-      $("result").innerHTML = "<div class=\"verdict ask\">Not in our list yet</div>" +
-        "<p>" + D.dishes.length + " dishes here. Not this one.</p>" +
-        "<p>Saved on this device. We'll add it.</p>" +
-        "<p>Photo the menu. Check: lard, stock, oyster sauce.</p>";
+      $("result").innerHTML = "<div class=\"verdict ask\">Hmm, not on my list yet</div>" +
+        "<p>I know " + D.dishes.length + " dishes — and this one isn't one of them. Yet.</p>" +
+        "<p>I saved it on your phone, and we'll add it.</p>" +
+        "<p>Meanwhile, snap the menu — and watch out for lard, stock and oyster sauce. They hide everywhere.</p>";
       return;
     }
     // PAYWALL：DEV_MODE 下 remaining() 为 Infinity，此分支永不触发；
     // DEV_MODE=false 时恢复：免费次数用完 → 挡住，去看广告或买 Kit。
     if (remaining() <= 0 && !paidPreview) {
       $("result").className = "subcard";
-      $("result").innerHTML = "<div class=\"verdict ask\">Free decodes used up</div>" +
-        "<p>Watch a 5s ad: +3.</p>" +
-        "<p>Or get Kit: $6.99, 90 days.</p>" +
+      $("result").innerHTML = "<div class=\"verdict ask\">That's your free checks for today</div>" +
+        "<p>Watch a 5-second ad and I'll give you 3 more.</p>" +
+        "<p>Or grab the Kit — $6.99, 90 days, unlimited.</p>" +
         '<button type="button" onclick="document.getElementById(\'adSection\').scrollIntoView()">Watch ad · +3</button>';
       return;
     }
@@ -249,7 +249,7 @@
       b.onclick = function () { $("dishInput").value = d.zh; decode(); $("decoder").scrollIntoView(); };
       listEl.appendChild(b);
     });
-    if (!shown) listEl.innerHTML = "<p class=\"muted\">No dishes match — try All.</p>";
+    if (!shown) listEl.innerHTML = "<p class=\"muted\">Nothing matches that — try All, or just say it out loud.</p>";
     return shown;
   }
   renderDishList("all", "");
@@ -292,11 +292,11 @@
     var item = state.order.find(function (x) { return x.id === dish.id; });
     if (item) item.qty++; else state.order.push({ id: dish.id, qty: 1 });
     save(); renderOrder();
-    alert("Added: " + dish.en);
+    alert("Got it — " + dish.en + " is on your list.");
   }
   function renderOrder() {
     var el = $("orderList");
-    if (!state.order.length) { el.innerHTML = "<p class=\"muted\">List empty. Decode a dish first.</p>"; }
+    if (!state.order.length) { el.innerHTML = "<p class=\"muted\">Nothing here yet — check a dish first, then add it.</p>"; }
     else {
       el.innerHTML = state.order.map(function (x) {
         var d = D.dishes.find(function (dd) { return dd.id === x.id; });
@@ -499,10 +499,96 @@
   $("inviteCount").textContent = "0 (placeholder)";
 
 
-  // ---- 相机查菜 (v2.7 补充：相机是主入口，文字输入只是折叠备用) ----
-  // web 版只有前端入口 + 流程：拍照后在下面出预览，并如实说明 OCR 未接通。
-  // 真 OCR（拍菜单 -> 识别菜名 -> 出 verdict）是 App 阶段的原生功能，
-  // 不要编造已接通。拍完后自动展开 110 道菜快选，点一道就能出结论。
+  // ---- Voice input (v3.4, DEV_MODE: on) ----
+  // Web Speech API. en-US first, tap "Voice: English" to switch to zh-CN.
+  // iOS Safari has no SpeechRecognition: we say so honestly instead of
+  // failing silently. Native voice is an App-stage feature.
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var voiceLang = "en-US";
+  function speakInto(inputEl, statusEl, after) {
+    if (!SR) {
+      if (statusEl) statusEl.textContent = "Voice typing doesn't work in this browser yet — iOS Safari doesn't offer it. Type the name instead, or wait for the App, where voice is built in.";
+      return;
+    }
+    var rec = new SR();
+    rec.lang = voiceLang; rec.interimResults = false; rec.maxAlternatives = 3;
+    if (statusEl) statusEl.textContent = "Listening… say the dish name.";
+    rec.onresult = function (e) {
+      var said = e.results[0][0].transcript || "";
+      if (inputEl) inputEl.value = said;
+      if (statusEl) statusEl.textContent = 'Heard: "' + said + '"';
+      if (after) after(said);
+    };
+    rec.onerror = function (e) {
+      if (statusEl) statusEl.textContent = "Hmm, I didn't catch that (" + (e.error || "error") + "). Say it once more — or just type it.";
+    };
+    try { rec.start(); } catch (err) {
+      if (statusEl) statusEl.textContent = "Voice couldn't start here. Type the name instead — it takes 3 seconds.";
+    }
+  }
+  var voiceBtn = $("voiceBtn"), voiceLangBtn = $("voiceLangBtn");
+  if (voiceLangBtn) {
+    voiceLangBtn.onclick = function () {
+      voiceLang = voiceLang === "en-US" ? "zh-CN" : "en-US";
+      voiceLangBtn.textContent = voiceLang === "en-US" ? "Voice: English" : "Voice: 中文";
+    };
+  }
+  if (voiceBtn) {
+    voiceBtn.onclick = function () {
+      speakInto($("dishInput"), $("voiceStatus"), function () { decode(); });
+    };
+  }
+  // Hotel card voice: hotel name in Chinese, room number in Chinese.
+  function hotelVoice(targetId) {
+    var saved = voiceLang; voiceLang = "zh-CN";
+    speakInto($(targetId), $("hotelVoiceStatus"), null);
+    voiceLang = saved;
+  }
+  var hnBtn = $("hotelNameVoiceBtn");
+  if (hnBtn) hnBtn.onclick = function () { hotelVoice("hotelName"); };
+  var hrBtn = $("hotelRoomVoiceBtn");
+  if (hrBtn) hrBtn.onclick = function () { hotelVoice("hotelRoom"); };
+
+  // ---- Camera: photo + OCR (v3.4, DEV_MODE: on) ----
+  // Photo stays on this device, never uploaded. OCR runs in the browser
+  // via Tesseract.js (CDN, lazy-loaded on first photo). If the library
+  // can't load here (offline / CDN blocked), we say so honestly and fall
+  // back to the 110-dish quick pick — we never pretend OCR worked.
+  // Low confidence (< 60) or no dish matched: "didn't recognise, tap one
+  // below" — never guess. Native OCR is still the App-stage feature.
+  var OCR_URL = "https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";
+  var ocrLoading = null;
+  function loadOCR() {
+    if (window.Tesseract) return Promise.resolve(true);
+    if (ocrLoading) return ocrLoading;
+    ocrLoading = new Promise(function (resolve) {
+      var s = document.createElement("script");
+      s.src = OCR_URL; s.async = true;
+      var done = false;
+      function finish(v) { if (!done) { done = true; resolve(v); } }
+      s.onload = function () { finish(!!window.Tesseract); };
+      s.onerror = function () { finish(false); };
+      setTimeout(function () { finish(!!window.Tesseract); }, 15000);
+      document.head.appendChild(s);
+    });
+    return ocrLoading;
+  }
+  function matchOcrText(text) {
+    if (!text) return null;
+    var lines = text.split(/[\n\r,，。、；;]+/).map(function (x) { return x.trim(); }).filter(Boolean);
+    var best = null;
+    lines.forEach(function (line) {
+      var d = findDish(line);
+      if (d && !best) best = d;
+      if (!d) {
+        var words = line.split(/\s+/);
+        words.forEach(function (w) {
+          if (w.length >= 2 && !best) { var dd = findDish(w); if (dd) best = dd; }
+        });
+      }
+    });
+    return best;
+  }
   var cameraBtn = $("cameraBtn"), photoInput = $("photoInput");
   if (cameraBtn && photoInput) {
     cameraBtn.onclick = function () { photoInput.click(); };
@@ -514,14 +600,34 @@
         var prev = $("photoPreview"), st = $("photoStatus");
         if (prev) {
           prev.classList.remove("hidden");
-          prev.innerHTML = '<img src="' + reader.result + '" alt="菜单照片" style="width:100%;border-radius:24px;display:block">';
-        }
-        if (st) {
-          st.classList.remove("hidden");
-          st.textContent = "Photo saved on this device — not uploaded. OCR is a native App feature and isn't connected in the web version yet. Tap any dish below for the answer right away — or open 'Type it instead' to type the name.";
+          prev.innerHTML = '<img src="' + reader.result + '" alt="Menu photo" style="width:100%;border-radius:20px;display:block">';
         }
         var picker = $("dishPicker");
         if (picker) picker.open = true;
+        if (!st) return;
+        st.classList.remove("hidden");
+        st.textContent = "Photo saved on this device — not uploaded. Reading the menu…";
+        loadOCR().then(function (ok) {
+          if (!ok || !window.Tesseract) {
+            st.textContent = "Photo's saved on your phone — I didn't upload it. I couldn't load the menu reader here (it needs network). Tap any dish below and I'll tell you in 3 seconds — or type the name.";
+            return;
+          }
+          return window.Tesseract.recognize(reader.result, "eng+chi_sim", {
+            logger: function () {}
+          }).then(function (res) {
+            var conf = res && res.data ? res.data.confidence : 0;
+            var dish = matchOcrText(res && res.data ? res.data.text : "");
+            if (dish && conf >= 60) {
+              st.textContent = 'I think this is "' + dish.en + '" — checking it for you now.';
+              $("dishInput").value = dish.zh;
+              decode();
+            } else {
+              st.textContent = "Hmm, I couldn't quite read that photo (confidence " + Math.round(conf) + "). Tap a dish below and I'll tell you in 3 seconds — no guessing.";
+            }
+          }).catch(function () {
+            st.textContent = "That photo didn't read well. Tap any dish below and I'll tell you in 3 seconds.";
+          });
+        });
       };
       reader.readAsDataURL(f);
     });
@@ -531,7 +637,7 @@
   function updateCounts() {
     // PAYWALL：DEV_MODE 下显示无限，不显示剩余次数/广告进度。
     if (DEV_MODE) {
-      $("countText").textContent = "开发模式 · 解码无限 ∞ · 全部解锁";
+      $("countText").textContent = "Dev mode · unlimited checks ∞ · everything unlocked";
       $("countBar").style.width = "100%";
       return;
     }
@@ -648,7 +754,7 @@
   // homepage anymore.
   // Views are show/hide only — all sections stay in the DOM, so decode,
   // deep links (#/dish/, #/diet/) and the order slip keep working.
-  var VIEW_SECTIONS = ["searchBar", "catChips", "hero", "decoder", "decoderTeaser", "storyDishes", "qrSection", "dietSection", "adSection", "kitPreview", "citiesSection", "meituanSection", "kitSection", "referral", "socialSearch", "subscribe"];
+  var VIEW_SECTIONS = ["searchBar", "catChips", "hero", "decoder", "decoderTeaser", "storyDishes", "qrSection", "dietSection", "adSection", "kitPreview", "citiesSection", "meituanSection", "kitSection", "referral", "socialSearch", "subscribe", "exploreCard"];
   var VIEWS = {
     home: ["searchBar", "catChips", "hero", "storyDishes", "citiesSection", "decoderTeaser"],
     decode: ["decoder"],
@@ -660,7 +766,7 @@
     subscribe: ["subscribe"],
     more: ["referral", "socialSearch"]
   };
-  var SECTION_VIEW = { searchBar: "home", catChips: "home", hero: "home", decoder: "decode", decoderTeaser: "home", storyDishes: "home", qrSection: "qr", dietSection: "diet", adSection: "decode", kitPreview: "account", citiesSection: "cities", meituanSection: "meituan", kitSection: "account", referral: "account", socialSearch: "more", subscribe: "subscribe" };
+  var SECTION_VIEW = { searchBar: "home", catChips: "home", hero: "home", decoder: "decode", decoderTeaser: "home", storyDishes: "home", qrSection: "qr", dietSection: "diet", adSection: "decode", kitPreview: "account", citiesSection: "cities", meituanSection: "meituan", kitSection: "account", referral: "account", socialSearch: "more", subscribe: "subscribe", exploreCard: "home" };
   var currentView = "home";
   function showView(name) {
     var ids = VIEWS[name] || VIEWS.home;
@@ -680,10 +786,6 @@
     document.querySelectorAll(".bottomnav a").forEach(function (x) {
       x.classList.toggle("active", x.getAttribute("data-view") === name);
     });
-    var menu = $("appMenu");
-    if (menu) menu.classList.add("hidden");
-    var btn = $("menuBtn");
-    if (btn) btn.setAttribute("aria-expanded", "false");
   }
   // Tap a nav item: switch to the view holding that section, open the card
   // if it is collapsed, then scroll to it.
@@ -730,14 +832,6 @@
     else if (/^#\/dish\//.test(h)) showView("decode");
     else showView("home");
   })();
-  var menuBtn = $("menuBtn");
-  if (menuBtn) {
-    menuBtn.onclick = function () {
-      var menu = $("appMenu");
-      var open = menu.classList.toggle("hidden") === false;
-      menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
-    };
-  }
 
   // ---- Paid preview toggle (no real payment) ----
   // PAYWALL：DEV_MODE 下强制等同已购（paidPreview=true），开关锁定在 ON，
@@ -760,24 +854,22 @@
   };
 
 
-  // ---- 白天 / 黑夜模式 (v2.7) ----
-  // 默认跟随系统 (prefers-color-scheme)，用户手动切换后记在 localStorage；
-  // <head> 里的内联脚本在 CSS 加载前就按同一规则定好 data-theme，避免闪烁。
-  var themeBtn = $("themeBtn");
-  function applyTheme(t) {
-    document.documentElement.setAttribute("data-theme", t);
-    try { localStorage.setItem("chinabite_theme", t); } catch (e) {}
+  // ---- Theme follows the phone (v3.4) ----
+  // No toggle button, no manual override, nothing in localStorage.
+  // <head> sets data-theme from prefers-color-scheme before CSS loads;
+  // this listener keeps it in step if the phone switches while open.
+  function syncThemeFromSystem() {
+    var dark = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches;
+    document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute("content", t === "dark" ? "#0A0E14" : "#ffffff");
-    if (themeBtn) themeBtn.textContent = t === "dark" ? "\u2600" : "\uD83C\uDF19";
+    if (meta) meta.setAttribute("content", dark ? "#0A0E14" : "#ffffff");
   }
-  if (themeBtn) {
-    themeBtn.onclick = function () {
-      var cur = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
-      applyTheme(cur === "dark" ? "light" : "dark");
-    };
-    applyTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light");
-  }
+  syncThemeFromSystem();
+  try {
+    var mq = matchMedia("(prefers-color-scheme: dark)");
+    if (mq.addEventListener) mq.addEventListener("change", syncThemeFromSystem);
+    else if (mq.addListener) mq.addListener(syncThemeFromSystem);
+  } catch (e) {}
 
   // ---- DEV MODE 初始化：页面标记 + 解锁展示（付费逻辑本身不动，只绕过） ----
   // 角标 #devBadge、锁文案 .paywall-lock、Kit 全开提示 #kitDevNote 都在 index.html；
