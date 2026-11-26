@@ -11,7 +11,8 @@
 //   OPTIONS 预检 204（CORS 头已加，前端跨域 POST 可读响应）。
 // - D1 已接：库 chinabite（f25b6ee5-46e2-492d-b0de-904ddd7e009d），
 //   wrangler.toml 有 [[d1_databases]] 绑定 CHINABITE_DB；建表 SQL 已执行。
-// - Resend 未接：确认邮件只生成模板，不发送（见 subscribeConfirmTemplate）。
+// - Resend 已接（v5.5）：确认邮件由 Dashboard Worker 的 sendResendEmail 真发
+//   （from China Bite <hello@chinavisacheck.com>），见 subscribeConfirmTemplate。
 // - 订阅表独立：chinabite_subscribers，不混 chinavisacheck 的订阅表。
 //   建表 SQL 在 migrations/0001_chinabite_subscribers.sql。
 
@@ -34,19 +35,20 @@ export function normalizeLang(v) {
   return SUBSCRIBE_LANGS.includes(v) ? v : "en";
 }
 
-// ---- 订阅确认邮件模板（只生成，不发送；Resend 未接）----
+// ---- 订阅确认邮件模板（v6.1：标题不再是 "new dishes first"，Oliver 说没用；
+// 改成欢迎订阅 + 只在有新内容时才发邮件）----
 // 包子 Bun 名义，先确认订阅，再给链接。中英文各一版；
 // ja/ko/de/fr 暂用英文版（模板只有中英文），lang 字段仍按用户所选存。
 export function subscribeConfirmTemplate(lang, email) {
   const useZh = lang === "zh";
   const subject = useZh
-    ? "订好了 — China Bite 新菜先知道"
-    : "You're in — new China Bite dishes first";
+    ? "订好了 — 欢迎来到 China Bite"
+    : "You're in — welcome to China Bite";
   const body = useZh
     ? [
         `你好，${email}，`,
         "订好了。你已订阅 China Bite。",
-        "有新菜、新城市上架时，我会发一封邮件告诉你。",
+        "有新内容时我会发一封邮件告诉你——新菜、新城市，或者值得知道的吃喝小贴士。",
         "只收 China Bite 的更新，不收营销。",
         "随时可退订。",
         "",
@@ -56,7 +58,7 @@ export function subscribeConfirmTemplate(lang, email) {
     : [
         `Hi ${email},`,
         "You're in. You're subscribed to China Bite.",
-        "I'll email you when new dishes or cities land.",
+        "You'll hear from me when there's something new — a new dish, a new city, or a food tip worth knowing.",
         "Only China Bite updates. No marketing.",
         "Unsubscribe anytime.",
         "",
@@ -182,8 +184,8 @@ export async function handleSubscribe(request, env) {
     d1Connected: store.d1Connected,
     confirmEmail: template,
     note: store.d1Connected
-      ? "已写入 D1 chinabite_subscribers。确认邮件模板已生成，未发送（Resend 未接）。"
-      : "已记入内存（D1 未接，Worker 重启清零）。确认邮件模板已生成，未发送（Resend 未接）。",
+      ? "已写入 D1 chinabite_subscribers。确认邮件由 Worker 经 Resend 真发（v5.5 起）。"
+      : "已记入内存（D1 未接，Worker 重启清零）。确认邮件由 Worker 经 Resend 真发（v5.5 起）。",
   }, 201);
 }
 
@@ -206,5 +208,5 @@ export default {
 // 4. 部署：python3 /tmp/worker-deploy.py（Cloudflare API 直连，wrangler 未登录）。
 //    生产地址：https://bite-api.chinavisacheck.com/api/subscribe
 //    （自定义域名路由；workers.dev 生产域名 2026-11-26 起报 404 error code 1042）。
-// 5. Resend 接入后：把 subscribeConfirmTemplate 的返回值发出去，
-//    再把 resend.connected / sent 改成 true，不要在未发送时写已发送。
+// 5. Resend 已接入（v5.5）：Dashboard Worker 的 handleSubscribe 里调
+//    sendResendEmail 真发确认邮件，再把 resend.connected / sent 写回响应。

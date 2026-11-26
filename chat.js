@@ -200,10 +200,10 @@
       b.onclick = fn;
       wrap.appendChild(b);
     };
-    mk("Search on Dianping", function () {
-      if (navigator.clipboard) navigator.clipboard.writeText(dish.zh);
-      addBun("Copied “" + esc(dish.zh) + "” — paste it in Dianping search. Scores, photos, price per person, that's how you pick a place.");
-      if (CB.openFaq) CB.openFaq("faq-dianping"); else CB.gotoSection("faqSection");
+    mk("Get it delivered", function () {
+      addBun("Delivery is in Orders — the buttons there search “" + esc(dish.zh) + "” for you. Opening it now.");
+      if (CB.goDelivery) CB.goDelivery(dish.id);
+      else CB.gotoSection("qrSection");
     });
     mk("How to order by QR", function () {
       addBun("Scan the table QR, pick dishes, pay first — then they cook. If it won't open, I have a slip the waiter can use. Opening the guide now.");
@@ -310,11 +310,11 @@
   var FAQ = [
     { keys: ["qr", "扫码", "won't open", "wont open", "how do i order", "how to order", "order"], a: "Scan the table QR, pick dishes, pay first — then they cook. If it won't open, show the waiter the order slip and they'll order on their phone. Want me to open the QR guide?", faqId: "faq-qr" },
     { keys: ["alipay", "wechat", "pay", "支付", "cash"], a: "WeChat Pay or Alipay first. Cash at the counter works too.", faqId: "faq-pay" },
-    { keys: ["delivery", "外卖", "takeaway", "deliver", "meituan", "美团"], a: "Dianping finds restaurants — scores, photos, price per person. Meituan delivers to your hotel: address in Chinese, and ask the rider to leave it at the front desk. Your hotel card is in the app — want me to open it?", faqId: "faq-delivery" },
-    { keys: ["free", "免费", "price", "cost", "kit", "$6.99", "how much"], a: "3 free checks a day. Watch a 5-second ad for +3 more. Paid unlock is $6.99 for 90 days, unlimited, no ads — want a peek at what's inside?", faqId: "faq-free" },
+    { keys: ["delivery", "外卖", "takeaway", "deliver", "meituan", "美团"], a: "Delivery lives in Orders → Delivery — the steps, the Meituan / Dianping buttons, and your hotel card are all there. Want me to open it?", faqId: "faq-delivery" },
+    { keys: ["free", "免费", "price", "cost", "kit", "$6.99", "how much"], a: "Paid unlock is $6.99 for 90 days. The Register card in Account has what's included — and whether payments are open yet.", faqId: "faq-free" },
     { keys: ["how does this work", "how does bun work", "how do i use", "what can you do", "faq", "frequently asked", "help"], a: "You ask, I answer — snap the menu, say a dish, or type it. I check it and tell you straight if you can eat it. The longer answers live in the FAQ — want me to open it?", openFaqCard: true },
     { keys: ["find you", "instagram", "tiktok", "where can i find", "social", "follow"], a: "We're #ChinaBite on Instagram, TikTok and X — search any dish name there. Every dish has its own link too.", faqId: "faq-find" },
-    { keys: ["invite", "friend", "referral", "share my link"], a: "Share your link — friends get 6 free checks, and you get +3 for each friend who finishes their first check.", faqId: "faq-invite" },
+    { keys: ["invite", "friend", "referral", "share my link"], a: "Your link gives friends 6 free checks. Your Invite card in Account has the link — the FAQ has the full details.", faqId: "faq-invite" },
     { keys: ["address", "verified", "where is", "location of"], a: "I don't make up addresses — the city lists show the type of place and the area, not a verified street address. Dianping has the real one.", faqId: "faq-address" },
     { keys: ["hotel card", "hotel address"], a: "Fill it once and copy it whenever you order — hotel name in Chinese plus your room number.", section: "meituanSection" },
     { keys: ["are the prices", "prices exact", "price guide"], a: "Rough guides from 2026-11-26, about ¥7.1 to the dollar. Menus change, so treat them as a ballpark.", faqId: "faq-prices" },

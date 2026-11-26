@@ -147,22 +147,6 @@
             "@type": "Answer",
             "text": "3 free checks a day. Watch a 5s ad: +3. Paid unlock $6.99 for 90 days — details in Account."
           }
-        },
-        {
-          "@type": "Question",
-          "name": "How do I use Meituan or Dianping to find food?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Dianping finds restaurants: score, photos, price per person. Meituan delivers to your hotel."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Can I order food delivery to my hotel in China?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes. Use the delivery mini-program in Alipay. Address in Chinese. Ask the rider to leave it at the front desk."
-          }
         }
       ]
     },
@@ -1720,10 +1704,8 @@
 <h3>Good to know</h3>
 <div class="subcard">
 <p><b>Add dishes from the decoder</b> — every dish card has an Add button. It lands here.</p>
-<p><b>No Chinese?</b> The slip below is big Chinese text — show the screen, no talking needed.</p>
-<p><b>Pay at the counter</b> — Alipay, WeChat, or cash. The slip says how you'll pay.</p>
-<p><b>Want more?</b> Add another dish the same way — the total updates by itself.</p>
-<p><b>Thirsty?</b> Drinks come room temp in China — beer, Coke, water. The Drinks section shows how to ask for them iced.</p>
+<p><b>No Chinese?</b> The slip is big Chinese text — just show the screen.</p>
+<p><b>Pay how you like</b> — Alipay, WeChat, or cash.</p>
 </div>
 <h3>Before your first meal</h3>
 <p class="small" id="payProgress" role="status">0 of 4 ready</p>
@@ -1731,26 +1713,27 @@
 <div id="payChecks"></div>
 </div>
 <div id="deliveryPanel" role="tabpanel" aria-labelledby="tabDelivery" class="hidden">
-<p class="muted">No table? Get it delivered to your hotel. This is a guide — you order in Meituan or 淘宝闪购 (Ele.me), not here.</p>
+<p class="muted">No table? Get it delivered to your hotel. This is a guide — you order in Meituan or Taobao Flash Purchase, not here.</p>
 <p class="small" id="deliveryListLine" role="status"></p>
 <p><button type="button" class="ghost" id="deliverySeeListBtn">See my list</button></p>
 <h3>How it works — 4 steps</h3>
-<p><b>1 · Open the app.</b> Meituan, or in Alipay open the 淘宝闪购 mini-program (was Ele.me). Meituan is the second choice.</p>
-<p><b>2 · Search in Chinese.</b> The buttons below open Meituan or Dianping search for the last dish you checked — no typing, no copying.</p>
-<p><b>3 · Address in Chinese.</b> Hotel name + room number, copied from your booking. Your hotel card holds it — fill it once, copy it whenever you order.</p>
+<p><b>1 · Open the app.</b> Meituan, or in Alipay open the Taobao Flash Purchase mini-program (formerly Ele.me). Meituan is the second choice.</p>
+<p><b>2 · Search in Chinese.</b> The buttons below search for you — no typing, no copying.</p>
+<p><b>3 · Address in Chinese.</b> Hotel name + room number, copied from your booking.</p>
 <p><b>4 · Pay in the app.</b> Alipay or WeChat Pay. The app shows the delivery fee and arrival time before you pay — they vary by distance and time of day.</p>
 <p>
 <button type="button" id="deliveryMeituanBtn">Search this dish in Meituan Waimai</button>
 <button type="button" class="ghost" id="deliveryDianpingBtn">Search this dish on Dianping</button>
-<button type="button" class="ghost" id="deliveryElemeBtn">Open Ele.me (淘宝闪购)</button>
+<button type="button" class="ghost" id="deliveryElemeBtn">Open Ele.me</button>
 <button type="button" class="ghost" id="deliveryHotelBtn">My hotel card</button>
 </p>
 <p class="small" id="deliveryDishNote" role="status"></p>
 <h3>Rider &amp; phone</h3>
 <div class="subcard">
-<p><b>Riders stop at the lobby</b> — ask them to leave it at the front desk. The hotel card already says it in Chinese: “请放在前台，不要打电话，发信息即可。”</p>
+<p><b>Riders stop at the lobby</b> — ask them to leave it at the front desk. Your hotel card already tells them: no call, just a text.</p>
 <p><b>Dianping or Meituan?</b> Same company, two jobs. Dianping = choose (scores, photos, prices). Meituan = get (delivery to your hotel, groceries too).</p>
-<p><b>No +86 number?</b> You can browse without one, but delivery needs a login.</p>
+<p><b>No +86 number?</b></p>
+<p><button type="button" class="ghost" onclick="window.ChinaBite.openFaq('faq-phone')">Do I need a Chinese phone number?</button></p>
 </div>
 </div>
 </div>
@@ -1936,19 +1919,23 @@
 <div class="card-body">
 <details class="faq-item" id="faq-qr">
 <summary>How do I order with a QR code?</summary>
-<p>Scan the code on the table, pick your dishes, pay first — then they cook. Most restaurants work this way, 80%+ of them.</p>
+<p>Most restaurants work this way — 80%+ of them. The QR Order card in Orders walks you through it, step by step.</p>
+<p><button type="button" class="ghost" data-goto="qrSection">Open QR Order</button></p>
 </details>
 <details class="faq-item" id="faq-qr-fail">
 <summary>What if the QR code won't open?</summary>
-<p>Don't wait. Show the waiter the order slip — they'll order on their phone and you pay at the counter.</p>
+<p>Don't wait — the QR Order card in Orders has the backup plan: the slip does the ordering for you.</p>
+<p><button type="button" class="ghost" data-goto="qrSection">Open QR Order</button></p>
 </details>
 <details class="faq-item" id="faq-dianping">
 <summary>Dianping or Meituan — what's the difference?</summary>
-<p>Same company, two jobs. <b>Dianping = choose</b> — scores, photos, price per person, the Must-Eat List. <b>Meituan = get</b> — delivery to your hotel, groceries too. The QR code at your table opens the restaurant's own mini-program, not Dianping.</p>
+<p>Same company, two jobs — the Delivery tab in Orders explains it where you use it.</p>
+<p><button type="button" class="ghost" data-goto="delivery">Open Delivery</button></p>
 </details>
 <details class="faq-item" id="faq-delivery">
 <summary>How do I get food delivered to my hotel?</summary>
-<p>Best route: the Alipay mini-program → 淘宝闪购 (was Ele.me). Meituan second. The address has to be in Chinese — copy it from your booking, hotel name + room number. Riders stop at the lobby, so ask them to leave it at the front desk. Your hotel card is in the app — fill it once, copy it whenever you order.</p>
+<p>The Delivery tab in Orders has the whole flow — the steps, the Meituan / Dianping buttons, and your hotel card.</p>
+<p><button type="button" class="ghost" data-goto="delivery">Open Delivery</button></p>
 </details>
 <details class="faq-item" id="faq-phone">
 <summary>Do I need a Chinese phone number?</summary>

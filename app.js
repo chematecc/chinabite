@@ -262,17 +262,12 @@
       '<button type="button" class="ghost" id="shareDishBtn">Share</button>' +
       '<details class="subcard"><summary>Next · pick one</summary>' +
       '<div class="next-steps">' +
-      '<button type="button" id="nextMeituanBtn">Search on Meituan</button>' +
-      '<button type="button" class="ghost" id="nextDianpingBtn">Search on Dianping</button>' +
+      '<button type="button" id="nextDeliveryBtn">Get it delivered</button>' +
       '<button type="button" class="ghost" id="nextQrBtn">How to order by QR</button>' +
-      '<button type="button" class="ghost" id="nextCardBtn">Show diet card to waiter</button></div></details>' +
-      "<p><b>Meituan:</b> Tap \"Search on Meituan\" — it opens Meituan Waimai search for this dish. You order and pay in Meituan, not here.</p>" +
-      "<p><b>Dianping:</b> Tap \"Search on Dianping\" — reviews and group deals for this dish, in the Dianping app or on the web.</p>" +
-      "<p><b>Getting it delivered?</b> Your hotel card is waiting in the Meituan section — the rider needs your address in Chinese.</p>";
+      '<button type="button" class="ghost" id="nextCardBtn">Show diet card to waiter</button></div></details>';
     $("addOrderBtn").onclick = function () { addToOrder(dish); };
     $("shareDishBtn").onclick = function () { shareDish(dish, v); };
-    $("nextMeituanBtn").onclick = function () { openDeepLink(MEITUAN_LINKS.waimaiScheme(dish.zh), MEITUAN_LINKS.waimaiH5(dish.zh)); };
-    $("nextDianpingBtn").onclick = function () { openDeepLink(MEITUAN_LINKS.dianpingScheme(dish.zh), MEITUAN_LINKS.dianpingH5); };
+    $("nextDeliveryBtn").onclick = function () { goDelivery(); };
     $("nextQrBtn").onclick = function () { gotoSection("qrSection"); };
     $("nextCardBtn").onclick = function () { gotoSection("dietSection"); };
     updateCounts();
@@ -506,9 +501,9 @@
       $("result").className = "subcard";
       $("result").innerHTML = "<div class=\"verdict ask\">That's your free checks for today</div>" +
         "<p>Watch a 5-second ad and I'll give you 3 more.</p>" +
-        "<p>Or unlock — $6.99, 90 days, unlimited, no ads.</p>" +
+        "<p>Or unlock it — register in Account.</p>" +
         '<button type="button" onclick="var a=document.getElementById(\'adSection\');a.classList.remove(\'hidden\');a.scrollIntoView()">Watch ad · +3</button>' +
-        ' <button type="button" class="ghost" onclick="window.ChinaBite.gotoSection(\'paySection\')">See unlock — $6.99</button>';
+        ' <button type="button" class="ghost" onclick="window.ChinaBite.showView(\'account\')">Go to Account</button>';
       return;
     }
     // PAYWALL：DEV_MODE 下 paidPreview=true，不扣次数；
@@ -913,7 +908,7 @@
           "<span class=\"ord-price\">¥" + (d.price * x.qty) + "</span>" +
           "<button type=\"button\" class=\"qty-btn ord-remove\" data-remove=\"" + esc(x.id) + "\" aria-label=\"Remove " + esc(d.en) + "\">×</button></p>";
       }).join("") + "<p><b>Total: ¥" + total + " · ≈$" + usd(total) + "</b> · " + items + (items === 1 ? " item" : " items") + "</p>" +
-        "<p class=\"small price-note\">" + esc(PRICE_BASIS_SHORT) + " — the total is a guide, not the bill.</p>";
+        "<p class=\"small price-note\">The total is a guide, not the bill.</p>";
       el.querySelectorAll("[data-qty]").forEach(function (b) {
         b.onclick = function () {
           var item = state.order.find(function (y) { return y.id === b.getAttribute("data-id"); });
@@ -1076,9 +1071,10 @@
   if ($("qrBlockedBtn")) $("qrBlockedBtn").onclick = function () { markRoute("b"); showToast("No problem — show the slip below to staff. No +86 number needed."); };
 
   // ---- Orders tabs: Dine-in / Delivery (v5.2) ----
-  // Delivery is a guide only — ordering happens in Meituan / Ele.me,
-  // not here. All copy comes from the FAQ + hotel card (no invented
-  // restaurants, addresses, phone numbers, prices, or wait times).
+  // Delivery is a guide only — ordering happens in Meituan / Taobao
+  // Flash Purchase, not here. This panel is the single home of the
+  // delivery flow — the FAQ only points here (v6.0 dedup). No invented
+  // restaurants, addresses, phone numbers, prices, or wait times.
   function setOrderTab(which) {
     var dine = $("tabDineIn"), del = $("tabDelivery"), dp = $("dineInPanel"), vp = $("deliveryPanel");
     if (!dine || !del || !dp || !vp) return;
@@ -1088,6 +1084,19 @@
     dp.classList.toggle("hidden", isDel);
     vp.classList.toggle("hidden", !isDel);
     if (isDel) updateDeliveryNote();
+  }
+  // v6.0: one way into delivery — the decoder, the chat and the FAQ all
+  // land here instead of keeping their own Meituan / Dianping buttons.
+  // dishId (optional) makes the delivery tab search that dish.
+  function goDelivery(dishId) {
+    if (dishId) {
+      var d = D.dishes.find(function (x) { return x.id === dishId; });
+      if (d) lastDish = d;
+    }
+    showView("orders");
+    setOrderTab("delivery");
+    var dp = $("deliveryPanel");
+    if (dp) dp.scrollIntoView({ behavior: "smooth", block: "start" });
   }
   // v6.0: deep-link buttons answer at once — "Opening…" + disabled for
   // 2s, so a second tap can't fire the scheme twice.
@@ -1129,10 +1138,10 @@
   if ($("deliveryElemeBtn")) $("deliveryElemeBtn").onclick = function () {
     var note = $("deliveryDishNote");
     var btn = $("deliveryElemeBtn");
-    if (note) note.textContent = "Opening Ele.me (淘宝闪购) — if nothing opens, search 淘宝闪购 inside Alipay instead.";
+    if (note) note.textContent = "Opening Ele.me — if nothing opens, search Taobao Flash Purchase inside Alipay instead.";
     pressBusy(btn);
     var w = window.open("https://www.ele.me/", "_blank");
-    if (!w && note) note.textContent = "Popup blocked — open ele.me in your browser, or search 淘宝闪购 inside Alipay.";
+    if (!w && note) note.textContent = "Popup blocked — open ele.me in your browser, or search Taobao Flash Purchase inside Alipay.";
   };
   if ($("deliveryHotelBtn")) $("deliveryHotelBtn").onclick = function () { gotoSection("meituanSection"); };
   if ($("deliverySeeListBtn")) $("deliverySeeListBtn").onclick = function () { setOrderTab("dinein"); };
@@ -1373,6 +1382,22 @@
   // ---- Deep links: #/dish/<id> and #/diet/<id> ----
   // Shared dish link opens the verdict directly, no charge (read-only view).
   (function deepLink() {
+    // v6.0: #/orders/delivery[/<dish-id>] — the single delivery entry;
+    // dish pages link here instead of keeping their own deep links.
+    var om = (location.hash || "").match(/^#\/orders\/delivery(?:\/([a-z0-9-]+))?/);
+    if (om) {
+      if (om[1]) {
+        var od = D.dishes.find(function (d) { return d.id === om[1]; });
+        if (od) lastDish = od;
+      }
+      showView("orders");
+      setOrderTab("delivery");
+      updateDeliveryNote();
+      var dp = $("deliveryPanel");
+      if (dp) dp.scrollIntoView();
+      return;
+    }
+    if (/^#\/orders/.test(location.hash || "")) { showView("orders"); return; }
     var m = (location.hash || "").match(/^#\/dish\/([a-z0-9-]+)/);
     if (m) {
       var dish = D.dishes.find(function (d) { return d.id === m[1]; });
@@ -1639,16 +1664,15 @@
   // v6.1: sign-up copy — "new dishes first" is gone (Oliver: no use).
   // Your email IS your account: no password. We email only when there's
   // something new worth sending.
+  // v6.1: Account copy is English-only (Oliver: the user is a native
+  // foreigner; Chinese appears only where shown to Chinese people — the
+  // waiter-facing lines and dish names). The language dropdown below only
+  // picks the confirmation EMAIL language; the card itself stays English.
   var SUBSCRIBE_COPY = {
-    en: { title: "Sign up.", line: "Your email is your account — no password. One email when there's something new, nothing else.", btn: "Subscribe", privacy: "Only China Bite updates. No marketing. Unsubscribe anytime.", done: "You're in.", doneLine: "We'll email you when there's something new.", already: "Already subscribed.", bad: "That email doesn't look right.", pending: "Couldn't reach the server. Saved on this device." },
-    zh: { title: "注册。", line: "邮箱就是你的账号，不用密码。有新内容时才发一封，别的没有。", btn: "订阅", privacy: "只收 China Bite 更新。不发营销。可随时退订。", done: "订好了。", doneLine: "有新内容时发你邮箱。", already: "已经订过了。", bad: "邮箱格式不对，再看一眼。", pending: "连不上服务器，先存在本机了。" },
-    ja: { title: "登録。", line: "メールアドレスがアカウントです。パスワード不要。新着があるときだけ送ります。", btn: "登録する", privacy: "China Bite の更新のみ。広告なし。いつでも解除できます。", done: "登録完了。", doneLine: "新着があればメールでお知らせします。", already: "登録済みです。", bad: "メールアドレスを確認してください。", pending: "サーバーに届きませんでした。この端末に保存しました。" },
-    ko: { title: "가입하기.", line: "이메일이 계정입니다. 비밀번호가 필요 없습니다. 새 소식이 있을 때만 메일을 보냅니다.", btn: "구독하기", privacy: "China Bite 소식만 받습니다. 광고 없음. 언제든 해지 가능.", done: "가입 완료.", doneLine: "새 소식이 있으면 메일로 알려드립니다.", already: "이미 구독 중입니다.", bad: "이메일 형식을 확인해 주세요.", pending: "서버에 연결하지 못했습니다. 이 기기에 저장했습니다." },
-    de: { title: "Anmelden.", line: "Deine E-Mail ist dein Konto — kein Passwort. Eine Mail nur, wenn es etwas Neues gibt.", btn: "Abonnieren", privacy: "Nur China Bite Updates. Kein Marketing. Jederzeit kündbar.", done: "Angemeldet.", doneLine: "Wir mailen dir, wenn es etwas Neues gibt.", already: "Schon angemeldet.", bad: "Diese E-Mail sieht nicht richtig aus.", pending: "Server nicht erreichbar. Auf diesem Gerät gespeichert." },
-    fr: { title: "S'inscrire.", line: "Ton e-mail est ton compte — pas de mot de passe. Un e-mail seulement quand il y a du nouveau.", btn: "S'abonner", privacy: "Uniquement les actus China Bite. Pas de marketing. Désinscription à tout moment.", done: "C'est noté.", doneLine: "On t'écrira quand il y aura du nouveau.", already: "Déjà abonné.", bad: "Cette adresse e-mail semble incorrecte.", pending: "Serveur injoignable. Enregistré sur cet appareil." }
+    en: { title: "Register.", line: "Your email is your account. We email you when there's something new — nothing else.", btn: "Subscribe", privacy: "Only China Bite updates. No marketing. Unsubscribe anytime.", done: "You're in.", doneLine: "We'll email you when there's something new.", already: "Already subscribed.", bad: "That email doesn't look right.", pending: "Couldn't reach the server. Saved on this device." }
   };
   var subForm = $("subscribeForm"), subEmail = $("subscribeEmail"), subLang = $("subscribeLang");
-  function subCopy() { return SUBSCRIBE_COPY[subLang.value] || SUBSCRIBE_COPY.en; }
+  function subCopy() { return SUBSCRIBE_COPY.en; }
   function applySubCopy() {
     var c = subCopy();
     $("subTitle").textContent = c.title;
@@ -1667,7 +1691,6 @@
     $("subscribeDone").classList.remove("hidden");
   }
   if (subForm && subEmail && subLang) {
-    subLang.addEventListener("change", applySubCopy);
     applySubCopy();
     subForm.addEventListener("submit", function (e) {
       e.preventDefault();
@@ -1704,11 +1727,13 @@
   // chat is a feature behind the Bun button / Ask Bun, not the homepage) ----
   // v5.0: Home = search + chips + hero + Ask Bun + Signature + cities +
   // decode teaser. Search = the decoder (type / voice / camera / 110
-  // quick-pick). Orders = QR order slip. Account = Unlock + sign-up +
-  // share / FAQ (v6.1: no "Kit" wording in Account). Views are show/hide
-  // only — all sections stay in the DOM, so decode, deep links (#/dish/,
-  // #/diet/) and the order slip keep working.
-  var VIEW_SECTIONS = ["homeView", "chatView", "chatComposer", "decoder", "qrSection", "dietSection", "drinksSection", "adSection", "citiesSection", "meituanSection", "paySection", "referral", "faqSection", "subscribe"];
+  // quick-pick). Orders = QR order slip. Account = one clean page:
+  // Register (email, blinking) + Share + Invite + FAQ. No Kit zone, no
+  // separate paid zone (v6.1). Unlock lives only in Account — everywhere
+  // else just links there. Views are show/hide only — all sections stay
+  // in the DOM, so decode, deep links (#/dish/, #/diet/) and the order
+  // slip keep working.
+  var VIEW_SECTIONS = ["homeView", "chatView", "chatComposer", "decoder", "qrSection", "dietSection", "drinksSection", "adSection", "citiesSection", "meituanSection", "shareSection", "referral", "faqSection", "subscribe"];
   var VIEWS = {
     home: ["homeView"],
     chat: ["chatView", "chatComposer"],
@@ -1717,12 +1742,12 @@
     cities: ["citiesSection"],
     diet: ["dietSection"],
     drinks: ["drinksSection"],
-    account: ["paySection", "subscribe", "referral", "faqSection"],
+    account: ["subscribe", "shareSection", "referral", "faqSection"],
     qr: ["qrSection"],
     meituan: ["meituanSection"],
     subscribe: ["subscribe"],
   };
-  var SECTION_VIEW = { homeView: "home", chatView: "chat", chatComposer: "chat", decoder: "search", qrSection: "orders", dietSection: "diet", drinksSection: "drinks", adSection: "search", citiesSection: "cities", meituanSection: "meituan", paySection: "account", referral: "account", faqSection: "account", subscribe: "subscribe" };
+  var SECTION_VIEW = { homeView: "home", chatView: "chat", chatComposer: "chat", decoder: "search", qrSection: "orders", dietSection: "diet", drinksSection: "drinks", adSection: "search", citiesSection: "cities", meituanSection: "meituan", shareSection: "account", referral: "account", faqSection: "account", subscribe: "subscribe" };
   var currentView = "chat";
   function showView(name) {
     var ids = VIEWS[name] || VIEWS.home;
@@ -1734,10 +1759,9 @@
       if (id === "adSection" && DEV_MODE) { el.classList.add("hidden"); return; }
       el.classList.toggle("hidden", ids.indexOf(id) < 0);
     });
-    // Account view: Unlock + sign-up open — no extra tap. The sign-up
+    // Account view: Register open at the top — no extra tap. The sign-up
     // email input blinks, so the empty field reads as "fill me in".
     if (name === "account") {
-      var ps = $("paySection"); if (ps) ps.open = true;
       var sb = $("subscribe"); if (sb) sb.open = true;
     }
     // v6.0: Orders opens the QR Order card — the bottom-nav tap used to
@@ -1781,7 +1805,9 @@
   document.querySelectorAll("[data-goto]").forEach(function (a) {
     a.addEventListener("click", function (e) {
       e.preventDefault();
-      gotoSection(a.getAttribute("data-goto"));
+      var t = a.getAttribute("data-goto");
+      if (t === "delivery") { goDelivery(); return; }
+      gotoSection(t);
     });
   });
   document.querySelectorAll("[data-view]").forEach(function (a) {
@@ -1811,6 +1837,7 @@
     var h = location.hash || "";
     if (/^#\/diet\//.test(h)) showView("diet");
     else if (/^#\/dish\//.test(h)) showView("search");
+    else if (/^#\/orders/.test(h)) { /* deep link already set the view */ }
     else showView("home");
   })();
 
@@ -1897,7 +1924,7 @@
     dishMatchesQuery: dishMatchesQuery, askBunAbout: askBunAbout,
     PRICE_BASIS: PRICE_BASIS, PRICE_BASIS_SHORT: PRICE_BASIS_SHORT, CITY_TIER: CITY_TIER,
     verdictFor: verdictFor, renderResult: renderResult,
-    checkDish: window.checkDish, gotoSection: gotoSection, showView: showView, openFaq: openFaq,
+    checkDish: window.checkDish, gotoSection: gotoSection, showView: showView, openFaq: openFaq, goDelivery: goDelivery,
     addToOrder: addToOrder, speakInto: speakInto, recognizePhoto: recognizePhoto,
     usd: usd, esc: esc, containsEn: containsEn, spiceLabel: spiceLabel,
     dishInCat: dishInCat, SIGNATURE_IDS: SIGNATURE_IDS, HALAL_IDS: HALAL_IDS,
