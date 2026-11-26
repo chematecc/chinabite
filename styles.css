@@ -1,4 +1,6 @@
-/* China Bite — Rounded, tempting light/dark card UI (v2.9).
+/* China Bite — Uber Eats-style UI (v3.2), rounded light/dark cards.
+   Top search bar + category chips, dish rows (image left, text right),
+   bottom nav Home / Search / Orders / Account. English first. */
    TOTAL break from v2.6 street-poster style. New direction, one system only:
    - NO warm colours: no warm cream, no terracotta, no chilli red /
      signal yellow poster, no cream type. All cleared, 0 occurrences.
@@ -118,6 +120,17 @@ details.card[open]>summary .card-sub{white-space:normal}
 .hero-stats span:first-child{border-left:0}
 .hero-stats b{display:block;font-size:24px;font-weight:800;color:var(--accent);line-height:1.1}
 
+/* ---- Top search bar + category chips (v3.2, Uber Eats-style) ---- */
+.searchbar{display:flex;align-items:center;gap:10px;background:var(--card2);border:1px solid var(--line);border-radius:999px;padding:6px 16px;min-height:52px;scroll-margin-top:76px}
+.searchbar svg{flex:0 0 auto;width:22px;height:22px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.searchbar input{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);font:inherit;font-weight:600;min-height:40px;padding:0 4px;box-shadow:none}
+.searchbar input:focus{outline:none}
+.searchbar input::placeholder{color:var(--muted)}
+.cat-chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 4px;scrollbar-width:none;scroll-margin-top:76px}
+.cat-chips::-webkit-scrollbar{display:none}
+.cat-chips .chip{flex:0 0 auto;margin:0}
+.cat-chips .chip[aria-pressed="true"]{background:var(--ink);color:var(--card);border-color:var(--ink)}
+
 /* ---- Decoder ---- */
 .count-slim{margin:12px 0 0}
 .progress{height:10px;background:var(--card2);border:1px solid var(--line);border-radius:999px;overflow:hidden}
@@ -129,18 +142,17 @@ details.card[open]>summary .card-sub{white-space:normal}
 
 /* ---- Signature dishes: horizontal scroll-snap cards inside the card ---- */
 .swipe-hint{font-size:15px;color:var(--muted);margin:8px 0 0}
-.story-grid{display:flex;gap:12px;margin:14px -20px 0;padding:4px 20px 12px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-.story-grid::-webkit-scrollbar{display:none}
+.story-grid{display:flex;flex-direction:column;gap:12px;margin:14px 0 0;padding:0}
 .story-city{font-size:18px;font-weight:800;margin:20px 0 4px}
-.story{flex:0 0 280px;scroll-snap-align:start;display:flex;flex-direction:column;align-items:stretch;text-align:left;padding:0;overflow:hidden;border:1px solid var(--line);border-radius:24px;background:var(--card);color:var(--ink);cursor:pointer;box-shadow:var(--shadow);transition:transform .18s ease,box-shadow .18s ease}
+.story{flex:1 1 auto;display:flex;flex-direction:row;align-items:center;gap:14px;text-align:left;padding:12px;overflow:hidden;border:1px solid var(--line);border-radius:24px;background:var(--card);color:var(--ink);cursor:pointer;box-shadow:var(--shadow);transition:transform .18s ease,box-shadow .18s ease}
 .story:hover,.story:focus-visible{transform:translateY(-4px);box-shadow:var(--shadow-lift)}
 .story:active{transform:translateY(-1px) scale(.99)}
-.story .thumb{flex:0 0 auto;height:240px;background:var(--card2)}
+.story .thumb{flex:0 0 120px;height:120px;border-radius:20px;overflow:hidden;background:var(--card2)}
 .story .thumb img{width:100%;height:100%;object-fit:cover;display:block}
-.story>span+span{display:block;min-width:0;padding:14px 14px 16px}
-.story .zh{font-size:21px;font-weight:800;display:block;line-height:1.3}
-.story .price{font-size:20px;font-weight:800;color:var(--accent);display:block;margin-top:6px}
-.story .en{font-size:15px;color:var(--muted);display:block;margin-top:2px}
+.story>span+span{display:block;flex:1;min-width:0;padding:0}
+.story .en{font-size:19px;font-weight:800;color:var(--ink);display:block;line-height:1.3}
+.story .zh{font-size:15px;color:var(--muted);display:block;margin-top:2px}
+.story .price{font-size:19px;font-weight:800;color:var(--accent);display:block;margin-top:6px}
 .story .how{font-size:15px;line-height:1.5;margin:8px 0 0}
 .next-steps{display:flex;flex-direction:column;gap:10px;margin:14px 0 4px}
 .next-steps button{margin:0}
@@ -169,8 +181,8 @@ label{display:block;font-weight:700;margin:12px 0 6px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:560px){.grid{grid-template-columns:1fr}}
 .dish{border:1px solid var(--line);padding:12px;background:var(--card2);color:var(--ink);cursor:pointer;text-align:left;min-height:48px;box-shadow:none;border-radius:20px}
-.dish .zh{font-size:17px;font-weight:700}
-.dish .en{color:var(--muted);font-size:15px}
+.dish .en{font-size:17px;font-weight:700;color:var(--ink)}
+.dish .zh{color:var(--muted);font-size:15px}
 table{width:100%;border-collapse:collapse;font-size:16px;color:var(--ink)}
 th,td{text-align:left;padding:10px 6px;border-bottom:1px solid var(--line);vertical-align:top;overflow-wrap:anywhere}
 th{font-size:15px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}

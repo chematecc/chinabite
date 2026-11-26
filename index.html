@@ -1611,19 +1611,25 @@
 <span class="dev-badge hidden" id="devBadge" title="开发模式：全部功能解锁。最终交付时把 app.js 里 DEV_MODE 设 false">DEV · 开发模式</span>
 </div>
 <nav id="appMenu" class="app-menu hidden" aria-label="全部内容">
-<a href="#hero" data-view="home">主页 · Home</a>
-<a href="#decoder" data-goto="decoder">解码 · 查菜</a>
-<a href="#storyDishes" data-goto="storyDishes">招牌菜 · Signature Dishes</a>
-<a href="#qrSection" data-goto="qrSection">扫码点餐</a>
-<a href="#dietSection" data-goto="dietSection">饮食卡</a>
-<a href="#citiesSection" data-goto="citiesSection">10 城</a>
+<a href="#hero" data-view="home">Home · 主页</a>
+<a href="#decoder" data-goto="decoder">Search · 查菜</a>
+<a href="#storyDishes" data-goto="storyDishes">Signature Dishes · 招牌菜</a>
+<a href="#qrSection" data-goto="qrSection">QR Order · 扫码点餐</a>
+<a href="#dietSection" data-goto="dietSection">Diet Cards · 饮食卡</a>
+<a href="#citiesSection" data-goto="citiesSection">Cities · 10 城</a>
 <a href="#meituanSection" data-goto="meituanSection">美团 / 点评 / 外卖</a>
-<a href="#kitPreview" data-goto="kitPreview">Kit 预览</a>
-<a href="#subscribe" data-goto="subscribe">订阅 · 新菜先知道</a>
+<a href="#kitPreview" data-goto="kitPreview">Kit Preview · 预览</a>
+<a href="#subscribe" data-goto="subscribe">Subscribe · 新菜先知道</a>
 </nav>
 </div>
 </header>
 <main>
+<!-- Uber Eats-style search: grey pill bar + category chips, home view only. -->
+<div class="searchbar" id="searchBar" role="search">
+<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></svg>
+<input type="search" id="topSearch" placeholder="Search dishes — try Mapo Tofu" autocomplete="off" lang="en" aria-label="Search dishes">
+</div>
+<div class="cat-chips" id="catChips" aria-label="Browse by category"></div>
 <header class="hero" id="hero">
 <img class="hero-img" src="assets/china-bite-hero-vertical.webp" alt="Bun helps a foreign visitor decode a Chinese menu" width="540" height="1080" fetchpriority="high">
 <div class="hero-body">
@@ -1633,9 +1639,9 @@
 <p class="hero-zh">这道菜，我能吃吗？</p>
 <p class="slogan">Discover China, One Bite at a Time.</p>
 <p class="hero-hook">One photo. One tap. Dinner, sorted. — 拍一张，点一下，今晚吃什么就定了。</p>
-<p class="pain">你刚坐下，服务员递来一张全是中文的菜单，扫码也看不懂。</p>
-<p class="pain-en">3 秒，告诉你这道菜能不能吃。</p>
-<p><button type="button" class="big" onclick="document.getElementById('storyDishes').scrollIntoView()">看看招牌菜 ↓ · Signature Dishes</button></p>
+<p class="pain">You just sat down. The waiter hands you a menu — all in Chinese. Even the QR code doesn't help.</p>
+<p class="pain-en">3 seconds to tell you if you can eat this dish. · 3 秒，告诉你这道菜能不能吃。</p>
+<p><button type="button" class="big" onclick="document.getElementById('storyDishes').scrollIntoView()">See signature dishes ↓</button></p>
 <div class="hero-stats"><span><b>110</b>dishes</span><span><b>10</b>cities</span><span><b>12</b>diet cards</span></div>
 </div>
 </header>
@@ -1645,31 +1651,30 @@
 <details class="card" id="storyDishes">
 <summary><span class="card-head"><h2>Signature Dishes · 招牌菜</h2><span class="card-sub">9 道招牌菜 — 每城 3 道，都是当地人先带你吃的菜</span></span><span class="chev" aria-hidden="true">▾</span></summary>
 <div class="card-body">
-<p class="swipe-hint">Swipe sideways to see more &rarr; 左右滑动看更多</p>
-<p class="story-city">成都 Chengdu</p>
+<p class="story-city">Chengdu · 成都</p>
 <div class="story-grid">
-<button type="button" class="story" onclick="checkDish('担担面')"><span class="thumb"><img src="assets/dish-dandanmian.webp" alt="Dan Dan Noodles" width="64" height="64" loading="lazy"></span><span><span class="zh">担担面</span><span class="en">Dan Dan Noodles</span><span class="price">¥20 · ≈$2.82</span><span class="how">你在成都早上，街边小店，老板现拌，你站着吃完就走。</span></span></button>
-<button type="button" class="story" onclick="checkDish('麻婆豆腐')"><span class="thumb"><img src="assets/dish-mapodoufu.webp" alt="Mapo Tofu" width="64" height="64" loading="lazy"></span><span><span class="zh">麻婆豆腐</span><span class="en">Mapo Tofu</span><span class="price">¥28 · ≈$3.94</span><span class="how">你晚饭一碗白米饭，一勺盖上去，就是一顿。</span></span></button>
-<button type="button" class="story" onclick="checkDish('回锅肉')"><span class="thumb"><img src="assets/dish-huiguorou.webp" alt="Twice-Cooked Pork" width="64" height="64" loading="lazy"></span><span><span class="zh">回锅肉</span><span class="en">Twice-Cooked Pork</span><span class="price">¥38 · ≈$5.35</span><span class="how">你点一份回锅肉下饭，蒜苗一下锅就香了。</span></span></button>
+<button type="button" class="story" onclick="checkDish('担担面')"><span class="thumb"><img src="assets/dish-dandanmian.webp" alt="Dan Dan Noodles" width="64" height="64" loading="lazy"></span><span><span class="en">Dan Dan Noodles</span><span class="zh">担担面</span><span class="price">¥20 · ≈$2.82</span><span class="how">Morning in Chengdu, a street stall. The owner tosses the noodles fresh — you finish standing up.</span></span></button>
+<button type="button" class="story" onclick="checkDish('麻婆豆腐')"><span class="thumb"><img src="assets/dish-mapodoufu.webp" alt="Mapo Tofu" width="64" height="64" loading="lazy"></span><span><span class="en">Mapo Tofu</span><span class="zh">麻婆豆腐</span><span class="price">¥28 · ≈$3.94</span><span class="how">One bowl of white rice, one spoonful on top — that's dinner.</span></span></button>
+<button type="button" class="story" onclick="checkDish('回锅肉')"><span class="thumb"><img src="assets/dish-huiguorou.webp" alt="Twice-Cooked Pork" width="64" height="64" loading="lazy"></span><span><span class="en">Twice-Cooked Pork</span><span class="zh">回锅肉</span><span class="price">¥38 · ≈$5.35</span><span class="how">Order it with rice. The garlic sprouts hit the wok and the whole place smells amazing.</span></span></button>
 </div>
-<p class="story-city">广州 Guangzhou</p>
+<p class="story-city">Guangzhou · 广州</p>
 <div class="story-grid">
-<button type="button" class="story" onclick="checkDish('烧鹅')"><span class="thumb"><img src="assets/dish-shaoe.webp" alt="Roast Goose" width="64" height="64" loading="lazy"></span><span><span class="zh">烧鹅</span><span class="en">Roast Goose</span><span class="price">¥52 · ≈$7.32</span><span class="how">你中午去买烧鹅，要排队，斩半只带走，皮脆肉嫩。</span></span></button>
-<button type="button" class="story" onclick="checkDish('虾饺')"><span class="thumb"><img src="assets/dish-xiajiao.webp" alt="Shrimp Dumplings" width="64" height="64" loading="lazy"></span><span><span class="zh">虾饺</span><span class="en">Shrimp Dumplings</span><span class="price">¥28 · ≈$3.94</span><span class="how">你早茶一坐下，先点一笼虾饺，趁热吃。</span></span></button>
-<button type="button" class="story" onclick="checkDish('肠粉')"><span class="thumb"><img src="assets/dish-changfen.webp" alt="Rice Noodle Roll" width="64" height="64" loading="lazy"></span><span><span class="zh">肠粉</span><span class="en">Rice Noodle Roll</span><span class="price">¥20 · ≈$2.82</span><span class="how">你早上来一碟肠粉，酱油按自己口味加。</span></span></button>
+<button type="button" class="story" onclick="checkDish('烧鹅')"><span class="thumb"><img src="assets/dish-shaoe.webp" alt="Roast Goose" width="64" height="64" loading="lazy"></span><span><span class="en">Roast Goose</span><span class="zh">烧鹅</span><span class="price">¥52 · ≈$7.32</span><span class="how">Queue at noon for roast goose. Half a goose to go, crispy skin.</span></span></button>
+<button type="button" class="story" onclick="checkDish('虾饺')"><span class="thumb"><img src="assets/dish-xiajiao.webp" alt="Shrimp Dumplings" width="64" height="64" loading="lazy"></span><span><span class="en">Shrimp Dumplings</span><span class="zh">虾饺</span><span class="price">¥28 · ≈$3.94</span><span class="how">Sit down for morning dim sum — har gow first, while it's hot.</span></span></button>
+<button type="button" class="story" onclick="checkDish('肠粉')"><span class="thumb"><img src="assets/dish-changfen.webp" alt="Rice Noodle Roll" width="64" height="64" loading="lazy"></span><span><span class="en">Rice Noodle Roll</span><span class="zh">肠粉</span><span class="price">¥20 · ≈$2.82</span><span class="how">Morning cheung fun. Add soy sauce to your taste.</span></span></button>
 </div>
-<p class="story-city">上海 Shanghai</p>
+<p class="story-city">Shanghai · 上海</p>
 <div class="story-grid">
-<button type="button" class="story" onclick="checkDish('生煎包')"><span class="thumb"><img src="assets/dish-shengjianbao.webp" alt="Pan-Fried Buns" width="64" height="64" loading="lazy"></span><span><span class="zh">生煎包</span><span class="en">Pan-Fried Buns</span><span class="price">¥16 · ≈$2.25</span><span class="how">你早上排队买生煎，咬开先喝汤，小心烫。</span></span></button>
-<button type="button" class="story" onclick="checkDish('蟹粉小笼')"><span class="thumb"><img src="assets/dish-xiefenxiaolong.webp" alt="Crab Roe Soup Dumplings" width="64" height="64" loading="lazy"></span><span><span class="zh">蟹粉小笼</span><span class="en">Crab Roe Soup Dumplings</span><span class="price">¥38 · ≈$5.35</span><span class="how">你配一碟姜丝醋，趁热吃，汤多小心烫。</span></span></button>
-<button type="button" class="story" onclick="checkDish('红烧肉')"><span class="thumb"><img src="assets/dish-hongshaorou.webp" alt="Red-Braised Pork" width="64" height="64" loading="lazy"></span><span><span class="zh">红烧肉</span><span class="en">Red-Braised Pork</span><span class="price">¥45 · ≈$6.34</span><span class="how">你一碗白饭配红烧肉，汤汁拌饭最香。</span></span></button>
+<button type="button" class="story" onclick="checkDish('生煎包')"><span class="thumb"><img src="assets/dish-shengjianbao.webp" alt="Pan-Fried Buns" width="64" height="64" loading="lazy"></span><span><span class="en">Pan-Fried Buns</span><span class="zh">生煎包</span><span class="price">¥16 · ≈$2.25</span><span class="how">Queue in the morning for shengjian. Bite a small hole first, drink the soup — careful, it's hot.</span></span></button>
+<button type="button" class="story" onclick="checkDish('蟹粉小笼')"><span class="thumb"><img src="assets/dish-xiefenxiaolong.webp" alt="Crab Roe Soup Dumplings" width="64" height="64" loading="lazy"></span><span><span class="en">Crab Roe Soup Dumplings</span><span class="zh">蟹粉小笼</span><span class="price">¥38 · ≈$5.35</span><span class="how">Eat with ginger and vinegar, while it's hot. Lots of soup inside.</span></span></button>
+<button type="button" class="story" onclick="checkDish('红烧肉')"><span class="thumb"><img src="assets/dish-hongshaorou.webp" alt="Red-Braised Pork" width="64" height="64" loading="lazy"></span><span><span class="en">Red-Braised Pork</span><span class="zh">红烧肉</span><span class="price">¥45 · ≈$6.34</span><span class="how">White rice with red-braised pork. The sauce on the rice is the best part.</span></span></button>
 </div>
 <p class="small">Tap a signature dish to check it. 点一道招牌菜，直接出结论。</p>
 </div>
 </details>
 
 <details class="card" id="qrSection">
-<summary><span class="card-head"><h2>QR Order · 扫码点餐</h2><span class="card-sub">扫码、代点单、清单 — 扫码打不开就用代点单</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<summary><span class="card-head"><h2>QR Order · 扫码点餐</h2><span class="card-sub">Scan, order, or show the slip — if the QR code won't open, use the order slip</span></span><span class="chev" aria-hidden="true">▾</span></summary>
 <div class="card-body">
 <p>80%+ restaurants: scan, order, pay.</p>
 <p>Pay first. Then they cook.</p>
@@ -1699,7 +1704,7 @@
 </details>
 
 <details class="card" id="dietSection">
-<summary><span class="card-head"><h2>Diet Cards · 饮食卡</h2><span class="card-sub">12 张饮食卡 — 给服务员看，不用说话</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<summary><span class="card-head"><h2>Diet Cards · 饮食卡</h2><span class="card-sub">12 diet cards — show the waiter, no talking needed</span></span><span class="chev" aria-hidden="true">▾</span></summary>
 <div class="card-body">
 <img class="mascot-mini" src="assets/china-bite-mascot-dumpling-288.webp" alt="China Bite mascot — a cheerful dumpling holding chopsticks" width="32" height="32" loading="lazy">
 <p>Tap to show big. No talking needed.</p>
@@ -1709,7 +1714,7 @@
 </details>
 
 <details class="card" id="adSection">
-<summary><span class="card-head"><h2>赚次数 · Free Decodes</h2><span class="card-sub">看 5 秒广告 +3 次 — 开发模式下已隐藏</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<summary><span class="card-head"><h2>Free Decodes · 赚次数</h2><span class="card-sub">Watch a 5s ad, get +3 — hidden in dev mode</span></span><span class="chev" aria-hidden="true">▾</span></summary>
 <div class="card-body">
 <p><b>Watch 5s. Get +3.</b></p>
 <p>Max 5/day. +15 total.</p>
@@ -1721,7 +1726,7 @@
 </details>
 
 <details class="card" id="kitPreview">
-<summary><span class="card-head"><h2>Kit Preview · 预览</h2><span class="card-sub">1 道菜、1 张卡、1 城样本 — 其余 Kit 解锁</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<summary><span class="card-head"><h2>Kit Preview · 预览</h2><span class="card-sub">1 dish, 1 card, 1 city sample — the rest unlocks with Kit</span></span><span class="chev" aria-hidden="true">▾</span></summary>
 <div class="card-body">
 <p class="block-sub" id="kitPreviewSub">1 dish, 1 card, 1 city. Rest locked.</p>
 <p><b>1 dish, full.</b> 麻婆豆腐 — verdict, inside, hidden, spice, price.</p>
@@ -1736,7 +1741,7 @@
 </details>
 
 <details class="card" id="citiesSection">
-<summary><span class="card-head"><h2>Cities · 10 城</h2><span class="card-sub">10 城，每城 3 道必吃</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<summary><span class="card-head"><h2>Cities · 10 城</h2><span class="card-sub">10 cities, 3 must-eat dishes each</span></span><span class="chev" aria-hidden="true">▾</span></summary>
 <div class="card-body">
 <p>10 cities.</p>
 <p>Sample only. Address not verified.</p>
@@ -1754,16 +1759,16 @@
 <p><b>Step 1 — Your diet</b></p>
 <div class="chips" id="profiles"></div>
 <p class="muted" id="profileDesc">No restriction.</p>
-<p><b>Step 2 — 拍菜单</b></p>
-<p><button type="button" class="big camera-btn" id="cameraBtn">拍菜单 · 拍照查菜</button></p>
+<p><b>Step 2 — Snap the menu</b></p>
+<p><button type="button" class="big camera-btn" id="cameraBtn">Snap the menu · 拍菜单</button></p>
 <input type="file" id="photoInput" accept="image/*" capture="environment" class="hidden" aria-label="拍菜单照片">
 <div id="photoPreview" class="hidden"></div>
 <p id="photoStatus" class="small hidden" role="status"></p>
 <details class="subcard" id="manualInput">
-<summary>手动输入 · 打字查菜</summary>
+<summary>Type it instead · 手动输入</summary>
 <label for="dishInput">Dish name · 菜名</label>
-<input type="text" id="dishInput" placeholder="比如麻婆豆腐" autocomplete="off" lang="zh-CN">
-<p><button type="button" class="big" id="decodeBtn">Decode · 查菜</button></p>
+<input type="text" id="dishInput" placeholder="e.g. Mapo Tofu 麻婆豆腐" autocomplete="off" lang="zh-CN">
+<p><button type="button" class="big" id="decodeBtn">Check this dish</button></p>
 </details>
 <div id="result" class="hidden"></div>
 <details class="subcard" id="dishPicker">
@@ -1775,15 +1780,15 @@
 </section>
 
 <section class="card decoder-teaser" id="decoderTeaser">
-<h2>还没决定吃什么？</h2>
-<p class="small">菜单上看到一道菜，拍下来查一查能不能吃。</p>
-<p><a class="btn-link" href="#decoder" data-goto="decoder">拍菜单 · 去解码 →</a></p>
+<h2>Not sure what to order?</h2>
+<p class="small">See a dish on the menu? Snap it and check if you can eat it.</p>
+<p><a class="btn-link" href="#decoder" data-goto="decoder">Snap the menu →</a></p>
 </section>
 
 
 
 <details class="card" id="meituanSection">
-<summary><span class="card-head"><h2>Meituan · Dianping · Delivery</h2><span class="card-sub">点评选店、美团外卖、酒店地址卡</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<summary><span class="card-head"><h2>Meituan · Dianping · Delivery</h2><span class="card-sub">Dianping to choose, Meituan for delivery, hotel address card</span></span><span class="chev" aria-hidden="true">▾</span></summary>
 <div class="card-body">
 <p><b>Dianping = choose.</b> Score, photos, price per person, Must-Eat List.</p>
 <p><b>Meituan = get.</b> Delivery to your hotel. Groceries too.</p>
@@ -1831,7 +1836,7 @@
 </details>
 
 <details class="card" id="referral">
-<summary><span class="card-head"><h2>Share &amp; Invite · 分享</h2><span class="card-sub">分享链接，好友多得 3 次</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<summary><span class="card-head"><h2>Share &amp; Invite · 分享</h2><span class="card-sub">Share your link — friends get 6 free decodes</span></span><span class="chev" aria-hidden="true">▾</span></summary>
 <div class="card-body">
 <p>Code: <code id="myRef">—</code></p>
 <p>Link: <code id="refLink">—</code></p>
@@ -1843,7 +1848,7 @@
 </details>
 
 <details class="card" id="socialSearch">
-<summary><span class="card-head"><h2>Find us · 搜我们</h2><span class="card-sub">#ChinaBite — 在 IG / TikTok / X 搜菜名</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<summary><span class="card-head"><h2>Find us · 搜我们</h2><span class="card-sub">#ChinaBite — search dish names on IG / TikTok / X</span></span><span class="chev" aria-hidden="true">▾</span></summary>
 <div class="card-body">
 <p>Search a dish name on IG / TikTok / X.</p>
 <p><b>#ChinaBite</b></p>
@@ -1852,7 +1857,7 @@
 </details>
 
 <details class="card" id="subscribe">
-<summary><span class="card-head"><h2>New dishes first.</h2><span class="card-sub">新菜先知道 — 加菜才发一封</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<summary><span class="card-head"><h2>New dishes first.</h2><span class="card-sub">New dishes first — one email when we add dishes</span></span><span class="chev" aria-hidden="true">▾</span></summary>
 <div class="card-body">
 <img class="sub-mascot" src="assets/china-bite-mascot-dumpling-288.webp" alt="China Bite mascot — a cheerful dumpling holding chopsticks" width="56" height="56" loading="lazy">
 <p id="subLine">One email when we add dishes. Nothing else.</p>
@@ -1886,10 +1891,10 @@
 </footer>
 </main>
 <nav class="bottomnav" aria-label="底部导航">
-<a href="#decoder" data-view="decode"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></svg><span>解码</span></a>
-<a href="#citiesSection" data-view="cities"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-5.5-7-11a7 7 0 1 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span>城市</span></a>
-<a href="#dietSection" data-view="diet"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8" cy="11" r="1.6"/><path d="M13 9.5h5M13 13.5h5"/></svg><span>饮食卡</span></a>
-<a href="#kitPreview" data-view="kit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l-1.2 12H7.2L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span>Kit</span></a>
+<a href="#hero" data-view="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/></svg><span>Home</span></a>
+<a href="#decoder" data-view="decode"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></svg><span>Search</span></a>
+<a href="#qrSection" data-view="qr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5L6 21V3z"/><path d="M9 8h6M9 12h6"/></svg><span>Orders</span></a>
+<a href="#kitPreview" data-view="account"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg><span>Account</span></a>
 <button type="button" id="themeBtn" class="nav-icon" aria-label="切换白天 / 黑夜模式" title="白天 / 黑夜">🌙</button>
 <button type="button" id="menuBtn" class="nav-icon" aria-expanded="false" aria-controls="appMenu" aria-label="菜单">☰</button>
 </nav>

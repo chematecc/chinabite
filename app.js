@@ -81,47 +81,57 @@
   });
 
   // ---- Verdict logic ----
+  // English-first (v3.2): the "why" is derived from the dish flags in plain
+  // English ("Contains pork, peanuts."). The Chinese note/hidden fields stay
+  // in data.js only (metadata) and are never shown — Chinese on screen is
+  // only dish names (subtitle) and the big waiter sentences.
+  var FLAG_EN = { pork: "pork", lard: "lard", stock: "meat stock", peanut: "peanuts", shrimp: "shrimp", gluten: "wheat (gluten)", soy: "soy", egg: "egg", dairy: "dairy", beef: "beef", chicken: "chicken", fish: "fish", lamb: "lamb", duck: "duck", goose: "goose", frog: "frog", alcohol: "alcohol" };
+  function containsEn(dish) {
+    var f = (dish.flags || []).filter(function (x) { return FLAG_EN[x]; }).map(function (x) { return FLAG_EN[x]; });
+    if (!f.length) return "Nothing to watch for.";
+    return "Contains " + f.join(", ") + ".";
+  }
   function verdictFor(dish) {
     var f = dish.flags || [];
     function has() { for (var i = 0; i < arguments.length; i++) if (f.indexOf(arguments[i]) >= 0) return true; return false; }
     var meat = has("pork", "beef", "chicken", "duck", "fish", "shrimp", "frog", "goose", "lamb");
     var animal = meat || has("egg", "dairy");
-    if (profile === "none") return { k: "ok", t: "You can eat it", why: dish.note };
+    if (profile === "none") return { k: "ok", t: "You can eat it", why: containsEn(dish) };
     if (profile === "vegetarian") {
-      if (meat) return { k: "no", t: "Avoid", why: "Meat. " + dish.note };
+      if (meat) return { k: "no", t: "Avoid", why: "Meat. " + containsEn(dish) };
       if (has("lard", "stock")) return { k: "ask", t: "Ask first", why: "Lard or stock. Ask first." };
-      if (has("egg")) return { k: "ok", t: "You can eat it", why: "Egg OK. " + dish.note };
-      return { k: "ok", t: "You can eat it", why: dish.note };
+      if (has("egg")) return { k: "ok", t: "You can eat it", why: "Egg is OK. " + containsEn(dish) };
+      return { k: "ok", t: "You can eat it", why: containsEn(dish) };
     }
     if (profile === "vegan") {
-      if (animal || has("lard", "stock")) return { k: "no", t: "Avoid", why: "Animal product. " + dish.note };
-      return { k: "ok", t: "You can eat it", why: dish.note };
+      if (animal || has("lard", "stock")) return { k: "no", t: "Avoid", why: "Animal product. " + containsEn(dish) };
+      return { k: "ok", t: "You can eat it", why: containsEn(dish) };
     }
     if (profile === "halal") {
-      if (has("pork", "lard", "alcohol")) return { k: "no", t: "Avoid", why: "Pork or lard. " + dish.note };
+      if (has("pork", "lard", "alcohol")) return { k: "no", t: "Avoid", why: "Pork or lard. " + containsEn(dish) };
       if (meat) return { k: "ask", t: "Ask first", why: "Meat. Ask: halal? Look for 清真." };
-      return { k: "ok", t: "You can eat it", why: dish.note };
+      return { k: "ok", t: "You can eat it", why: containsEn(dish) };
     }
     if (profile === "peanut") {
       if (has("peanut")) return { k: "no", t: "Avoid", why: "Peanuts. Don't order." };
       if (has("stock")) return { k: "ask", t: "Ask first", why: "No peanuts. Ask about sauce." };
-      return { k: "ok", t: "You can eat it", why: dish.note };
+      return { k: "ok", t: "You can eat it", why: containsEn(dish) };
     }
     if (profile === "shellfish") {
       if (has("shrimp")) return { k: "no", t: "Avoid", why: "Shellfish. Don't order." };
       if (has("stock")) return { k: "ask", t: "Ask first", why: "No shellfish. Ask about stock." };
-      return { k: "ok", t: "You can eat it", why: dish.note };
+      return { k: "ok", t: "You can eat it", why: containsEn(dish) };
     }
     if (profile === "gluten") {
-      if (has("gluten")) return { k: "no", t: "Avoid", why: "Wheat. " + dish.note };
-      return { k: "ok", t: "You can eat it", why: dish.note };
+      if (has("gluten")) return { k: "no", t: "Avoid", why: "Wheat (gluten). " + containsEn(dish) };
+      return { k: "ok", t: "You can eat it", why: containsEn(dish) };
     }
     if (profile === "nospicy") {
-      if (dish.spicy >= 2) return { k: "no", t: "Avoid", why: "Too spicy. " + dish.note };
+      if (dish.spicy >= 2) return { k: "no", t: "Avoid", why: "Too spicy. Spice " + dish.spicy + "/3." };
       if (dish.spicy === 1) return { k: "ask", t: "Ask first", why: "Mild spice. Ask: no chili." };
-      return { k: "ok", t: "You can eat it", why: "Not spicy. " + dish.note };
+      return { k: "ok", t: "You can eat it", why: "Not spicy. " + containsEn(dish) };
     }
-    return { k: "ok", t: "You can eat it", why: dish.note };
+    return { k: "ok", t: "You can eat it", why: containsEn(dish) };
   }
 
   function spiceLabel(n) { return ["Not spicy", "Mild", "Medium", "Very spicy"][n] + " (" + n + "/3)"; }
@@ -135,24 +145,24 @@
     $("result").className = "subcard";
     $("result").innerHTML =
       '<img class="mascot-mini" src="assets/china-bite-mascot-dumpling-288.webp" alt="China Bite mascot — a cheerful dumpling holding chopsticks" width="32" height="32" loading="lazy">' +
-      '<div class="verdict ' + cls + '">' + esc(v.t) + " — " + esc(dish.zh) + " " + esc(dish.en) + "</div>" +
+      '<div class="verdict ' + cls + '">' + esc(v.t) + " — " + esc(dish.en) + " (" + esc(dish.zh) + ")</div>" +
       "<p><b>Why:</b> " + esc(v.why) + "</p>" +
       "<p><b>Inside:</b> " + esc(dish.main) + "</p>" +
-      "<p><b>Hidden:</b> " + esc(dish.hidden) + "</p>" +
+      "<p><b>Watch out:</b> " + esc(containsEn(dish)) + "</p>" +
       "<p><b>Spice:</b> " + esc(spiceLabel(dish.spicy)) + "</p>" +
       ((dish.flags && dish.flags.length) ? "<p><b>Watch:</b> " + esc(dish.flags.join(", ")) + "</p>" : "") +
       "<p><b>Price:</b> ¥" + dish.price + " · ≈$" + usd(dish.price) + "</p>" +
       "<p><b>Show waiter:</b></p><p class=\"bigzh\">" + esc(dish.waiter) + "</p>" +
       "<p class=\"small\">" + esc(dish.py) + "</p>" +
-      '<button type="button" id="addOrderBtn">Add to list · 加入清单</button> ' +
+      '<button type="button" id="addOrderBtn">Add to order</button> ' +
       '<button type="button" class="ghost" id="shareDishBtn">Share</button>' +
-      '<details class="subcard"><summary>下一步 · 3 选 1</summary>' +
+      '<details class="subcard"><summary>Next · pick 1 of 3</summary>' +
       '<div class="next-steps">' +
-      '<button type="button" id="nextDianpingBtn">点评搜这道菜 · Search on Dianping</button>' +
-      '<button type="button" class="ghost" id="nextQrBtn">扫码怎么点 · How to order by QR</button>' +
-      '<button type="button" class="ghost" id="nextCardBtn">饮食卡给服务员看 · Show diet card</button></div></details>' +
-      "<p><b>Dianping:</b> 点“点评搜这道菜”，菜名自动复制，去点评粘贴搜。</p>" +
-      "<p><b>Delivery?</b> 菜名已复制，去美团外卖粘贴搜。酒店卡在下面美团区。</p>";
+      '<button type="button" id="nextDianpingBtn">Search on Dianping</button>' +
+      '<button type="button" class="ghost" id="nextQrBtn">How to order by QR</button>' +
+      '<button type="button" class="ghost" id="nextCardBtn">Show diet card to waiter</button></div></details>' +
+      "<p><b>Dianping:</b> Tap \"Search on Dianping\" — the dish name is copied. Paste it in Dianping search.</p>" +
+      "<p><b>Delivery?</b> The dish name is copied — paste it in Meituan search. Your hotel card is in the Meituan section.</p>";
     $("addOrderBtn").onclick = function () { addToOrder(dish); };
     $("shareDishBtn").onclick = function () { shareDish(dish, v); };
     $("nextDianpingBtn").onclick = function () {
@@ -181,7 +191,7 @@
         save();
       }
       $("result").className = "subcard";
-      $("result").innerHTML = "<div class=\"verdict ask\">Not in list yet · 没收录</div>" +
+      $("result").innerHTML = "<div class=\"verdict ask\">Not in our list yet</div>" +
         "<p>" + D.dishes.length + " dishes here. Not this one.</p>" +
         "<p>Saved on this device. We'll add it.</p>" +
         "<p>Photo the menu. Check: lard, stock, oyster sauce.</p>";
@@ -191,7 +201,7 @@
     // DEV_MODE=false 时恢复：免费次数用完 → 挡住，去看广告或买 Kit。
     if (remaining() <= 0 && !paidPreview) {
       $("result").className = "subcard";
-      $("result").innerHTML = "<div class=\"verdict ask\">Free decodes used up · 用完了</div>" +
+      $("result").innerHTML = "<div class=\"verdict ask\">Free decodes used up</div>" +
         "<p>Watch a 5s ad: +3.</p>" +
         "<p>Or get Kit: $6.99, 90 days.</p>" +
         '<button type="button" onclick="document.getElementById(\'adSection\').scrollIntoView()">Watch ad · +3</button>';
@@ -205,22 +215,84 @@
   $("decodeBtn").onclick = decode;
   $("dishInput").addEventListener("keydown", function (e) { if (e.key === "Enter") decode(); });
 
-  // Quick-pick dish list (110)
+  // Quick-pick dish list (110) — Uber Eats-style rows, English first.
+  // Re-rendered by the top search bar and the category chips (v3.2).
+  var SIGNATURE_IDS = ["dandan-mian", "mapo-tofu", "huiguo-pork", "shao-e", "xiajiao", "changfen", "shengjian-bao", "xiefen-xiaolong", "hongshao-rou"];
+  var HALAL_IDS = ["lanzhou", "yangrou-chuan", "kao-baozi", "shouzhuafan", "halal-beef-noodles", "yangrou-tang", "ziran-yangrou", "nang", "dapanji", "yangrou-paomo"];
+  var MEAT_FLAGS = ["pork", "beef", "chicken", "duck", "fish", "shrimp", "frog", "goose", "lamb"];
+  function dishInCat(d, cat) {
+    if (cat === "all") return true;
+    if (cat === "signature") return SIGNATURE_IDS.indexOf(d.id) >= 0;
+    if (cat === "noodles") return /noodle/i.test(d.en) || /[面线粉]/.test(d.zh);
+    if (cat === "dumplings") return /dumpling|bun/i.test(d.en) || ["jiaozi", "xiaolongbao", "xiajiao", "chashao-bao", "shengjian-bao", "liusha-bao", "zhongshuijiao", "guotie", "kao-baozi"].indexOf(d.id) >= 0;
+    if (cat === "spicy") return d.spicy >= 2;
+    if (cat === "veg") return !(d.flags || []).some(function (f) { return MEAT_FLAGS.indexOf(f) >= 0; });
+    if (cat === "halal") return HALAL_IDS.indexOf(d.id) >= 0 || /清真/.test(d.note || "") || /清真/.test(d.hidden || "");
+    if (cat === "soup") return /soup/i.test(d.en);
+    if (cat === "rice") return /rice/i.test(d.en);
+    return true;
+  }
+  var currentCat = "all";
   var listEl = $("dishList");
-  D.dishes.forEach(function (d) {
-    var b = document.createElement("button");
-    b.className = "dish"; b.type = "button";
-    b.innerHTML = '<span class="zh">' + esc(d.zh) + '</span><br><span class="en">' + esc(d.en) + " · ¥" + d.price + " · Spice " + d.spicy + "/3</span>";
-    b.onclick = function () { $("dishInput").value = d.zh; decode(); $("decoder").scrollIntoView(); };
-    listEl.appendChild(b);
-  });
+  function renderDishList(cat, q) {
+    currentCat = cat || "all";
+    q = (q || "").trim().toLowerCase();
+    listEl.innerHTML = "";
+    var shown = 0;
+    D.dishes.forEach(function (d) {
+      if (!dishInCat(d, currentCat)) return;
+      if (q && d.en.toLowerCase().indexOf(q) < 0 && d.zh.indexOf(q) < 0 && (d.py || "").toLowerCase().indexOf(q) < 0) return;
+      shown++;
+      var b = document.createElement("button");
+      b.className = "dish"; b.type = "button";
+      b.innerHTML = '<span class="en">' + esc(d.en) + '</span><br><span class="zh">' + esc(d.zh) + " · ¥" + d.price + " · ≈$" + usd(d.price) + " · Spice " + d.spicy + "/3</span>";
+      b.onclick = function () { $("dishInput").value = d.zh; decode(); $("decoder").scrollIntoView(); };
+      listEl.appendChild(b);
+    });
+    if (!shown) listEl.innerHTML = "<p class=\"muted\">No dishes match — try All.</p>";
+    return shown;
+  }
+  renderDishList("all", "");
+
+  // ---- Top search bar + category chips (v3.2, Uber Eats-style) ----
+  var CATS = [["all", "All"], ["signature", "Signature"], ["noodles", "Noodles"], ["dumplings", "Dumplings"], ["spicy", "Spicy"], ["veg", "Veg"], ["halal", "Halal"], ["soup", "Soup"], ["rice", "Rice"]];
+  var chipsEl = $("catChips");
+  if (chipsEl) {
+    CATS.forEach(function (c) {
+      var b = document.createElement("button");
+      b.className = "chip"; b.type = "button"; b.textContent = c[1];
+      b.setAttribute("aria-pressed", c[0] === "all" ? "true" : "false");
+      b.onclick = function () {
+        Array.prototype.forEach.call(chipsEl.children, function (x) { x.setAttribute("aria-pressed", "false"); });
+        b.setAttribute("aria-pressed", "true");
+        if (c[0] === "signature") {
+          showView("home");
+          var sd = $("storyDishes"); if (sd) { sd.open = true; sd.scrollIntoView({ behavior: "smooth", block: "start" }); }
+          return;
+        }
+        renderDishList(c[0], ($("topSearch") || { value: "" }).value);
+        showView("decode");
+        var pk = $("dishPicker"); if (pk) { pk.open = true; pk.scrollIntoView({ behavior: "smooth", block: "start" }); }
+      };
+      chipsEl.appendChild(b);
+    });
+  }
+  var topSearch = $("topSearch");
+  if (topSearch) {
+    topSearch.addEventListener("input", function () { renderDishList(currentCat, topSearch.value); });
+    topSearch.addEventListener("keydown", function (e) {
+      if (e.key !== "Enter") return;
+      var d = findDish(topSearch.value);
+      if (d) { $("dishInput").value = d.zh; showView("decode"); decode(); }
+    });
+  }
 
   // ---- Order list + slip (B route) ----
   function addToOrder(dish) {
     var item = state.order.find(function (x) { return x.id === dish.id; });
     if (item) item.qty++; else state.order.push({ id: dish.id, qty: 1 });
     save(); renderOrder();
-    alert("Added: " + dish.zh);
+    alert("Added: " + dish.en);
   }
   function renderOrder() {
     var el = $("orderList");
@@ -314,15 +386,15 @@
       var html = "<h3>" + esc(c.en) + " · " + esc(c.zh) + "</h3>" +
         (cityImg ? "<img class=\"city-img\" src=\"" + cityImg + "\" alt=\"" + esc(c.en) + " street scene\" width=\"491\" height=\"327\" loading=\"lazy\">" : "") +
         "<p>" + esc(c.scene) + "</p>" +
-        "<p><b>3 dishes · 必吃 3 道</b></p>" +
+        "<p><b>3 must-eat dishes</b></p>" +
         (c.mustEat || []).map(function (m) {
           var d = dishById[m.id];
           if (!d) return "";
           return "<p><button type=\"button\" onclick=\"checkDish('" + esc(d.zh) + "')\">" + esc(d.zh) + " · " + esc(d.en) + "</button><br><span class=\"small\">" + esc(m.note) + "</span></p>";
         }).join("") +
-        "<p><b>Watch · 注意：</b>" + esc(c.tip) + "</p>" +
-        "<p><b>Getting there · 交通：</b>" + esc(c.transport) + "</p>" +
-        c.places.map(function (p) { return "<p>• " + esc(p.name) + " — " + esc(p.type) + " · " + esc(p.area) + " · " + esc(p.note) + "<br><span class=\"small\">Dianping: search the shop name to see its score. No score copied here. 点评评分参考：去点评搜店名看分。</span></p>"; }).join("");
+        "<p><b>Watch out:</b> " + esc(c.tip) + "</p>" +
+        "<p><b>Getting there:</b> " + esc(c.transport) + "</p>" +
+        c.places.map(function (p) { return "<p>• " + esc(p.name) + " — " + esc(p.type) + " · " + esc(p.area) + " · " + esc(p.note) + "<br><span class=\"small\">Dianping: search the shop name to see its score. No score copied here.</span></p>"; }).join("");
       div.innerHTML = html;
       cityEl.appendChild(div);
     });
@@ -446,7 +518,7 @@
         }
         if (st) {
           st.classList.remove("hidden");
-          st.textContent = "照片已拍好，存在本机，不上传。OCR 识别是 App 阶段的原生功能，web 版暂未接通 — 点下面任意一道菜，马上出结论；也可以展开「手动输入」打字查。";
+          st.textContent = "Photo saved on this device — not uploaded. OCR is a native App feature and isn't connected in the web version yet. Tap any dish below for the answer right away — or open 'Type it instead' to type the name.";
         }
         var picker = $("dishPicker");
         if (picker) picker.open = true;
@@ -487,7 +559,7 @@
         clearInterval(adTimer);
         $("adCount").textContent = "Done";
         $("adSkip").classList.remove("hidden");
-        $("adSkip").textContent = "Back · 回主页 (+3)";
+        $("adSkip").textContent = "Back (+3 decodes)";
       } else { $("adCount").textContent = n; }
     }, 1000);
   };
@@ -576,19 +648,19 @@
   // homepage anymore.
   // Views are show/hide only — all sections stay in the DOM, so decode,
   // deep links (#/dish/, #/diet/) and the order slip keep working.
-  var VIEW_SECTIONS = ["hero", "decoder", "decoderTeaser", "storyDishes", "qrSection", "dietSection", "adSection", "kitPreview", "citiesSection", "meituanSection", "kitSection", "referral", "socialSearch", "subscribe"];
+  var VIEW_SECTIONS = ["searchBar", "catChips", "hero", "decoder", "decoderTeaser", "storyDishes", "qrSection", "dietSection", "adSection", "kitPreview", "citiesSection", "meituanSection", "kitSection", "referral", "socialSearch", "subscribe"];
   var VIEWS = {
-    home: ["hero", "storyDishes", "citiesSection", "decoderTeaser"],
+    home: ["searchBar", "catChips", "hero", "storyDishes", "citiesSection", "decoderTeaser"],
     decode: ["decoder"],
     cities: ["citiesSection"],
     diet: ["dietSection"],
-    kit: ["kitPreview", "kitSection"],
+    account: ["kitPreview", "kitSection", "subscribe", "referral"],
     qr: ["qrSection"],
     meituan: ["meituanSection"],
     subscribe: ["subscribe"],
     more: ["referral", "socialSearch"]
   };
-  var SECTION_VIEW = { hero: "home", decoder: "decode", decoderTeaser: "home", storyDishes: "home", qrSection: "qr", dietSection: "diet", adSection: "decode", kitPreview: "kit", citiesSection: "cities", meituanSection: "meituan", kitSection: "kit", referral: "more", socialSearch: "more", subscribe: "subscribe" };
+  var SECTION_VIEW = { searchBar: "home", catChips: "home", hero: "home", decoder: "decode", decoderTeaser: "home", storyDishes: "home", qrSection: "qr", dietSection: "diet", adSection: "decode", kitPreview: "account", citiesSection: "cities", meituanSection: "meituan", kitSection: "account", referral: "account", socialSearch: "more", subscribe: "subscribe" };
   var currentView = "home";
   function showView(name) {
     var ids = VIEWS[name] || VIEWS.home;

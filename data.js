@@ -603,144 +603,144 @@ window.CHINABITE_DATA = {
   ],
   cities: [
     { id:"shanghai", en:"Shanghai", zh:"上海",
-      scene:"你早上在上海，排队买生煎，咬开先喝汤，小心烫。",
+      scene:"In the morning in Shanghai, queue up for shengjian bao. Bite a small hole first, drink the soup — careful, it's hot.",
       mustEat:[
-        { id:"shengjian-bao", note:"生煎咬开先喝汤，小心烫，猪肉馅。" },
-        { id:"xiaolongbao", note:"小笼汤多，配姜丝醋，咬开先喝汤小心烫。" },
-        { id:"hongshao-rou", note:"红烧肉偏甜，五花肉偏油，配白饭吃。" }
+        { id:"shengjian-bao", note:"Bite a small hole first, drink the soup. Careful, it's hot. Pork filling." },
+        { id:"xiaolongbao", note:"Lots of soup inside. Eat with ginger and vinegar. Bite a small hole first — careful, it's hot." },
+        { id:"hongshao-rou", note:"Slightly sweet. Fatty pork belly. Best with plain rice." }
       ],
-      tip:"上海菜偏甜，点菜先问甜咸；早餐店要排队，避开高峰。",
-      transport:"地铁到人民广场、静安寺一带，步行就能找到吃的。",
+      tip:"Shanghai food leans sweet — ask sweet or salty before ordering. Breakfast shops have queues; avoid rush hour.",
+      transport:"Metro to People's Square or Jing'an Temple, then walk — food is everywhere.",
       places:[
-        { name:"素食馆示例 · 静安寺一带", type:"Vegetarian restaurant", area:"Jing'an area", note:"地址待核实" },
-        { name:"清真拉面示例 · 市中心", type:"Halal Lanzhou noodles", area:"City centre", note:"地址待核实" },
-        { name:"素食馆示例 · 人民广场一带", type:"Vegetarian restaurant", area:"People's Square area", note:"地址待核实" }
+        { name:"Vegetarian restaurant · Jing'an Temple area", type:"Vegetarian restaurant", area:"Jing'an area", note:"Address not verified" },
+        { name:"Halal Lanzhou noodles · City centre", type:"Halal Lanzhou noodles", area:"City centre", note:"Address not verified" },
+        { name:"Vegetarian restaurant · People's Square area", type:"Vegetarian restaurant", area:"People's Square area", note:"Address not verified" }
       ] },
     { id:"beijing", en:"Beijing", zh:"北京",
-      scene:"你在北京早上，路边买个煎饼果子，边走边吃。",
+      scene:"In the morning in Beijing, grab a jianbing from a street stall and eat as you walk.",
       mustEat:[
-        { id:"peking-duck", note:"烤鸭配面饼卷着吃，按只卖，先问价。" },
-        { id:"zhajiang", note:"炸酱面酱咸，先拌匀再吃，猪肉酱。" },
-        { id:"jianbing", note:"煎饼问加不加肉和辣，路边摊现做现吃。" }
+        { id:"peking-duck", note:"Duck served with pancakes. Sold by the whole duck — ask the price first." },
+        { id:"zhajiang", note:"Salty soybean sauce. Mix well before eating. Pork sauce." },
+        { id:"jianbing", note:"Ask if it has meat or chili. Made fresh at street stalls." }
       ],
-      tip:"北京菜量大，两个人点两道就够；烤鸭按只卖，提前问价。",
-      transport:"地铁到王府井、前门一带，步行就能找到吃的。",
+      tip:"Portions are big — two dishes is enough for two people. Duck is sold by the whole bird; ask the price first.",
+      transport:"Metro to Wangfujing or Qianmen, then walk — food is everywhere.",
       places:[
-        { name:"素食馆示例 · 雍和宫一带", type:"Vegetarian restaurant", area:"Yonghegong area", note:"地址待核实" },
-        { name:"清真餐馆示例 · 牛街一带", type:"Halal restaurants", area:"Niujie area", note:"地址待核实" },
-        { name:"素食友好示例 · 三里屯一带", type:"Vegetarian-friendly", area:"Sanlitun area", note:"地址待核实" }
+        { name:"Vegetarian restaurant · Yonghegong area", type:"Vegetarian restaurant", area:"Yonghegong area", note:"Address not verified" },
+        { name:"Halal restaurants · Niujie area", type:"Halal restaurants", area:"Niujie area", note:"Address not verified" },
+        { name:"Vegetarian-friendly · Sanlitun area", type:"Vegetarian-friendly", area:"Sanlitun area", note:"Address not verified" }
       ] },
     { id:"chengdu", en:"Chengdu", zh:"成都",
-      scene:"你在成都宽窄巷子逛饿了，坐下来点三道，先说微辣。",
+      scene:"Wandering Kuanzhai Alley and hungry — sit down, order three dishes, and say 'mild spice' first.",
       mustEat:[
-        { id:"mapo-tofu-veg", note:"无肉版还是辣 2/3，怕辣先说微辣，先问油汤。" },
-        { id:"huiguo-pork", note:"回锅肉是五花肉，偏油偏辣，配白饭吃。" },
-        { id:"dandan-mian", note:"担担面含花生酱，花生过敏别点。" }
+        { id:"mapo-tofu-veg", note:"The no-meat version is still spice 2/3. Say 'mild' if you can't take heat. Ask about the oil and broth." },
+        { id:"huiguo-pork", note:"Pork belly, oily and spicy. Best with plain rice." },
+        { id:"dandan-mian", note:"Contains peanut sauce. Peanut allergy — skip it." }
       ],
-      tip:"成都菜大多带辣，不吃辣点菜先说微辣或不要辣；火锅先点清汤。",
-      transport:"地铁到春熙路、宽窄巷子一带，步行就能找到吃的。",
+      tip:"Most Chengdu food is spicy. Say 'mild' or 'no chili' before ordering. For hot pot, start with clear broth.",
+      transport:"Metro to Chunxi Road or Kuanzhai Alley, then walk — food is everywhere.",
       places:[
-        { name:"素食友好示例 · 宽窄巷子一带", type:"Vegetarian-friendly", area:"Kuanzhai Alley area", note:"地址待核实" },
-        { name:"清真拉面示例 · 市中心", type:"Halal Lanzhou noodles", area:"City centre", note:"地址待核实" },
-        { name:"素食友好示例 · 春熙路一带", type:"Vegetarian-friendly", area:"Chunxi Road area", note:"地址待核实" }
+        { name:"Vegetarian-friendly · Kuanzhai Alley area", type:"Vegetarian-friendly", area:"Kuanzhai Alley area", note:"Address not verified" },
+        { name:"Halal Lanzhou noodles · City centre", type:"Halal Lanzhou noodles", area:"City centre", note:"Address not verified" },
+        { name:"Vegetarian-friendly · Chunxi Road area", type:"Vegetarian-friendly", area:"Chunxi Road area", note:"Address not verified" }
       ] },
     { id:"xian", en:"Xi'an", zh:"西安",
-      scene:"你早上在西安回民街，先看绿牌，再点一碗羊肉泡馍。",
+      scene:"In the morning on Huimin Street in Xi'an, look for the green halal sign first, then order a bowl of yangrou paomo.",
       mustEat:[
-        { id:"yangrou-paomo", note:"羊肉泡馍要自己掰馍，掰小块才入味。" },
-        { id:"roujiamo", note:"肉夹馍是猪肉，清真店是牛肉，点前先问。" },
-        { id:"youpo-mian", note:"油泼面辣 2/3，怕辣先说少辣。" }
+        { id:"yangrou-paomo", note:"Tear the bread into small pieces yourself — small pieces soak up the flavour." },
+        { id:"roujiamo", note:"Roujiamo is pork. Halal shops use beef — ask before ordering." },
+        { id:"youpo-mian", note:"Spice 2/3. Say 'less chili' if you can't take heat." }
       ],
-      tip:"回民街先看绿牌清真再进店；牛羊肉多，猪肉菜先问。",
-      transport:"地铁到钟楼站，步行到回民街一带。",
+      tip:"On Huimin Street, look for the green halal sign before going in. Lots of lamb and beef — ask about pork dishes first.",
+      transport:"Metro to Bell Tower station, walk to Huimin Street.",
       places:[
-        { name:"清真餐馆示例 · 回民街一带", type:"Halal restaurants", area:"Huimin Street area", note:"地址待核实" },
-        { name:"素食友好示例 · 钟楼一带", type:"Vegetarian-friendly", area:"Bell Tower area", note:"地址待核实" },
-        { name:"清真拉面示例 · 市中心", type:"Halal Lanzhou noodles", area:"City centre", note:"地址待核实" }
+        { name:"Halal restaurants · Huimin Street area", type:"Halal restaurants", area:"Huimin Street area", note:"Address not verified" },
+        { name:"Vegetarian-friendly · Bell Tower area", type:"Vegetarian-friendly", area:"Bell Tower area", note:"Address not verified" },
+        { name:"Halal Lanzhou noodles · City centre", type:"Halal Lanzhou noodles", area:"City centre", note:"Address not verified" }
       ] },
     { id:"guangzhou", en:"Guangzhou", zh:"广州",
-      scene:"你早上在广州喝早茶，先点一笼虾饺，茶位费另算。",
+      scene:"Morning dim sum in Guangzhou — order a basket of har gow first. Tea is charged separately.",
       mustEat:[
-        { id:"shao-e", note:"烧鹅按只或半只卖，先问价，皮脆趁热吃。" },
-        { id:"xiajiao", note:"虾饺有虾，虾过敏别点，趁热吃。" },
-        { id:"changfen", note:"肠粉馅先问，酱油按自己口味加。" }
+        { id:"shao-e", note:"Sold by the whole or half goose. Ask the price first. Crispy skin, eat while hot." },
+        { id:"xiajiao", note:"Contains shrimp. Shrimp allergy — skip it. Eat while hot." },
+        { id:"changfen", note:"Ask about the filling first. Add soy sauce to your taste." }
       ],
-      tip:"早茶按位收费，茶位费另算；点心按笼点，少点多试。",
-      transport:"地铁到北京路、上下九一带，步行就能找到吃的。",
+      tip:"Dim sum is charged per seat, tea is extra. Order one basket at a time and try a few.",
+      transport:"Metro to Beijing Road or Shangxiajiu, then walk — food is everywhere.",
       places:[
-        { name:"素食馆示例 · 上下九一带", type:"Vegetarian restaurant", area:"Shangxiajiu area", note:"地址待核实" },
-        { name:"清真餐馆示例 · 市中心", type:"Halal restaurants", area:"City centre", note:"地址待核实" },
-        { name:"素食友好示例 · 北京路一带", type:"Vegetarian-friendly", area:"Beijing Road area", note:"地址待核实" }
+        { name:"Vegetarian restaurant · Shangxiajiu area", type:"Vegetarian restaurant", area:"Shangxiajiu area", note:"Address not verified" },
+        { name:"Halal restaurants · City centre", type:"Halal restaurants", area:"City centre", note:"Address not verified" },
+        { name:"Vegetarian-friendly · Beijing Road area", type:"Vegetarian-friendly", area:"Beijing Road area", note:"Address not verified" }
       ] },
     { id:"shenzhen", en:"Shenzhen", zh:"深圳",
-      scene:"你在深圳早上，路边来一碗潮汕牛肉丸加肠粉。",
+      scene:"In the morning in Shenzhen, a bowl of Chaoshan beef balls with cheung fun from a street stall.",
       mustEat:[
-        { id:"chaoshan-beef-balls", note:"潮汕牛肉丸是牛肉，汤是牛骨汤，现煮现吃。" },
-        { id:"baiqie-chicken", note:"白切鸡配姜蓉，鸡肉带骨，慢慢吃。" },
-        { id:"changfen", note:"肠粉馅先问，酱油按自己口味加。" }
+        { id:"chaoshan-beef-balls", note:"Beef balls in beef-bone broth, cooked to order." },
+        { id:"baiqie-chicken", note:"Served with ginger paste. Chicken on the bone — eat slowly." },
+        { id:"changfen", note:"Ask about the filling first. Add soy sauce to your taste." }
       ],
-      tip:"深圳吃饭多在商场和城中村，小店菜单中文多，备好饮食卡。",
-      transport:"地铁到岗厦、会展中心一带，商场里就能找到吃的。",
+      tip:"In Shenzhen, eat in malls and old neighbourhoods. Menus are mostly Chinese — keep your diet card ready.",
+      transport:"Metro to Gangxia or the Convention Centre — food is inside the malls.",
       places:[
-        { name:"素食馆示例 · 岗厦一带", type:"Vegetarian restaurant", area:"Gangxia area", note:"地址待核实" },
-        { name:"素食友好示例 · 会展中心一带", type:"Vegetarian-friendly", area:"Convention Centre area", note:"地址待核实" },
-        { name:"清真拉面示例 · 市中心", type:"Halal Lanzhou noodles", area:"City centre", note:"地址待核实" }
+        { name:"Vegetarian restaurant · Gangxia area", type:"Vegetarian restaurant", area:"Gangxia area", note:"Address not verified" },
+        { name:"Vegetarian-friendly · Convention Centre area", type:"Vegetarian-friendly", area:"Convention Centre area", note:"Address not verified" },
+        { name:"Halal Lanzhou noodles · City centre", type:"Halal Lanzhou noodles", area:"City centre", note:"Address not verified" }
       ] },
     { id:"hangzhou", en:"Hangzhou", zh:"杭州",
-      scene:"你在杭州西湖边走累了，坐下来点狮子头配白饭。",
+      scene:"Tired from walking around West Lake, sit down and order lion's head meatballs with plain rice.",
       mustEat:[
-        { id:"shizitou", note:"狮子头是猪肉大丸子，偏油，配白饭吃。" },
-        { id:"jitouni", note:"鸡头米是种子不是鸡肉，当季才有，先问有没有。" },
-        { id:"douhua", note:"豆花咸甜不同，先问再点。" }
+        { id:"shizitou", note:"Big pork meatballs, a bit oily. Best with plain rice." },
+        { id:"jitouni", note:"Fox nut is a seed, not chicken. Seasonal — ask if they have it." },
+        { id:"douhua", note:"Douhua comes sweet or savoury — ask before ordering." }
       ],
-      tip:"杭州菜偏甜偏淡，西湖边吃饭贵，先问价再点。",
-      transport:"地铁到龙翔桥站，步行到西湖边一带。",
+      tip:"Hangzhou food is sweet and light. Restaurants by West Lake are pricey — ask the price first.",
+      transport:"Metro to Longxiangqiao station, walk to West Lake.",
       places:[
-        { name:"素食馆示例 · 西湖边", type:"Vegetarian restaurant", area:"West Lake area", note:"地址待核实" },
-        { name:"素食友好示例 · 龙翔桥一带", type:"Vegetarian-friendly", area:"Longxiangqiao area", note:"地址待核实" },
-        { name:"清真拉面示例 · 市中心", type:"Halal Lanzhou noodles", area:"City centre", note:"地址待核实" }
+        { name:"Vegetarian restaurant · West Lake area", type:"Vegetarian restaurant", area:"West Lake area", note:"Address not verified" },
+        { name:"Vegetarian-friendly · Longxiangqiao area", type:"Vegetarian-friendly", area:"Longxiangqiao area", note:"Address not verified" },
+        { name:"Halal Lanzhou noodles · City centre", type:"Halal Lanzhou noodles", area:"City centre", note:"Address not verified" }
       ] },
     { id:"chongqing", en:"Chongqing", zh:"重庆",
-      scene:"你在重庆晚上吃火锅，先点清汤锅，牛油红汤先放一边。",
+      scene:"Hot pot at night in Chongqing — start with clear broth, leave the beef-tallow red broth for later.",
       mustEat:[
-        { id:"qingtang-huoguo", note:"清汤火锅先问汤底是不是鸡汤。" },
-        { id:"fanqie-huoguo", note:"番茄火锅偏酸，先问辣度。" },
-        { id:"liangfen", note:"凉粉微辣，素菜，配火锅解腻。" }
+        { id:"qingtang-huoguo", note:"Ask if the clear broth is chicken stock." },
+        { id:"fanqie-huoguo", note:"A bit sour. Ask about the spice level." },
+        { id:"liangfen", note:"Slightly spicy, vegetarian. Good with hot pot." }
       ],
-      tip:"重庆火锅默认牛油红汤，怕辣直接点清汤或番茄锅；小面默认很辣，先说微辣。",
-      transport:"地铁到较场口站，步行到解放碑一带。",
+      tip:"Chongqing hot pot is beef-tallow red broth by default. If you can't take heat, order clear or tomato broth. Noodles are very spicy by default — say 'mild' first.",
+      transport:"Metro to Jiaochangkou station, walk to Jiefangbei.",
       places:[
-        { name:"素食友好示例 · 解放碑一带", type:"Vegetarian-friendly", area:"Jiefangbei area", note:"地址待核实" },
-        { name:"清真拉面示例 · 市中心", type:"Halal Lanzhou noodles", area:"City centre", note:"地址待核实" },
-        { name:"素食友好示例 · 观音桥一带", type:"Vegetarian-friendly", area:"Guanyinqiao area", note:"地址待核实" }
+        { name:"Vegetarian-friendly · Jiefangbei area", type:"Vegetarian-friendly", area:"Jiefangbei area", note:"Address not verified" },
+        { name:"Halal Lanzhou noodles · City centre", type:"Halal Lanzhou noodles", area:"City centre", note:"Address not verified" },
+        { name:"Vegetarian-friendly · Guanyinqiao area", type:"Vegetarian-friendly", area:"Guanyinqiao area", note:"Address not verified" }
       ] },
     { id:"kunming", en:"Kunming", zh:"昆明",
-      scene:"你在昆明早上，先来一碗过桥米线，汤现烫肉片。",
+      scene:"In the morning in Kunming, start with a bowl of guoqiao rice noodles — the hot broth cooks the meat slices.",
       mustEat:[
-        { id:"guoqiao-mixian", note:"过桥米线汤现烫肉片，趁热吃，肉汤打底。" },
-        { id:"liangfen", note:"凉粉微辣，素菜，夜市小吃先点它开胃。" },
-        { id:"douhua", note:"豆花咸甜不同，先问再点。" }
+        { id:"guoqiao-mixian", note:"The hot broth cooks the meat slices. Eat while hot. Meat-stock broth." },
+        { id:"liangfen", note:"Slightly spicy, vegetarian. Order it first at night markets." },
+        { id:"douhua", note:"Douhua comes sweet or savoury — ask before ordering." }
       ],
-      tip:"昆明菜酸辣多，夜市菜单中文多，备好饮食卡；菌子菜先问是不是人工种的。",
-      transport:"地铁到南屏街站，步行到南屏街一带。",
+      tip:"Kunming food is sour and spicy. Night-market menus are mostly Chinese — keep your diet card ready. Ask if mushrooms are farmed.",
+      transport:"Metro to Nanping Street station, walk around Nanping Street.",
       places:[
-        { name:"素食馆示例 · 南屏街一带", type:"Vegetarian restaurant", area:"Nanping Street area", note:"地址待核实" },
-        { name:"素食友好示例 · 翠湖一带", type:"Vegetarian-friendly", area:"Green Lake area", note:"地址待核实" },
-        { name:"清真餐馆示例 · 市中心", type:"Halal restaurants", area:"City centre", note:"地址待核实" }
+        { name:"Vegetarian restaurant · Nanping Street area", type:"Vegetarian restaurant", area:"Nanping Street area", note:"Address not verified" },
+        { name:"Vegetarian-friendly · Green Lake area", type:"Vegetarian-friendly", area:"Green Lake area", note:"Address not verified" },
+        { name:"Halal restaurants · City centre", type:"Halal restaurants", area:"City centre", note:"Address not verified" }
       ] },
     { id:"guilin", en:"Guilin", zh:"桂林",
-      scene:"你在阳朔西街晚上逛累了，坐下来点一碗桂林米粉。",
+      scene:"Tired from walking West Street in Yangshuo at night, sit down for a bowl of Guilin rice noodles.",
       mustEat:[
-        { id:"guilin-mifen", note:"桂林米粉卤含猪肉，配花生，过敏先问。" },
-        { id:"liangban-muer", note:"木耳凉拌微辣，素菜，配饭吃。" },
-        { id:"suanmeitang", note:"酸梅汤偏甜，配辣菜喝。" }
+        { id:"guilin-mifen", note:"The braised sauce has pork, served with peanuts. Ask first if allergic." },
+        { id:"liangban-muer", note:"Cold wood ear, slightly spicy, vegetarian. Good with rice." },
+        { id:"suanmeitang", note:"A bit sweet. Good with spicy food." }
       ],
-      tip:"阳朔西街吃饭先问价；啤酒鱼不在本单，先问做法和价。",
-      transport:"高铁到桂林站，市区打车；阳朔没地铁，坐车到西街一带。",
+      tip:"On Yangshuo West Street, ask the price first. Beer fish isn't on this list — ask how it's cooked and what it costs.",
+      transport:"High-speed train to Guilin station, then taxi. Yangshuo has no metro — take a bus or taxi to West Street.",
       places:[
-        { name:"素食友好示例 · 阳朔西街一带", type:"Vegetarian-friendly", area:"Yangshuo West Street area", note:"地址待核实" },
-        { name:"素食馆示例 · 市中心", type:"Vegetarian restaurant", area:"City centre", note:"地址待核实" },
-        { name:"清真拉面示例 · 市中心", type:"Halal Lanzhou noodles", area:"City centre", note:"地址待核实" }
+        { name:"Vegetarian-friendly · Yangshuo West Street area", type:"Vegetarian-friendly", area:"Yangshuo West Street area", note:"Address not verified" },
+        { name:"Vegetarian restaurant · City centre", type:"Vegetarian restaurant", area:"City centre", note:"Address not verified" },
+        { name:"Halal Lanzhou noodles · City centre", type:"Halal Lanzhou noodles", area:"City centre", note:"Address not verified" }
       ] }
   ]
 };
