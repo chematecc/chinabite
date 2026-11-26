@@ -30,9 +30,20 @@
   function loadProfile() {
     try {
       var p = JSON.parse(localStorage.getItem(PROFILE_KEY) || "{}");
-      if (p && typeof p === "object") return p;
+      if (p && typeof p === "object") {
+        // v4.3: diet is an ARRAY (multi-select). Migrate the old single
+        // string once: "vegetarian" -> ["vegetarian"], "none" -> [] —
+        // and write the migrated array back immediately, so localStorage
+        // itself holds an array from now on.
+        if (typeof p.diet === "string") {
+          p.diet = (!p.diet || p.diet === "none") ? [] : [p.diet];
+          try { localStorage.setItem(PROFILE_KEY, JSON.stringify(p)); } catch (e) {}
+        }
+        if (!Array.isArray(p.diet)) p.diet = [];
+        return p;
+      }
     } catch (e) {}
-    return {};
+    return { diet: [] };
   }
   function saveProfile() {
     try { localStorage.setItem(PROFILE_KEY, JSON.stringify(profile)); } catch (e) {}
@@ -85,6 +96,7 @@
 
   // ---- Quick-reply chips (horizontal scroll, above the composer) ----
   function renderChips(list) {
+    chipsBar.classList.remove("wrap");
     chipsBar.innerHTML = "";
     list.forEach(function (c) {
       var b = document.createElement("button");
@@ -233,6 +245,15 @@
     }, 700);
   }
 
+  function dietLabels() {
+    if (!profile.diet.length) return ["No restriction"];
+    return profile.diet.map(function (id) {
+      var d = DIET_CHIPS.find(function (x) { return x.value === id; });
+      return d ? d.label : id;
+    });
+  }
+  function dietSummary() { return dietLabels().join(", "); }
+
   // ---- Local rules bot (fallback + while the LLM key is not set) ----
   // Match order mirrors the Dashboard support bot: dish > card > FAQ > city.
   var DIET_WORDS = [
@@ -296,6 +317,12 @@
     var dish = CB.findDish(q) || findDishInText(q);
     if (dish) return { kind: "dish", dish: dish };
     if (/recommend|suggest|hungry|what should i eat|what can i eat|what's good|surprise me|i'm hungry|im hungry/i.test(q)) return { kind: "recommend" };
+    // "Show my diet card" — with a multi-select profile, show EVERY
+    // selected diet card, not just the first one.
+    if (/diet card/i.test(q)) {
+      if (profile.diet.length) return { kind: "cards", cardIds: profile.diet.slice() };
+      return { kind: "section", section: "dietSection", text: "Here are the diet cards — tap one to show it big to the waiter." };
+    }
     var cardId = matchCardId(q);
     if (cardId && /card|show|diet|allergy|vegetarian|vegan|halal|peanut|shellfish|gluten|egg|dairy|spicy/i.test(q)) return { kind: "card", cardId: cardId };
     var city = matchCity(q);
@@ -316,6 +343,14 @@
       recommendReply();
     } else if (res.kind === "card") {
       showCard(res.cardId, "Here you go — show this to the waiter, no talking needed.");
+      suggestChips();
+    } else if (res.kind === "cards") {
+      showCard(res.cardIds[0], "Here are yours — show these to the waiter, no talking needed.");
+      res.cardIds.slice(1).forEach(function (id) { showCard(id); });
+      suggestChips();
+    } else if (res.kind === "section") {
+      addBun(esc(res.text));
+      CB.gotoSection(res.section);
       suggestChips();
     } else if (res.kind === "city") {
       var c = res.city;
@@ -463,20 +498,48 @@
     saveProfile();
     onboardingStep = "diet";
     sayLater(id ? "Nice — " + esc(label) + ". Good eating there." : "No worries — we'll keep it general for now.", null, 600);
-    setTimeout(function () {
-      addBun("Anything I should watch out for?");
-      renderChips(DIET_CHIPS.map(function (c) {
-        return { label: c.label, onClick: function () { pickDiet(c.value, c.label); } };
-      }));
-    }, 1400);
+    setTimeout(askDiet, 1400);
   }
-  function pickDiet(id, label) {
-    addUser(esc(label));
-    profile.diet = id;
-    CB.setProfile(id);
+  // v4.3: diet is MULTI-SELECT — tap all that apply, then Done.
+  // "No restriction" is exclusive: tapping it clears the rest, tapping
+  // anything else clears it. Chips wrap (not a scroll row) so Done is
+  // always visible without scrolling.
+  function isDietSelected(v) { return v === "none" ? profile.diet.length === 0 : profile.diet.indexOf(v) >= 0; }
+  function renderDietChips() {
+    chipsBar.classList.add("wrap");
+    chipsBar.innerHTML = "";
+    DIET_CHIPS.forEach(function (c) {
+      var b = document.createElement("button");
+      b.className = "chip"; b.type = "button"; b.textContent = c.label;
+      b.setAttribute("aria-pressed", isDietSelected(c.value) ? "true" : "false");
+      b.onclick = function () { toggleDiet(c.value); };
+      chipsBar.appendChild(b);
+    });
+    var done = document.createElement("button");
+    done.className = "chip chip-done"; done.type = "button"; done.textContent = "Done — that's me ✓";
+    done.onclick = confirmDiet;
+    chipsBar.appendChild(done);
+    scrollDown();
+  }
+  function toggleDiet(v) {
+    if (v === "none") profile.diet = [];
+    else {
+      var i = profile.diet.indexOf(v);
+      if (i >= 0) profile.diet.splice(i, 1); else profile.diet.push(v);
+    }
+    saveProfile();
+    renderDietChips();
+  }
+  function askDiet() {
+    addBun("Anything I should watch out for? Tap all that apply, then hit Done.");
+    renderDietChips();
+  }
+  function confirmDiet() {
+    addUser(esc(dietSummary()));
+    CB.setProfile(profile.diet);
     saveProfile();
     onboardingStep = "craving";
-    sayLater("Got it — " + esc(label) + ". I'll remember that.", null, 600);
+    sayLater("Got it — " + esc(dietSummary()) + ". I'll remember that.", null, 600);
     setTimeout(function () {
       addBun("Last one — what are you in the mood for?");
       renderChips(CRAVE_CHIPS.map(function (c) {
@@ -491,7 +554,7 @@
     saveProfile();
     onboardingStep = null;
     var city = profile.city ? cityById(profile.city) : null;
-    var dietLabel = (DIET_CHIPS.find(function (d) { return d.value === profile.diet; }) || {}).label || "No restriction";
+    var dietLabel = dietSummary();
     sayLater("Done — " + (city ? esc(city.en) : "China") + " · " + esc(dietLabel) + " · " + esc(label) + ". Saved on your phone, change it anytime with “My tastes” up top.", null, 600);
     setTimeout(function () { recommendReply(); }, 1400);
   }
@@ -552,9 +615,9 @@
   });
 
   // ---- "My tastes": redo the 3 questions ----
+  // v4.3: keep the saved profile and PRE-FILL it — the diet step shows
+  // the current selections checked, so this is editing, not starting over.
   $("chatTastesBtn").onclick = function () {
-    profile = {};
-    saveProfile();
     log.innerHTML = "";
     askCity();
   };
@@ -579,7 +642,7 @@
   }
 
   // ---- Start ----
-  if (profile.diet) CB.setProfile(profile.diet);
+  CB.setProfile(profile.diet || []);
   checkAiStatus();
   if (profile.done) welcomeBack();
   else askCity();

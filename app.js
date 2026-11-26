@@ -56,7 +56,9 @@
   // PAYWALL：DEV_MODE 下默认等同已购 Kit 预览（无限解码、无广告），
   // 付费预览开关本身保留，DEV_MODE=false 时恢复手动切换。
   var paidPreview = DEV_MODE;
-  var profile = "none";
+  // v4.3: diet profile is MULTI-SELECT — an array of diet ids.
+  // [] = no restriction. "none" is not stored; it is the empty array.
+  var profile = [];
   var lastDish = null;
 
   // PAYWALL：DEV_MODE 下解码无限次，不扣次数。
@@ -64,21 +66,41 @@
   function usd(cny) { return (cny / D.rate).toFixed(2); }
   function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
 
-  // ---- Profiles ----
+  // ---- Profiles (v4.3: MULTI-SELECT) ----
+  // Any diet/allergy options can be true at the same time, so chips toggle:
+  // tap to select, tap again to unselect. "No restriction" is exclusive —
+  // tapping it clears the rest, tapping anything else clears it (it is just
+  // the empty selection, never stored alongside other ids).
   var profEl = $("profiles");
+  function profileById(id) {
+    for (var i = 0; i < D.profiles.length; i++) if (D.profiles[i].id === id) return D.profiles[i];
+    return null;
+  }
+  function refreshProfileUI() {
+    Array.prototype.forEach.call(profEl.children, function (c) {
+      var id = c.getAttribute("data-profile");
+      var on = id === "none" ? profile.length === 0 : profile.indexOf(id) >= 0;
+      c.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+    var labels = profile.map(function (id) { var p = profileById(id); return p ? p.en : id; });
+    $("profileDesc").textContent = labels.length ? labels.join(" · ") : "No restriction.";
+  }
   D.profiles.forEach(function (p) {
     var b = document.createElement("button");
-    b.className = "chip"; b.type = "button"; b.textContent = p.en + " · " + p.zh;
-    b.setAttribute("aria-pressed", p.id === profile ? "true" : "false");
+    b.className = "chip"; b.type = "button"; b.textContent = p.en;
+    b.setAttribute("data-profile", p.id);
     b.onclick = function () {
-      profile = p.id;
-      Array.prototype.forEach.call(profEl.children, function (c) { c.setAttribute("aria-pressed", "false"); });
-      b.setAttribute("aria-pressed", "true");
-      $("profileDesc").textContent = p.en + " — " + p.desc;
+      if (p.id === "none") profile = [];
+      else {
+        var i = profile.indexOf(p.id);
+        if (i >= 0) profile.splice(i, 1); else profile.push(p.id);
+      }
+      refreshProfileUI();
       if (lastDish) renderResult(lastDish);
     };
     profEl.appendChild(b);
   });
+  refreshProfileUI();
 
   // ---- Verdict logic ----
   // English-first (v3.2): the "why" is derived from the dish flags in plain
@@ -91,47 +113,71 @@
     if (!f.length) return "Nothing sneaky in here.";
     return "Has " + f.join(", ") + " in it.";
   }
-  function verdictFor(dish) {
+  // One diet rule, judged on its own. verdictFor() below runs EVERY
+  // selected rule and takes the worst result — so vegetarian + peanut
+  // allergy means a dish is skipped if EITHER rule says skip.
+  function singleVerdict(id, dish) {
     var f = dish.flags || [];
     function has() { for (var i = 0; i < arguments.length; i++) if (f.indexOf(arguments[i]) >= 0) return true; return false; }
     var meat = has("pork", "beef", "chicken", "duck", "fish", "shrimp", "frog", "goose", "lamb");
     var animal = meat || has("egg", "dairy");
-    if (profile === "none") return { k: "ok", t: "You're good", why: containsEn(dish) };
-    if (profile === "vegetarian") {
+    if (id === "none") return { k: "ok", t: "You're good", why: containsEn(dish) };
+    if (id === "vegetarian") {
       if (meat) return { k: "no", t: "Skip this one", why: "It's got meat in it. " + containsEn(dish) };
       if (has("lard", "stock")) return { k: "ask", t: "Ask them first", why: "Could be lard or meat stock in there — worth one quick question." };
       if (has("egg")) return { k: "ok", t: "You're good", why: "Egg's fine for you. " + containsEn(dish) };
       return { k: "ok", t: "You're good", why: containsEn(dish) };
     }
-    if (profile === "vegan") {
+    if (id === "vegan") {
       if (animal || has("lard", "stock")) return { k: "no", t: "Skip this one", why: "Animal product in there. " + containsEn(dish) };
       return { k: "ok", t: "You're good", why: containsEn(dish) };
     }
-    if (profile === "halal") {
+    if (id === "halal") {
       if (has("pork", "lard", "alcohol")) return { k: "no", t: "Skip this one", why: "Pork or lard — not halal. " + containsEn(dish) };
       if (meat) return { k: "ask", t: "Ask them first", why: "It's meat — ask if it's halal, or look for the green 清真 sign." };
       return { k: "ok", t: "You're good", why: containsEn(dish) };
     }
-    if (profile === "peanut") {
+    if (id === "peanut") {
       if (has("peanut")) return { k: "no", t: "Skip this one", why: "Peanuts are the whole point of this one. Don't risk it." };
       if (has("stock")) return { k: "ask", t: "Ask them first", why: "No peanuts in the dish itself — but ask about the sauce, just in case." };
       return { k: "ok", t: "You're good", why: containsEn(dish) };
     }
-    if (profile === "shellfish") {
+    if (id === "shellfish") {
       if (has("shrimp")) return { k: "no", t: "Skip this one", why: "Shellfish in there. Don't risk it." };
       if (has("stock")) return { k: "ask", t: "Ask them first", why: "No shellfish in the dish — but the stock might have some. One quick question." };
       return { k: "ok", t: "You're good", why: containsEn(dish) };
     }
-    if (profile === "gluten") {
+    if (id === "gluten") {
       if (has("gluten")) return { k: "no", t: "Skip this one", why: "Wheat in there. " + containsEn(dish) };
       return { k: "ok", t: "You're good", why: containsEn(dish) };
     }
-    if (profile === "nospicy") {
+    if (id === "nospicy") {
       if (dish.spicy >= 2) return { k: "no", t: "Too hot for you", why: "Spice " + dish.spicy + "/3 — this one bites back." };
       if (dish.spicy === 1) return { k: "ask", t: "Ask them first", why: "Just a little heat — ask them to hold the chili." };
       return { k: "ok", t: "You're good", why: "No heat at all. " + containsEn(dish) };
     }
     return { k: "ok", t: "You're good", why: containsEn(dish) };
+  }
+
+  // v4.3: combine ALL selected diet rules. Worst result wins
+  // (no > ask > ok); the "why" joins every rule that objected, so a
+  // vegetarian with a peanut allergy hears about the meat AND the peanuts.
+  // A single selected diet gives exactly the old single-diet answer.
+  function verdictFor(dish) {
+    if (!profile.length) return { k: "ok", t: "You're good", why: containsEn(dish) };
+    var worst = 0, whys = [], seenWhy = {};
+    profile.forEach(function (id) {
+      var r = singleVerdict(id, dish);
+      var rank = r.k === "no" ? 2 : r.k === "ask" ? 1 : 0;
+      if (rank > worst) worst = rank;
+      if (rank > 0 && !seenWhy[r.why]) { seenWhy[r.why] = true; whys.push(r.why); }
+    });
+    if (worst === 0) return { k: "ok", t: "You're good", why: containsEn(dish) };
+    return {
+      k: worst === 2 ? "no" : "ask",
+      t: worst === 2 ? "Skip this one" : "Ask them first",
+      why: whys.join(" ")
+    };
   }
 
   function spiceLabel(n) { return ["Not spicy", "Mild", "Medium", "Very spicy"][n] + " (" + n + "/3)"; }
@@ -300,7 +346,7 @@
     else {
       el.innerHTML = state.order.map(function (x) {
         var d = D.dishes.find(function (dd) { return dd.id === x.id; });
-        return "<p>• " + esc(d.zh) + " " + esc(d.en) + " × " + x.qty + " — ¥" + (d.price * x.qty) + "</p>";
+        return "<p>• " + esc(d.en) + " (" + esc(d.zh) + ") × " + x.qty + " — ¥" + (d.price * x.qty) + "</p>";
       }).join("");
     }
     renderSlip();
@@ -317,7 +363,7 @@
     $("slipPreview").innerHTML =
       "<p class=\"bigzh\">您好，请帮我用你们的手机下单，谢谢！</p>" +
       "<p class=\"bigzh\">桌号：" + esc(tableNo) + " &nbsp; 人数：" + esc(people) + "</p>" +
-      (lines.length ? "<p class=\"bigzh\">" + esc(lines.join("<br>")) + "</p>" : "<p class=\"muted\">（先在解码器里把菜加入清单）</p>") +
+      (lines.length ? "<p class=\"bigzh\">" + esc(lines.join("<br>")) + "</p>" : "<p class=\"muted\">(Add dishes to your list in the decoder first.)</p>") +
       "<p class=\"bigzh\">我用" + esc(payText) + "。</p>";
   }
   ["tableNo", "peopleNo"].forEach(function (id) { var el = $(id); if (el) el.addEventListener("input", renderSlip); });
@@ -328,14 +374,14 @@
   $("shareOrderBtn").onclick = function () {
     var text = "My China order list:\n" + state.order.map(function (x) {
       var d = D.dishes.find(function (dd) { return dd.id === x.id; });
-      return "- " + d.zh + " " + d.en + " ×" + x.qty;
+      return "- " + d.en + " (" + d.zh + ") ×" + x.qty;
     }).join("\n") + "\nMade with China Bite: " + location.origin + location.pathname + "?ref=" + state.myRef;
     shareText("My China Bite order list", text);
   };
   renderOrder();
 
   // ---- QR route A table ----
-  $("qrTable").innerHTML = "<table><tr><th>中文</th><th>English</th><th>What it means</th></tr>" +
+  $("qrTable").innerHTML = "<table><tr><th>Chinese</th><th>English</th><th>What it means</th></tr>" +
     D.qrButtons.map(function (b) { return "<tr><td><b>" + esc(b.zh) + "</b></td><td>" + esc(b.en) + "</td><td>" + esc(b.note) + "</td></tr>"; }).join("") + "</table>";
 
   // ---- Payment checklist ----
@@ -390,7 +436,7 @@
         (c.mustEat || []).map(function (m) {
           var d = dishById[m.id];
           if (!d) return "";
-          return "<p><button type=\"button\" onclick=\"checkDish('" + esc(d.zh) + "')\">" + esc(d.zh) + " · " + esc(d.en) + "</button><br><span class=\"small\">" + esc(m.note) + "</span></p>";
+          return "<p><button type=\"button\" onclick=\"checkDish('" + esc(d.zh) + "')\">" + esc(d.en) + " (" + esc(d.zh) + ")</button><br><span class=\"small\">" + esc(m.note) + "</span></p>";
         }).join("") +
         "<p><b>Watch out:</b> " + esc(c.tip) + "</p>" +
         "<p><b>Getting there:</b> " + esc(c.transport) + "</p>" +
@@ -531,7 +577,7 @@
   if (voiceLangBtn) {
     voiceLangBtn.onclick = function () {
       voiceLang = voiceLang === "en-US" ? "zh-CN" : "en-US";
-      voiceLangBtn.textContent = voiceLang === "en-US" ? "Voice: English" : "Voice: 中文";
+      voiceLangBtn.textContent = voiceLang === "en-US" ? "Voice: English" : "Voice: Chinese";
     };
   }
   if (voiceBtn) {
@@ -777,6 +823,11 @@
     // Dishes view: signature dishes open so the list shows them.
     var story = $("storyDishes");
     if (story) story.open = (name === "dishes");
+    // Account view: Kit sits at the top, already open — no extra tap.
+    if (name === "account") {
+      var kp = $("kitPreview"); if (kp) kp.open = true;
+      var ks = $("kitSection"); if (ks) ks.open = true;
+    }
     window.scrollTo(0, 0);
     document.querySelectorAll(".bottomnav a").forEach(function (x) {
       x.classList.toggle("active", x.getAttribute("data-view") === name);
@@ -843,7 +894,7 @@
       paidPreview = true;
       e.target.checked = true;
       $("adSection").classList.add("hidden");
-      $("paidNote").textContent = "开发模式：全部解锁，无广告。";
+      $("paidNote").textContent = "Dev mode: all unlocked, no ads.";
       updateCounts();
       return;
     }
@@ -885,12 +936,12 @@
     var paidTgl = $("paidToggle");
     if (paidTgl) { paidTgl.checked = true; }
     var paidN = $("paidNote");
-    if (paidN) paidN.textContent = "开发模式：全部解锁，无广告。";
+    if (paidN) paidN.textContent = "Dev mode: all unlocked, no ads.";
     document.querySelectorAll(".paywall-lock").forEach(function (el) { el.classList.add("hidden"); });
     var kitNote = $("kitDevNote");
     if (kitNote) kitNote.classList.remove("hidden");
     var kitSub = $("kitPreviewSub");
-    if (kitSub) kitSub.textContent = "开发模式：Kit 全开预览 — 110 道菜 · 12 张卡 · 10 城全部可见。";
+    if (kitSub) kitSub.textContent = "Dev mode: Kit preview fully open — 110 dishes · 12 cards · 10 cities visible.";
   }
     // ---- v4.0: minimal public API for the chat layer (chat.js) ----
   // The chat is the homepage now; it answers through these, so the
@@ -921,11 +972,14 @@
     addToOrder: addToOrder, speakInto: speakInto, recognizePhoto: recognizePhoto,
     usd: usd, esc: esc, containsEn: containsEn, spiceLabel: spiceLabel,
     dishInCat: dishInCat, SIGNATURE_IDS: SIGNATURE_IDS, HALAL_IDS: HALAL_IDS,
-    getProfile: function () { return profile; },
-    setProfile: function (id) {
-      var i = -1;
-      D.profiles.forEach(function (p, idx) { if (p.id === id) i = idx; });
-      if (i >= 0 && profEl.children[i]) profEl.children[i].click();
+    // v4.3: diet profile is an array (multi-select). Accepts an array, a
+    // single id, or "none"/empty (= no restriction). Syncs the decoder chips.
+    getProfile: function () { return profile.slice(); },
+    setProfile: function (ids) {
+      var arr = Array.isArray(ids) ? ids : (!ids || ids === "none" ? [] : [ids]);
+      profile = arr.filter(function (id) { return !!profileById(id); });
+      refreshProfileUI();
+      if (lastDish) renderResult(lastDish);
     }
   };
 

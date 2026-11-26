@@ -15,116 +15,116 @@
 
 ## Dishes (110)
 
-- 麻婆豆腐 (Má pó dòufu) — Mapo Tofu: Tofu, minced pork, chili bean paste. Spice 3/3. ¥28. 经典版必有猪肉末
-- 宫保鸡丁 (Gōng bǎo jī dīng) — Kung Pao Chicken: Chicken, peanuts, dried chili. Spice 2/3. ¥38. 花生是主角，别点
-- 鱼香肉丝 (Yú xiāng ròu sī) — Fish-Fragrant Pork (no fish): Shredded pork, wood ear, bamboo shoots. Spice 2/3. ¥32. 有猪肉，没鱼
-- 糖醋排骨 (Táng cù pái gǔ) — Sweet & Sour Pork Ribs: Pork ribs, sugar, black vinegar. Spice 0/3. ¥48. 带骨猪肉
-- 小笼包 (Xiǎo lóng bāo) — Soup Dumplings (Xiaolongbao): Pork filling, wheat wrapper, hot soup. Spice 0/3. ¥22. 猪肉馅，汤很烫
-- 饺子 (Jiǎo zi) — Dumplings (Jiaozi): Wheat wrapper; pork, shrimp, or veg. Spice 0/3. ¥18. 先问馅，再点
-- 兰州拉面 (Lán zhōu lā miàn) — Lanzhou Beef Noodles: Hand-pulled noodles, beef, beef broth. Spice 1/3. ¥25. 先问是否清真
-- 炸酱面 (Zhá jiàng miàn) — Zhajiang Noodles: Wheat noodles, minced pork, soybean paste. Spice 0/3. ¥22. 酱里有猪肉末
-- 酸辣汤 (Suān là tāng) — Hot & Sour Soup: Chicken stock, pork, egg, tofu. Spice 2/3. ¥18. 肉汤打底，难改
-- 西红柿炒蛋 (Xī hóng shì chǎo dàn) — Tomato & Egg Stir-Fry: Tomato, egg. Spice 0/3. ¥24. 蛋为主，问猪油
-- 地三鲜 (Dì sān xiān) — Di San Xian (Eggplant, Potato, Pepper): Eggplant, potato, green pepper. Spice 0/3. ¥28. 菜安全，油要问
-- 干锅花菜 (Gān guō huā cài) — Dry-Pot Cauliflower: Cauliflower, dried chili, garlic. Spice 2/3. ¥30. 锅里常有猪肉
-- 白灼虾 (Bái zhuó xiā) — Blanched Shrimp: Whole shrimp, ginger, soy dip. Spice 0/3. ¥58. 虾过敏，别点
-- 清蒸鲈鱼 (Qīng zhēng lú yú) — Steamed Sea Bass: Whole sea bass, ginger, spring onion. Spice 0/3. ¥68. 整鱼带刺，小心
-- 北京烤鸭 (Běi jīng kǎo yā) — Peking Duck: Roast duck, pancakes, spring onion. Spice 0/3. ¥98. 鸭肉，配面饼
-- 火锅 (Huǒ guō) — Hot Pot: You choose: meat, veg, tofu, broth. Spice 3/3. ¥80. 清汤可，牛油否
-- 麻辣烫 (Má là tàng) — Malatang (Pick-Your-Own Hot Pot): You pick skewers, cooked in broth. Spice 3/3. ¥35. 汤是关键，选清汤
-- 煎饼果子 (Jiān bǐng guǒ zi) — Jianbing (Chinese Crepe): Wheat crepe, egg, thin crisp. Spice 1/3. ¥12. 查有没有加肉
-- 豆腐脑 (Dòu fu nǎo) — Tofu Pudding (Doufunao): Soft tofu, savory or sweet sauce. Spice 0/3. ¥8. 咸甜不同，先问
-- 扬州炒饭 (Yáng zhōu chǎo fàn) — Yangzhou Fried Rice: Rice, egg, shrimp, ham, peas. Spice 0/3. ¥25. 有虾有火腿
-- 水煮牛肉 (Shǔi zhǔ niú ròu) — Shuizhu Beef (in Chili Oil): Beef slices, chili oil, bean sprouts. Spice 3/3. ¥48. 牛肉泡辣汤，很辣
-- 水煮鱼 (Shǔi zhǔ yú) — Shuizhu Fish (in Chili Oil): Fish fillet, chili oil, bean sprouts. Spice 3/3. ¥58. 鱼片泡辣油，很辣
-- 毛血旺 (Máo xuè wàng) — Mao Xue Wang (Blood & Tripe): Duck blood, beef tripe, chili. Spice 3/3. ¥52. 内脏血旺，很辣
-- 回锅肉 (Huí guō ròu) — Twice-Cooked Pork: Pork belly, chili, garlic sprouts. Spice 2/3. ¥38. 五花肉回锅，辣
-- 辣子鸡 (Là zǐ jī) — Chili Chicken (Lazi Chicken): Chicken, dried chili, Sichuan pepper. Spice 3/3. ¥42. 辣椒比鸡多
-- 夫妻肺片 (Fū qī fèi piàn) — Sliced Beef Offal in Chili Oil: Beef offal, chili oil, peanuts. Spice 2/3. ¥32. 牛杂凉拌，含花生
-- 口水鸡 (Kǒu shuǐ jī) — Mouth-Watering Chicken: Chicken, chili oil, peanuts, sesame. Spice 2/3. ¥36. 凉鸡浇辣油
-- 酸菜鱼 (Suān cài yú) — Fish with Pickled Mustard: Fish fillet, pickled mustard, chili. Spice 2/3. ¥58. 酸菜鱼片，微辣
-- 干锅牛蛙 (Gān guō niú wā) — Dry-Pot Frog: Frog legs, chili, garlic. Spice 3/3. ¥68. 牛蛙干锅，很辣
-- 麻辣香锅 (Má là xiāng guō) — Mala Hot Pot (Dry): Mixed meat, veg, chili. Spice 3/3. ¥45. 自选荤素，很辣
-- 钵钵鸡 (Bō bō jī) — Bobo Chicken (Cold Skewers): Chicken skewers, chili oil, sesame. Spice 2/3. ¥30. 凉拌串串，辣油
-- 凉拌黄瓜 (Liáng bàn huáng guā) — Cold Cucumber Salad: Cucumber, garlic, chili, vinegar. Spice 1/3. ¥15. 黄瓜凉拌，微辣
-- 白切鸡 (Bái qiē jī) — White Cut Chicken: Chicken, ginger, spring onion. Spice 0/3. ¥45. 白斩鸡，配姜蓉
-- 烧鹅 (Shāo é) — Roast Goose: Roast goose, five-spice. Spice 0/3. ¥52. 烧鹅皮脆，咸
-- 叉烧包 (Chā shāo bāo) — Char Siu Bun: Pork, wheat bun. Spice 0/3. ¥18. 猪肉叉烧包
-- 虾饺 (Xiā jiǎo) — Shrimp Dumplings (Har Gow): Shrimp, wheat wrapper. Spice 0/3. ¥28. 虾仁水晶饺
-- 肠粉 (Cháng fěn) — Rice Noodle Roll (Cheung Fun): Rice roll, shrimp, pork, or beef. Spice 0/3. ¥20. 先问馅，米浆
-- 艇仔粥 (Tǐng zǎi zhōu) — Boat Congee: Rice porridge, shrimp, pork, egg. Spice 0/3. ¥22. 粥里有虾有肉
-- 及第粥 (Jí dì zhōu) — Pork Offal Congee: Rice porridge, pork offal. Spice 0/3. ¥22. 猪杂粥，内脏
-- 萝卜糕 (Luó bo gāo) — Turnip Cake: Turnip, rice flour, pork, shrimp. Spice 0/3. ¥16. 萝卜糕含虾米
-- 马拉糕 (Mǎ lā gāo) — Malay Sponge Cake: Steamed sponge, egg, milk. Spice 0/3. ¥14. 甜糕含蛋奶
-- 流沙包 (Liú shā bāo) — Salted Egg Yolk Bun: Salted egg yolk, butter, wheat. Spice 0/3. ¥18. 流沙含蛋黄奶油
-- 腐乳通菜 (Fǔ rǔ tōng cài) — Water Spinach with Fermented Tofu: Water spinach, fermented tofu. Spice 0/3. ¥22. 腐乳味咸，素菜
-- 豉汁凤爪 (Chǐ zhī fèng zhuǎ) — Chicken Feet in Black Bean Sauce: Chicken feet, black bean sauce. Spice 1/3. ¥28. 鸡爪带骨，小心
-- 打卤面 (Dǎ lǔ miàn) — Noodles in Gravy (Da Lu Mian): Noodles, pork, egg, mushroom. Spice 0/3. ¥22. 卤里有肉有蛋
-- 刀削面 (Dāo xiāo miàn) — Knife-Cut Noodles: Noodles, beef, tomato. Spice 1/3. ¥25. 刀削面配牛肉
-- 油泼面 (Yóu pō miàn) — Oil-Splashed Noodles: Noodles, chili oil, garlic. Spice 2/3. ¥20. 油泼辣子，很辣
-- 担担面 (Dàn dàn miàn) — Dan Dan Noodles: Noodles, minced pork, peanut sauce. Spice 2/3. ¥20. 花生酱猪肉末
-- 重庆小面 (Chóng qìng xiǎo miàn) — Chongqing Noodles: Noodles, chili, pork, peanuts. Spice 3/3. ¥18. 麻辣小面，很辣
-- 热干面 (Rè gān miàn) — Hot Dry Noodles: Noodles, sesame paste, soy. Spice 0/3. ¥12. 芝麻酱面，咸
-- 牛肉面 (Niú ròu miàn) — Beef Noodles: Noodles, beef, broth. Spice 1/3. ¥28. 牛肉汤面
-- 羊肉泡馍 (Yáng ròu pào mó) — Lamb Soup with Crumbled Bread: Lamb, bread, broth. Spice 0/3. ¥35. 羊肉汤泡馍
-- 肉夹馍 (Ròu jiā mó) — Roujiamo (Pork Bun): Pork, wheat bun. Spice 0/3. ¥12. 猪肉夹馍
-- 煎饼 (Jiān bǐng) — Shandong Pancake: Wheat crepe, egg, scallion. Spice 0/3. ¥10. 薄饼卷葱，含蛋
-- 葱油饼 (Cōng yóu bǐng) — Scallion Oil Pancake: Wheat, scallion, oil. Spice 0/3. ¥10. 葱油饼，素
-- 锅贴 (Guō tiē) — Potstickers (Guotie): Pork, wheat wrapper. Spice 0/3. ¥18. 猪肉锅贴，煎
-- 麻婆豆腐（无肉版） (Má pó dòufu (wú ròu bǎn)) — Mapo Tofu (No Meat): Tofu, chili bean paste, Sichuan pepper. Spice 2/3. ¥26. 无肉版，先问油汤
-- 干煸四季豆 (Gān biān sì jì dòu) — Dry-Fried Green Beans: Green beans, dried chili, garlic. Spice 2/3. ¥28. 四季豆，先问肉末
-- 蒜蓉西兰花 (Suàn róng xī lán huā) — Garlic Broccoli: Broccoli, garlic. Spice 0/3. ¥28. 素菜，问猪油
-- 清炒时蔬 (Qīng chǎo shí shū) — Stir-Fried Seasonal Greens: Seasonal greens, garlic. Spice 0/3. ¥25. 时蔬，问油和汤
-- 素炒三丝 (Sù chǎo sān sī) — Stir-Fried Three Vegetables: Carrot, wood ear, green pepper. Spice 0/3. ¥24. 三丝素菜，问蚝油
-- 凉拌木耳 (Liáng bàn mù ěr) — Cold Wood Ear Salad: Wood ear, garlic, vinegar. Spice 1/3. ¥18. 木耳凉拌，素
-- 番茄蛋花汤 (Fān qié dàn huā tāng) — Tomato Egg Drop Soup: Tomato, egg, water. Spice 0/3. ¥16. 蛋花汤，问鸡汤
-- 紫菜蛋花汤 (Zǐ cài dàn huā tāng) — Seaweed Egg Drop Soup: Seaweed, egg. Spice 0/3. ¥14. 紫菜蛋汤，问肉汤
-- 罗汉斋 (Luó hàn zhāi) — Buddha's Delight (Luohan Zhai): Mixed veg, tofu, mushrooms. Spice 0/3. ¥32. 斋菜，问蚝油
-- 香菇青菜 (Xiāng gū qīng cài) — Mushrooms & Greens: Shiitake mushrooms, greens. Spice 0/3. ¥26. 香菇青菜，问蚝油
-- 羊肉串 (Yáng ròu chuàn) — Lamb Skewers (Halal): Lamb, cumin, chili. Spice 1/3. ¥20. 清真羊肉串，看绿牌
-- 烤包子 (Kǎo bāo zi) — Baked Lamb Buns (Halal): Lamb, onion, wheat bun. Spice 0/3. ¥15. 烤包子羊肉馅
-- 手抓饭 (Shǒu zhuā fàn) — Hand-Pulled Rice (Pilaf): Rice, lamb, carrot, raisin. Spice 0/3. ¥30. 手抓饭羊肉
-- 大盘鸡 (Dà pán jī) — Big Plate Chicken: Chicken, potato, chili, noodles. Spice 2/3. ¥48. 大盘鸡，微辣
-- 清真牛肉面 (Qīng zhēn niú ròu miàn) — Halal Beef Noodles: Noodles, beef, beef broth. Spice 1/3. ¥26. 清真牛肉面，看绿牌
-- 羊肉汤 (Yáng ròu tāng) — Lamb Soup: Lamb, lamb broth. Spice 0/3. ¥28. 羊肉汤清真店
-- 孜然羊肉 (Zī rán yáng ròu) — Cumin Lamb: Lamb, cumin, onion. Spice 1/3. ¥45. 孜然羊肉，清真店
-- 馕 (Náng) — Nang (Flatbread): Wheat flatbread. Spice 0/3. ¥8. 馕，素饼
-- 红烧肉 (Hóng shāo ròu) — Red-Braised Pork: Pork belly, soy, sugar. Spice 0/3. ¥45. 五花肉红烧，甜
-- 生煎包 (Shēng jiān bāo) — Pan-Fried Buns (Shengjian): Pork, wheat bun. Spice 0/3. ¥16. 生煎猪肉馅，汤烫
-- 葱油拌面 (Cōng yóu bàn miàn) — Scallion Oil Noodles: Noodles, scallion oil. Spice 0/3. ¥18. 葱油拌面，素
-- 腌笃鲜 (Yān dǔ xiān) — Yandu Xian (Salted Pork Soup): Salted pork, bamboo, tofu. Spice 0/3. ¥48. 咸肉汤，猪肉
-- 响油鳝糊 (Xiǎng yóu shàn hú) — Sizzling Eel: Eel, oil, garlic. Spice 0/3. ¥68. 鳝糊，油多
-- 糖醋小排 (Táng cù xiǎo pái) — Sweet & Sour Pork Ribs (Shanghai): Pork ribs, sugar, vinegar. Spice 0/3. ¥45. 糖醋小排，甜酸
-- 狮子头 (Shī zi tóu) — Lion's Head Meatballs: Pork meatballs, cabbage. Spice 0/3. ¥38. 狮子头猪肉丸
-- 鸡头米 (Jī tóu mǐ) — Fox Nut (Gorgon Fruit): Fox nut seeds, sugar, water. Spice 0/3. ¥30. 鸡头米是种子，甜
-- 松鼠桂鱼 (Sōng shǔ guì yú) — Squirrel Fish (Mandarin Fish): Mandarin fish, sweet-sour sauce. Spice 0/3. ¥88. 松鼠鱼酸甜，带刺
-- 蟹粉小笼 (Xiè fěn xiǎo lóng) — Crab Roe Soup Dumplings: Crab roe, pork, wheat wrapper. Spice 0/3. ¥38. 蟹粉小笼，汤烫
-- 清汤火锅 (Qīng tāng huǒ guō) — Clear Broth Hot Pot: Clear broth, meat, veg, tofu. Spice 0/3. ¥70. 清汤火锅，问汤底
-- 番茄火锅 (Fān qié huǒ guō) — Tomato Hot Pot: Tomato broth, meat, veg. Spice 0/3. ¥70. 番茄火锅，问汤底
-- 菌汤火锅 (Jùn tāng huǒ guō) — Mushroom Broth Hot Pot: Mushroom broth, veg, tofu. Spice 0/3. ¥75. 菌汤火锅，问鸡汤
-- 烤羊肉串 (Kǎo yáng ròu chuàn) — Grilled Lamb Skewers: Lamb, cumin, chili. Spice 1/3. ¥15. 烤羊肉串，孜然
-- 烤茄子 (Kǎo qié zi) — Grilled Eggplant: Eggplant, garlic, chili. Spice 1/3. ¥18. 烤茄子，问蚝油
-- 烤生蚝 (Kǎo shēng háo) — Grilled Oysters: Oysters, garlic, chili. Spice 1/3. ¥25. 烤生蚝，贝类
-- 烤玉米 (Kǎo yù mǐ) — Grilled Corn: Corn, butter or oil. Spice 0/3. ¥10. 烤玉米，或刷黄油
-- 烤红薯 (Kǎo hóng shǔ) — Roasted Sweet Potato: Sweet potato. Spice 0/3. ¥10. 烤红薯，素
-- 豆花 (Dòu huā) — Douhua (Tofu Pudding): Soft tofu, sweet syrup. Spice 0/3. ¥10. 甜豆花，问配料
-- 杨枝甘露 (Yáng zhī gān lù) — Mango Pomelo Sago: Mango, pomelo, sago, milk. Spice 0/3. ¥22. 杨枝甘露，含奶
-- 双皮奶 (Shuāng pí nǎi) — Double-Skin Milk: Milk, egg white, sugar. Spice 0/3. ¥18. 双皮奶，蛋奶
-- 姜撞奶 (Jiāng zhuàng nǎi) — Ginger Milk Curd: Milk, ginger, sugar. Spice 0/3. ¥16. 姜撞奶，含奶
-- 凉粉 (Liáng fěn) — Liangfen (Starch Jelly): Starch jelly, chili, vinegar. Spice 1/3. ¥12. 凉粉微辣，素
-- 冰粉 (Bīng fěn) — Bingfen (Ice Jelly): Ice jelly, brown sugar, nuts. Spice 0/3. ¥12. 冰粉，问配料
-- 豆浆 (Dòu jiāng) — Soy Milk: Soy milk, sugar. Spice 0/3. ¥6. 豆浆，甜咸先问
-- 酸梅汤 (Suān méi tāng) — Sour Plum Drink: Plum, hawthorn, sugar. Spice 0/3. ¥10. 酸梅汤，甜酸
-- 过桥米线 (Guò qiáo mǐ xiàn) — Guoqiao Rice Noodles (Crossing-the-Bridge Noodles): Rice noodles, chicken/pork broth, raw meat slices, egg. Spice 0/3. ¥28. 汤现烫肉片，趁热吃
-- 桂林米粉 (Guì lín mǐ fěn) — Guilin Rice Noodles: Rice noodles, pork, pickled beans, peanuts. Spice 1/3. ¥18. 卤肉粉，配花生
-- 潮汕牛肉丸 (Cháo shàn niú ròu wán) — Chaoshan Beef Balls: Beef balls, beef broth, celery. Spice 0/3. ¥30. 牛肉丸，汤现煮
-- 西安凉皮 (Xī ān liáng pí) — Xi'an Liangpi (Cold Skin Noodles): Wheat starch noodles, chili oil, cucumber. Spice 2/3. ¥12. 凉皮辣，面筋是面
-- 沙县扁肉 (Shā xiàn biǎn ròu) — Shaxian Bianrou (Pork Wonton Soup): Pork wonton, clear broth. Spice 0/3. ¥12. 猪肉小馄饨
-- 柳州螺蛳粉 (Liǔ zhōu luó sī fěn) — Liuzhou Luosifen (River Snail Noodles): Rice noodles, snail broth, pickled bamboo, peanuts. Spice 2/3. ¥18. 螺蛳汤，酸笋味重
-- 南京鸭血粉丝汤 (Nán jīng yā xuè fěn sī tāng) — Nanjing Duck Blood Vermicelli Soup: Duck blood, vermicelli, duck offal, duck broth. Spice 0/3. ¥20. 鸭血鸭杂，鸭汤
-- 成都钟水饺 (Chéng dū zhōng shuǐ jiǎo) — Chengdu Zhong Dumplings: Pork dumplings, chili oil, sweet soy. Spice 2/3. ¥15. 猪肉饺，红油辣
-- 广州云吞面 (Guǎng zhōu yún tūn miàn) — Guangzhou Wonton Noodles: Shrimp-pork wonton, egg noodles, clear broth. Spice 0/3. ¥22. 虾猪云吞，蛋面
-- 杭州东坡肉 (Háng zhōu dōng pō ròu) — Hangzhou Dongpo Pork: Braised pork belly, soy, rock sugar. Spice 0/3. ¥45. 五花肉，甜口
+- 麻婆豆腐 (Má pó dòufu) — Mapo Tofu: Tofu, minced pork, chili bean paste. Spice 3/3. ¥28
+- 宫保鸡丁 (Gōng bǎo jī dīng) — Kung Pao Chicken: Chicken, peanuts, dried chili. Spice 2/3. ¥38
+- 鱼香肉丝 (Yú xiāng ròu sī) — Fish-Fragrant Pork (no fish): Shredded pork, wood ear, bamboo shoots. Spice 2/3. ¥32
+- 糖醋排骨 (Táng cù pái gǔ) — Sweet & Sour Pork Ribs: Pork ribs, sugar, black vinegar. Spice 0/3. ¥48
+- 小笼包 (Xiǎo lóng bāo) — Soup Dumplings (Xiaolongbao): Pork filling, wheat wrapper, hot soup. Spice 0/3. ¥22
+- 饺子 (Jiǎo zi) — Dumplings (Jiaozi): Wheat wrapper; pork, shrimp, or veg. Spice 0/3. ¥18
+- 兰州拉面 (Lán zhōu lā miàn) — Lanzhou Beef Noodles: Hand-pulled noodles, beef, beef broth. Spice 1/3. ¥25
+- 炸酱面 (Zhá jiàng miàn) — Zhajiang Noodles: Wheat noodles, minced pork, soybean paste. Spice 0/3. ¥22
+- 酸辣汤 (Suān là tāng) — Hot & Sour Soup: Chicken stock, pork, egg, tofu. Spice 2/3. ¥18
+- 西红柿炒蛋 (Xī hóng shì chǎo dàn) — Tomato & Egg Stir-Fry: Tomato, egg. Spice 0/3. ¥24
+- 地三鲜 (Dì sān xiān) — Di San Xian (Eggplant, Potato, Pepper): Eggplant, potato, green pepper. Spice 0/3. ¥28
+- 干锅花菜 (Gān guō huā cài) — Dry-Pot Cauliflower: Cauliflower, dried chili, garlic. Spice 2/3. ¥30
+- 白灼虾 (Bái zhuó xiā) — Blanched Shrimp: Whole shrimp, ginger, soy dip. Spice 0/3. ¥58
+- 清蒸鲈鱼 (Qīng zhēng lú yú) — Steamed Sea Bass: Whole sea bass, ginger, spring onion. Spice 0/3. ¥68
+- 北京烤鸭 (Běi jīng kǎo yā) — Peking Duck: Roast duck, pancakes, spring onion. Spice 0/3. ¥98
+- 火锅 (Huǒ guō) — Hot Pot: You choose: meat, veg, tofu, broth. Spice 3/3. ¥80
+- 麻辣烫 (Má là tàng) — Malatang (Pick-Your-Own Hot Pot): You pick skewers, cooked in broth. Spice 3/3. ¥35
+- 煎饼果子 (Jiān bǐng guǒ zi) — Jianbing (Chinese Crepe): Wheat crepe, egg, thin crisp. Spice 1/3. ¥12
+- 豆腐脑 (Dòu fu nǎo) — Tofu Pudding (Doufunao): Soft tofu, savory or sweet sauce. Spice 0/3. ¥8
+- 扬州炒饭 (Yáng zhōu chǎo fàn) — Yangzhou Fried Rice: Rice, egg, shrimp, ham, peas. Spice 0/3. ¥25
+- 水煮牛肉 (Shǔi zhǔ niú ròu) — Shuizhu Beef (in Chili Oil): Beef slices, chili oil, bean sprouts. Spice 3/3. ¥48
+- 水煮鱼 (Shǔi zhǔ yú) — Shuizhu Fish (in Chili Oil): Fish fillet, chili oil, bean sprouts. Spice 3/3. ¥58
+- 毛血旺 (Máo xuè wàng) — Mao Xue Wang (Blood & Tripe): Duck blood, beef tripe, chili. Spice 3/3. ¥52
+- 回锅肉 (Huí guō ròu) — Twice-Cooked Pork: Pork belly, chili, garlic sprouts. Spice 2/3. ¥38
+- 辣子鸡 (Là zǐ jī) — Chili Chicken (Lazi Chicken): Chicken, dried chili, Sichuan pepper. Spice 3/3. ¥42
+- 夫妻肺片 (Fū qī fèi piàn) — Sliced Beef Offal in Chili Oil: Beef offal, chili oil, peanuts. Spice 2/3. ¥32
+- 口水鸡 (Kǒu shuǐ jī) — Mouth-Watering Chicken: Chicken, chili oil, peanuts, sesame. Spice 2/3. ¥36
+- 酸菜鱼 (Suān cài yú) — Fish with Pickled Mustard: Fish fillet, pickled mustard, chili. Spice 2/3. ¥58
+- 干锅牛蛙 (Gān guō niú wā) — Dry-Pot Frog: Frog legs, chili, garlic. Spice 3/3. ¥68
+- 麻辣香锅 (Má là xiāng guō) — Mala Hot Pot (Dry): Mixed meat, veg, chili. Spice 3/3. ¥45
+- 钵钵鸡 (Bō bō jī) — Bobo Chicken (Cold Skewers): Chicken skewers, chili oil, sesame. Spice 2/3. ¥30
+- 凉拌黄瓜 (Liáng bàn huáng guā) — Cold Cucumber Salad: Cucumber, garlic, chili, vinegar. Spice 1/3. ¥15
+- 白切鸡 (Bái qiē jī) — White Cut Chicken: Chicken, ginger, spring onion. Spice 0/3. ¥45
+- 烧鹅 (Shāo é) — Roast Goose: Roast goose, five-spice. Spice 0/3. ¥52
+- 叉烧包 (Chā shāo bāo) — Char Siu Bun: Pork, wheat bun. Spice 0/3. ¥18
+- 虾饺 (Xiā jiǎo) — Shrimp Dumplings (Har Gow): Shrimp, wheat wrapper. Spice 0/3. ¥28
+- 肠粉 (Cháng fěn) — Rice Noodle Roll (Cheung Fun): Rice roll, shrimp, pork, or beef. Spice 0/3. ¥20
+- 艇仔粥 (Tǐng zǎi zhōu) — Boat Congee: Rice porridge, shrimp, pork, egg. Spice 0/3. ¥22
+- 及第粥 (Jí dì zhōu) — Pork Offal Congee: Rice porridge, pork offal. Spice 0/3. ¥22
+- 萝卜糕 (Luó bo gāo) — Turnip Cake: Turnip, rice flour, pork, shrimp. Spice 0/3. ¥16
+- 马拉糕 (Mǎ lā gāo) — Malay Sponge Cake: Steamed sponge, egg, milk. Spice 0/3. ¥14
+- 流沙包 (Liú shā bāo) — Salted Egg Yolk Bun: Salted egg yolk, butter, wheat. Spice 0/3. ¥18
+- 腐乳通菜 (Fǔ rǔ tōng cài) — Water Spinach with Fermented Tofu: Water spinach, fermented tofu. Spice 0/3. ¥22
+- 豉汁凤爪 (Chǐ zhī fèng zhuǎ) — Chicken Feet in Black Bean Sauce: Chicken feet, black bean sauce. Spice 1/3. ¥28
+- 打卤面 (Dǎ lǔ miàn) — Noodles in Gravy (Da Lu Mian): Noodles, pork, egg, mushroom. Spice 0/3. ¥22
+- 刀削面 (Dāo xiāo miàn) — Knife-Cut Noodles: Noodles, beef, tomato. Spice 1/3. ¥25
+- 油泼面 (Yóu pō miàn) — Oil-Splashed Noodles: Noodles, chili oil, garlic. Spice 2/3. ¥20
+- 担担面 (Dàn dàn miàn) — Dan Dan Noodles: Noodles, minced pork, peanut sauce. Spice 2/3. ¥20
+- 重庆小面 (Chóng qìng xiǎo miàn) — Chongqing Noodles: Noodles, chili, pork, peanuts. Spice 3/3. ¥18
+- 热干面 (Rè gān miàn) — Hot Dry Noodles: Noodles, sesame paste, soy. Spice 0/3. ¥12
+- 牛肉面 (Niú ròu miàn) — Beef Noodles: Noodles, beef, broth. Spice 1/3. ¥28
+- 羊肉泡馍 (Yáng ròu pào mó) — Lamb Soup with Crumbled Bread: Lamb, bread, broth. Spice 0/3. ¥35
+- 肉夹馍 (Ròu jiā mó) — Roujiamo (Pork Bun): Pork, wheat bun. Spice 0/3. ¥12
+- 煎饼 (Jiān bǐng) — Shandong Pancake: Wheat crepe, egg, scallion. Spice 0/3. ¥10
+- 葱油饼 (Cōng yóu bǐng) — Scallion Oil Pancake: Wheat, scallion, oil. Spice 0/3. ¥10
+- 锅贴 (Guō tiē) — Potstickers (Guotie): Pork, wheat wrapper. Spice 0/3. ¥18
+- 麻婆豆腐（无肉版） (Má pó dòufu (wú ròu bǎn)) — Mapo Tofu (No Meat): Tofu, chili bean paste, Sichuan pepper. Spice 2/3. ¥26
+- 干煸四季豆 (Gān biān sì jì dòu) — Dry-Fried Green Beans: Green beans, dried chili, garlic. Spice 2/3. ¥28
+- 蒜蓉西兰花 (Suàn róng xī lán huā) — Garlic Broccoli: Broccoli, garlic. Spice 0/3. ¥28
+- 清炒时蔬 (Qīng chǎo shí shū) — Stir-Fried Seasonal Greens: Seasonal greens, garlic. Spice 0/3. ¥25
+- 素炒三丝 (Sù chǎo sān sī) — Stir-Fried Three Vegetables: Carrot, wood ear, green pepper. Spice 0/3. ¥24
+- 凉拌木耳 (Liáng bàn mù ěr) — Cold Wood Ear Salad: Wood ear, garlic, vinegar. Spice 1/3. ¥18
+- 番茄蛋花汤 (Fān qié dàn huā tāng) — Tomato Egg Drop Soup: Tomato, egg, water. Spice 0/3. ¥16
+- 紫菜蛋花汤 (Zǐ cài dàn huā tāng) — Seaweed Egg Drop Soup: Seaweed, egg. Spice 0/3. ¥14
+- 罗汉斋 (Luó hàn zhāi) — Buddha's Delight (Luohan Zhai): Mixed veg, tofu, mushrooms. Spice 0/3. ¥32
+- 香菇青菜 (Xiāng gū qīng cài) — Mushrooms & Greens: Shiitake mushrooms, greens. Spice 0/3. ¥26
+- 羊肉串 (Yáng ròu chuàn) — Lamb Skewers (Halal): Lamb, cumin, chili. Spice 1/3. ¥20
+- 烤包子 (Kǎo bāo zi) — Baked Lamb Buns (Halal): Lamb, onion, wheat bun. Spice 0/3. ¥15
+- 手抓饭 (Shǒu zhuā fàn) — Hand-Pulled Rice (Pilaf): Rice, lamb, carrot, raisin. Spice 0/3. ¥30
+- 大盘鸡 (Dà pán jī) — Big Plate Chicken: Chicken, potato, chili, noodles. Spice 2/3. ¥48
+- 清真牛肉面 (Qīng zhēn niú ròu miàn) — Halal Beef Noodles: Noodles, beef, beef broth. Spice 1/3. ¥26
+- 羊肉汤 (Yáng ròu tāng) — Lamb Soup: Lamb, lamb broth. Spice 0/3. ¥28
+- 孜然羊肉 (Zī rán yáng ròu) — Cumin Lamb: Lamb, cumin, onion. Spice 1/3. ¥45
+- 馕 (Náng) — Nang (Flatbread): Wheat flatbread. Spice 0/3. ¥8
+- 红烧肉 (Hóng shāo ròu) — Red-Braised Pork: Pork belly, soy, sugar. Spice 0/3. ¥45
+- 生煎包 (Shēng jiān bāo) — Pan-Fried Buns (Shengjian): Pork, wheat bun. Spice 0/3. ¥16
+- 葱油拌面 (Cōng yóu bàn miàn) — Scallion Oil Noodles: Noodles, scallion oil. Spice 0/3. ¥18
+- 腌笃鲜 (Yān dǔ xiān) — Yandu Xian (Salted Pork Soup): Salted pork, bamboo, tofu. Spice 0/3. ¥48
+- 响油鳝糊 (Xiǎng yóu shàn hú) — Sizzling Eel: Eel, oil, garlic. Spice 0/3. ¥68
+- 糖醋小排 (Táng cù xiǎo pái) — Sweet & Sour Pork Ribs (Shanghai): Pork ribs, sugar, vinegar. Spice 0/3. ¥45
+- 狮子头 (Shī zi tóu) — Lion's Head Meatballs: Pork meatballs, cabbage. Spice 0/3. ¥38
+- 鸡头米 (Jī tóu mǐ) — Fox Nut (Gorgon Fruit): Fox nut seeds, sugar, water. Spice 0/3. ¥30
+- 松鼠桂鱼 (Sōng shǔ guì yú) — Squirrel Fish (Mandarin Fish): Mandarin fish, sweet-sour sauce. Spice 0/3. ¥88
+- 蟹粉小笼 (Xiè fěn xiǎo lóng) — Crab Roe Soup Dumplings: Crab roe, pork, wheat wrapper. Spice 0/3. ¥38
+- 清汤火锅 (Qīng tāng huǒ guō) — Clear Broth Hot Pot: Clear broth, meat, veg, tofu. Spice 0/3. ¥70
+- 番茄火锅 (Fān qié huǒ guō) — Tomato Hot Pot: Tomato broth, meat, veg. Spice 0/3. ¥70
+- 菌汤火锅 (Jùn tāng huǒ guō) — Mushroom Broth Hot Pot: Mushroom broth, veg, tofu. Spice 0/3. ¥75
+- 烤羊肉串 (Kǎo yáng ròu chuàn) — Grilled Lamb Skewers: Lamb, cumin, chili. Spice 1/3. ¥15
+- 烤茄子 (Kǎo qié zi) — Grilled Eggplant: Eggplant, garlic, chili. Spice 1/3. ¥18
+- 烤生蚝 (Kǎo shēng háo) — Grilled Oysters: Oysters, garlic, chili. Spice 1/3. ¥25
+- 烤玉米 (Kǎo yù mǐ) — Grilled Corn: Corn, butter or oil. Spice 0/3. ¥10
+- 烤红薯 (Kǎo hóng shǔ) — Roasted Sweet Potato: Sweet potato. Spice 0/3. ¥10
+- 豆花 (Dòu huā) — Douhua (Tofu Pudding): Soft tofu, sweet syrup. Spice 0/3. ¥10
+- 杨枝甘露 (Yáng zhī gān lù) — Mango Pomelo Sago: Mango, pomelo, sago, milk. Spice 0/3. ¥22
+- 双皮奶 (Shuāng pí nǎi) — Double-Skin Milk: Milk, egg white, sugar. Spice 0/3. ¥18
+- 姜撞奶 (Jiāng zhuàng nǎi) — Ginger Milk Curd: Milk, ginger, sugar. Spice 0/3. ¥16
+- 凉粉 (Liáng fěn) — Liangfen (Starch Jelly): Starch jelly, chili, vinegar. Spice 1/3. ¥12
+- 冰粉 (Bīng fěn) — Bingfen (Ice Jelly): Ice jelly, brown sugar, nuts. Spice 0/3. ¥12
+- 豆浆 (Dòu jiāng) — Soy Milk: Soy milk, sugar. Spice 0/3. ¥6
+- 酸梅汤 (Suān méi tāng) — Sour Plum Drink: Plum, hawthorn, sugar. Spice 0/3. ¥10
+- 过桥米线 (Guò qiáo mǐ xiàn) — Guoqiao Rice Noodles (Crossing-the-Bridge Noodles): Rice noodles, chicken/pork broth, raw meat slices, egg. Spice 0/3. ¥28
+- 桂林米粉 (Guì lín mǐ fěn) — Guilin Rice Noodles: Rice noodles, pork, pickled beans, peanuts. Spice 1/3. ¥18
+- 潮汕牛肉丸 (Cháo shàn niú ròu wán) — Chaoshan Beef Balls: Beef balls, beef broth, celery. Spice 0/3. ¥30
+- 西安凉皮 (Xī ān liáng pí) — Xi'an Liangpi (Cold Skin Noodles): Wheat starch noodles, chili oil, cucumber. Spice 2/3. ¥12
+- 沙县扁肉 (Shā xiàn biǎn ròu) — Shaxian Bianrou (Pork Wonton Soup): Pork wonton, clear broth. Spice 0/3. ¥12
+- 柳州螺蛳粉 (Liǔ zhōu luó sī fěn) — Liuzhou Luosifen (River Snail Noodles): Rice noodles, snail broth, pickled bamboo, peanuts. Spice 2/3. ¥18
+- 南京鸭血粉丝汤 (Nán jīng yā xuè fěn sī tāng) — Nanjing Duck Blood Vermicelli Soup: Duck blood, vermicelli, duck offal, duck broth. Spice 0/3. ¥20
+- 成都钟水饺 (Chéng dū zhōng shuǐ jiǎo) — Chengdu Zhong Dumplings: Pork dumplings, chili oil, sweet soy. Spice 2/3. ¥15
+- 广州云吞面 (Guǎng zhōu yún tūn miàn) — Guangzhou Wonton Noodles: Shrimp-pork wonton, egg noodles, clear broth. Spice 0/3. ¥22
+- 杭州东坡肉 (Háng zhōu dōng pō ròu) — Hangzhou Dongpo Pork: Braised pork belly, soy, rock sugar. Spice 0/3. ¥45
 
 ## Cities (10)
 
