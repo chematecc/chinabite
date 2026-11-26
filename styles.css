@@ -238,13 +238,12 @@ footer{padding:8px 4px;border-top:1px solid var(--line)}
 .ask-bun{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;text-align:left;padding:12px 16px;border-radius:20px;margin:0}
 .ask-bun img{width:32px;height:32px;border-radius:50%;object-fit:cover;display:block;flex:0 0 32px}
 .ask-bun span{flex:1;min-width:0}
-.ask-bun small{display:block;font-weight:500;font-size:13px;opacity:.85;line-height:1.4}
 .home-sec{margin:6px 0 0}
 .home-sec .block-sub{margin:6px 0 12px}
-/* v5.2: home sections fold — Signature open by default, Cities + decode
-   teaser closed. Same summary pattern as details.card (title + sub +
-   chevron), lighter chrome: no card border. <summary> is natively
-   keyboard-operable; aria-expanded is synced by app.js. */
+/* v5.2: home sections fold — Signature open by default, Cities closed.
+   Same summary pattern as details.card (title + sub + chevron), lighter
+   chrome: no card border. <summary> is natively keyboard-operable;
+   aria-expanded is synced by app.js. (v5.7: decode teaser deleted.) */
 .home-sec>summary{list-style:none;cursor:pointer;display:flex;align-items:flex-start;gap:12px;padding:0}
 .home-sec>summary::-webkit-details-marker{display:none}
 .home-sec>summary .card-head{flex:1;min-width:0}
@@ -260,8 +259,6 @@ footer{padding:8px 4px;border-top:1px solid var(--line)}
 .city-row{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 6px;scrollbar-width:none}
 .city-row::-webkit-scrollbar{display:none}
 .city-row .chip{flex:0 0 auto;margin:0}
-.decode-teaser p{margin:10px 0}
-.decode-teaser button{margin:4px 0 0}
 /* While a search / chip filter is active, Home shows only the results. */
 #homeView.filtering .browse-block{display:none}
 .back-home{margin:0 0 4px;min-height:40px;padding:8px 14px;font-size:14px}

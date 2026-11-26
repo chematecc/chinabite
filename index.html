@@ -1616,7 +1616,7 @@
 </div>
 </header>
 <main>
-<!-- v5.0: Uber Eats-style home — search, chips, hero, Ask Bun, Signature, cities, decode teaser. Chat lives behind the Bun button / Ask Bun. -->
+<!-- v5.7: clean, short home — search, chips, hero, value line, Ask Bun, Signature, Cities (folded). Decode teaser deleted (v5.7): it repeated the value line a third time and duplicated the Search view decoder + bottom nav. Chat lives behind the Bun button / Ask Bun. -->
 <section id="homeView" aria-label="Home">
 <div class="search-row">
 <div class="searchbar" id="searchBar" role="search">
@@ -1633,22 +1633,16 @@
 </div>
 <div class="hero-banner browse-block"><img src="assets/china-bite-hero-v55.webp" alt="A round table of elegant Chinese banquet dishes — bamboo steamers of dim sum, soups and greens on dark wood" width="800" height="320" fetchpriority="high"></div>
 <p class="value-prop browse-block">The menu is in Chinese. Bun tells you what it is, if you can eat it, and how to order it — in 3 seconds.</p>
-<button type="button" class="ask-bun browse-block" id="askBunBtn" data-view="chat"><img src="assets/china-bite-mascot-dumpling-288.webp" alt="Bun" width="32" height="32"><span><b>Ask Bun</b><small>Not sure what to eat? Chat with Bun — 3 quick questions.</small></span></button>
+<button type="button" class="ask-bun browse-block" id="askBunBtn" data-view="chat"><img src="assets/china-bite-mascot-dumpling-288.webp" alt="Bun" width="32" height="32"><span><b>Ask Bun</b></span></button>
 <details class="home-sec browse-block" id="homeSignature" open>
-<summary><span class="card-head"><h2>Signature Dishes</h2><span class="card-sub">30 signature dishes — 3 must-eats from each of the 10 cities.</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<summary><span class="card-head"><h2>Signature Dishes</h2><span class="card-sub">3 must-eats from each of the 10 cities.</span></span><span class="chev" aria-hidden="true">▾</span></summary>
 <div class="cat-chips" id="sigCityChips" aria-label="Signature dishes by city"></div>
 <p class="small price-note">Prices are reference only — mid-range local restaurant, Tier-1 city. Street stalls are cheaper; hotels &amp; tourist spots cost more. ¥→$ at 7.1 (2026-11-26).</p>
 <div class="story-grid" id="homeSignatureList"></div>
 </details>
 <details class="home-sec browse-block" id="homeCities">
-<summary><span class="card-head"><h2>10 Cities</h2><span class="card-sub">3 must-eat dishes in each city.</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<summary><span class="card-head"><h2>10 Cities</h2><span class="card-sub">3 must-eats per city.</span></span><span class="chev" aria-hidden="true">▾</span></summary>
 <div class="city-row" id="homeCityRow"></div>
-</details>
-<details class="card decode-teaser browse-block" id="homeDecodeTeaser">
-<summary><span class="card-head"><h2>Can't read the menu?</h2><span class="card-sub">Snap a photo, say it, or type it — Bun tells you in 3 seconds.</span></span><span class="chev" aria-hidden="true">▾</span></summary>
-<div class="card-body">
-<p><button type="button" data-view="search">Decode a dish</button></p>
-</div>
 </details>
 </section>
 <section id="chatView" aria-label="Chat with Bun">
