@@ -1,4 +1,4 @@
-// China Bite v4.0 — chat layer. The homepage IS the chat now.
+// Jade Bite v4.0 — chat layer. The homepage IS the chat now.
 // Bun is the food friend: asks where you are, what you can't eat,
 // what you're in the mood for — then answers in bubbles, with rich
 // dish cards underneath. Old card sections stay in the DOM as the
@@ -12,16 +12,16 @@
 // honestly in the chat status line — never pretend the AI answered.
 // To go live with the LLM: set the Worker secret, nothing else changes
 // in this file. Model is chosen server-side (Worker env LLM_MODEL).
-// API 域名用 bite-api.chinavisacheck.com（Worker 自定义域名路由）：
+// API 域名用 api.jadebite.otto-lux.com（Worker 自定义域名路由）：
 // workers.dev 生产域名 2026-11-26 14:38 起全站报 404 error code 1042，
 // 脚本本身正常（版本预览 URL 200），是生产路由故障，改走自定义域名绕过。
 // /api/chat/status 由 CHAT_API 派生（见下），一起跟着走新域名。
 (function () {
   "use strict";
-  var CB = window.ChinaBite;
+  var CB = window.JadeBite;
   var D = window.CHINABITE_DATA;
   if (!CB || !D) return;
-  var CHAT_API = "https://bite-api.chinavisacheck.com/api/chat";
+  var CHAT_API = "https://api.jadebite.otto-lux.com/api/chat";
   var PROFILE_KEY = "chinabite_chat_profile_v1";
   var $ = function (id) { return document.getElementById(id); };
   var log = $("chatLog"), chipsBar = $("chatChips"), input = $("chatInput");
@@ -59,9 +59,27 @@
   function cityById(id) { return (D.cities || []).find(function (c) { return c.id === id; }) || null; }
   function dishById(id) { return (D.dishes || []).find(function (d) { return d.id === id; }) || null; }
   function cardById(id) { return (D.cards || []).find(function (c) { return c.id === id; }) || null; }
-  function usd(cny) { return (window.CBFX ? window.CBFX.fmt(cny) : "$" + (cny / 7.1).toFixed(2)); }
+  // Design polish 27 Nov: only scroll when the chat view is actually
+  // showing. The welcome bubbles fire on load while the home view is
+  // up, and the old unconditional scroll dragged the whole page ~385px
+  // down on every load, hiding the search bar + hero until the user
+  // scrolled back up.
+  // v6.6: when the chat lives in the drawer, scroll the drawer log
+  // instead — the window behind the scrim must not move.
   function scrollDown() {
-    setTimeout(function () { try { window.scrollTo(0, document.body.scrollHeight); } catch (e) {} }, 50);
+    setTimeout(function () {
+      try {
+        var dr = document.getElementById("bunDrawer");
+        if (dr && dr.classList.contains("open")) {
+          var log = document.getElementById("chatLog");
+          if (log) log.scrollTop = log.scrollHeight;
+          return;
+        }
+        var v = document.getElementById("chatView");
+        if (v && v.classList.contains("hidden")) return;
+        window.scrollTo(0, document.body.scrollHeight);
+      } catch (e) {}
+    }, 50);
   }
 
   // ---- Bubbles ----
@@ -128,20 +146,20 @@
   "baiqie-chicken": "assets/dish-baiqiechicken.webp", "bingfen": "assets/dish-bingfen.webp", "blanched-shrimp": "assets/dish-blanchedshrimp.webp",
   "bobo-chicken": "assets/dish-bobochicken.webp", "changfen": "assets/dish-changfen.webp", "chaoshan-beef-balls": "assets/dish-chaoshanbeefballs.webp",
   "chashao-bao": "assets/dish-chashaobao.webp", "chengdu-zhongshuijiao": "assets/dish-chengduzhongshuijiao.webp", "chizhi-fengzhua": "assets/dish-chizhifengzhua.webp",
-  "chongqing-noodles": "assets/dish-chongqingnoodles.webp", "congyou-bing": "assets/dish-congyoubing.webp", "dahu-mian": "assets/dish-dahumian.webp",
+  "chongqing-noodles": "assets/dish-chongqingnoodles.webp", "congyou-banmian": "assets/dish-congyoubanmian.webp", "congyou-bing": "assets/dish-congyoubing.webp", "dahu-mian": "assets/dish-dahumian.webp",
   "dandan-mian": "assets/dish-dandanmian.webp", "daoxiao-mian": "assets/dish-daoxiaomian.webp", "dapanji": "assets/dish-dapanji.webp",
   "disanxian": "assets/dish-disanxian.webp", "doufunao": "assets/dish-doufunao.webp", "douhua": "assets/dish-douhua.webp",
-  "doujiang": "assets/dish-doujiang.webp", "fanqie-danhua-tang": "assets/dish-fanqiedanhuatang.webp", "fanqie-huoguo": "assets/dish-fanqiehuoguo.webp",
+  "doujiang": "assets/dish-doujiang.webp", "dry-pot-cauliflower": "assets/dish-drypotcauliflower.webp", "drypot-frog": "assets/dish-drypotfrog.webp", "fanqie-danhua-tang": "assets/dish-fanqiedanhuatang.webp", "fanqie-huoguo": "assets/dish-fanqiehuoguo.webp",
   "fuqi-feipian": "assets/dish-fuqifeipian.webp", "furu-tongcai": "assets/dish-furutongcai.webp", "ganbian-sijidou": "assets/dish-ganbiansijidou.webp",
   "guangzhou-wonton": "assets/dish-guangzhouwonton.webp", "guilin-mifen": "assets/dish-guilinmifen.webp", "guoqiao-mixian": "assets/dish-guoqiaomixian.webp",
-  "guotie": "assets/dish-guotie.webp", "hangzhou-dongporou": "assets/dish-hangzhoudongporou.webp", "hongshao-rou": "assets/dish-hongshaorou.webp",
+  "guotie": "assets/dish-guotie.webp", "halal-beef-noodles": "assets/dish-halalbeefnoodles.webp", "hangzhou-dongporou": "assets/dish-hangzhoudongporou.webp", "hongshao-rou": "assets/dish-hongshaorou.webp",
   "hot-sour-soup": "assets/dish-hotsoursoup.webp", "hotpot": "assets/dish-hotpot.webp", "huiguo-pork": "assets/dish-huiguorou.webp",
   "jian-bing": "assets/dish-jian-bing.webp", "jianbing": "assets/dish-jianbing.webp", "jiangzhuang-nai": "assets/dish-jiangzhuangnai.webp",
-  "jiaozi": "assets/dish-jiaozi.webp", "jidi-zhou": "assets/dish-jidizhou.webp", "kao-baozi": "assets/dish-kaobaozi.webp",
+  "jiaozi": "assets/dish-jiaozi.webp", "jidi-zhou": "assets/dish-jidizhou.webp", "juntang-huoguo": "assets/dish-juntanghuoguo.webp", "kao-baozi": "assets/dish-kaobaozi.webp",
   "kao-hongshu": "assets/dish-kaohongshu.webp", "kao-shenghao": "assets/dish-kaoshenghao.webp", "kao-yangrou-chuan": "assets/dish-kaoyangrouchuan.webp",
   "kao-yumi": "assets/dish-kaoyumi.webp", "koushui-chicken": "assets/dish-koushuichicken.webp", "kung-pao": "assets/dish-kungpao.webp",
   "lanzhou": "assets/dish-lanzhou.webp", "lazi-chicken": "assets/dish-lazichicken.webp", "liangban-cucumber": "assets/dish-liangbancucumber.webp",
-  "liangfen": "assets/dish-liangfen.webp", "liusha-bao": "assets/dish-liushabao.webp", "liuzhou-luoshifen": "assets/dish-liuzhouluoshifen.webp",
+  "liangban-muer": "assets/dish-liangbanmuer.webp", "liangfen": "assets/dish-liangfen.webp", "liusha-bao": "assets/dish-liushabao.webp", "liuzhou-luoshifen": "assets/dish-liuzhouluoshifen.webp",
   "luobo-gao": "assets/dish-luobogao.webp", "luohan-zhai": "assets/dish-luohanzhai.webp", "mala-gao": "assets/dish-malagao.webp",
   "mala-xiangguo": "assets/dish-malaxiangguo.webp", "malatang": "assets/dish-malatang.webp", "maoxuewang": "assets/dish-maoxuewang.webp",
   "mapo-tofu": "assets/dish-mapodoufu.webp", "mapo-tofu-veg": "assets/dish-mapotofuveg.webp", "nang": "assets/dish-nang.webp",
@@ -151,12 +169,19 @@
   "shengjian-bao": "assets/dish-shengjianbao.webp", "shizitou": "assets/dish-shizitou.webp", "shouzhuafan": "assets/dish-shouzhuafan.webp",
   "shuangpi-nai": "assets/dish-shuangpinai.webp", "shuizhu-beef": "assets/dish-shuizhubeef.webp", "shuizhu-fish": "assets/dish-shuizhufish.webp",
   "songshu-guiyu": "assets/dish-songshuguiyu.webp", "steamed-bass": "assets/dish-steamedbass.webp", "suancai-fish": "assets/dish-suancaifish.webp",
-  "sweet-sour-ribs": "assets/dish-sweetsourribs.webp", "tangcu-xiaopai": "assets/dish-tangcuxiaopai.webp", "tingzai-zhou": "assets/dish-tingzaizhou.webp",
+  "suanmeitang": "assets/dish-suanmeitang.webp", "suanrong-xilanhua": "assets/dish-suanrongxilanhua.webp", "sweet-sour-ribs": "assets/dish-sweetsourribs.webp", "tangcu-xiaopai": "assets/dish-tangcuxiaopai.webp", "tingzai-zhou": "assets/dish-tingzaizhou.webp",
   "tomato-egg": "assets/dish-tomatoegg.webp", "xiajiao": "assets/dish-xiajiao.webp", "xian-liangpi": "assets/dish-xianliangpi.webp",
   "xianggu-qingcai": "assets/dish-xiangguqingcai.webp", "xiangyou-shanhu": "assets/dish-xiangyoushanhu.webp", "xiaolongbao": "assets/dish-xiaolongbao.webp",
-  "xiefen-xiaolong": "assets/dish-xiefenxiaolong.webp", "yangrou-chuan": "assets/dish-yangrouchuan.webp", "yangrou-paomo": "assets/dish-yangroupaomo.webp",
+  "xiefen-xiaolong": "assets/dish-xiefenxiaolong.webp", "yandu-xian": "assets/dish-yanduxian.webp", "yangrou-chuan": "assets/dish-yangrouchuan.webp", "yangrou-paomo": "assets/dish-yangroupaomo.webp",
   "yangrou-tang": "assets/dish-yangroutang.webp", "yangzhi-ganlu": "assets/dish-yangzhiganlu.webp", "yangzhou-rice": "assets/dish-yangzhourice.webp",
-  "youpo-mian": "assets/dish-youpomian.webp", "yuxiang": "assets/dish-yuxiang.webp", "zhajiang": "assets/dish-zhajiang.webp"
+  "youpo-mian": "assets/dish-youpomian.webp", "yuxiang": "assets/dish-yuxiang.webp", "zhajiang": "assets/dish-zhajiang.webp", "zicai-danhua-tang": "assets/dish-zicaidanhuatang.webp", "ziran-yangrou": "assets/dish-ziranyangrou.webp",
+  // Overseas dishes (2026-11-27, 15) + backfilled photos (3) — filenames are pinyin-based, NOT id-based.
+  "beef-broccoli": "assets/dish-beefbroccoli.webp", "chop-suey": "assets/dish-chopsuey.webp", "chow-mein": "assets/dish-chowmein.webp",
+  "crab-rangoon": "assets/dish-crabrangoon.webp", "egg-drop-soup": "assets/dish-eggdropsoup.webp", "egg-foo-young": "assets/dish-eggfooyoung.webp",
+  "general-tsos-chicken": "assets/dish-generaltsoschicken.webp", "hot-sour-soup-overseas": "assets/dish-hotsoursoupoverseas.webp", "jitouni": "assets/dish-jitouni.webp",
+  "kao-qiezi": "assets/dish-kaoqiezi.webp", "lemon-chicken": "assets/dish-lemonchicken.webp", "lo-mein": "assets/dish-lomein.webp",
+  "mongolian-beef": "assets/dish-mongolianbeef.webp", "orange-chicken": "assets/dish-orangechicken.webp", "sesame-chicken": "assets/dish-sesamechicken.webp",
+  "suchao-sansi": "assets/dish-suchaosansi.webp", "sweet-sour-pork": "assets/dish-sweetsourpork.webp", "wonton-soup": "assets/dish-wontonsoup.webp"
   };
   function dishCardEl(dish) {
     var v = CB.verdictFor(dish);
@@ -166,8 +191,7 @@
     el.innerHTML = img + '<div class="cd-body">' +
       '<span class="en">' + esc(dish.en) + '</span>' +
       '<span class="zh">' + esc(dish.zh) + ' · ' + esc(dish.py || "") + '</span>' +
-      '<span class="price">¥' + dish.price + ' · ≈' + usd(dish.price) + ' · Spicy ' + dish.spicy + '/3</span>' +
-      '<span class="cd-note">Price is reference only</span>' +
+      '<span class="spice">Spicy ' + dish.spicy + '/3</span>' +
       '<span class="cd-verdict">' + esc(v.t) + " — " + esc(v.why) + '</span>' +
       '<div class="cd-actions">' +
       '<button type="button" data-act="check">Tell me more</button>' +
@@ -226,8 +250,6 @@
       "<p><b>What's in it:</b> " + esc(dish.main) + "</p>" +
       "<p><b>Heads up:</b> " + esc(CB.containsEn(dish)) + "</p>" +
       "<p><b>How hot:</b> " + esc(CB.spiceLabel(dish.spicy)) + "</p>" +
-      "<p><b>About:</b> ¥" + dish.price + " · ≈" + usd(dish.price) + "</p>" +
-      "<p class=\"small price-note\">" + esc(CB.PRICE_BASIS) + "</p>" +
       "<p><b>Show them this:</b></p><p class=\"bigzh\">" + esc(dish.waiter) + "</p>" +
       "<p class=\"small\">" + esc(dish.py || "") + "</p>";
     addBun(html, { cards: [dish], nextSteps: dish });
@@ -238,9 +260,9 @@
     var card = cardById(cardId);
     if (!card) return false;
     var html = (intro ? esc(intro) + "<br>" : "") +
-      "<p><b>" + esc(card.en) + " · " + esc(card.zh) + "</b></p>" +
+      "<p><b>" + esc(card.en) + "</b></p>" +
       card.lines.map(function (l) { return '<p class="bigzh">' + esc(l) + "</p>"; }).join("") +
-      '<p><button type="button" class="ghost" id="chatCardBigBtn">Show big</button></p>';
+      '<p><button type="button" class="ghost" id="chatCardBigBtn">Enlarge</button></p>';
     var row = addBun(html);
     var btn = row.querySelector("#chatCardBigBtn");
     if (btn) btn.onclick = function () {
@@ -307,22 +329,11 @@
     { id: "sesame", keys: ["sesame", "芝麻过敏"] },
     { id: "soy", keys: ["soy allergy", "大豆过敏"] }
   ];
-  var FAQ = [
-    { keys: ["qr", "扫码", "won't open", "wont open", "how do i order", "how to order", "order"], a: "The QR Order card in Orders walks you through it — and it has a backup slip if the code won't open. Want me to open the QR guide?", faqId: "faq-qr" },
-    { keys: ["alipay", "wechat", "pay", "支付", "cash"], a: "WeChat Pay or Alipay first. Cash at the counter works too.", faqId: "faq-pay" },
-    { keys: ["delivery", "外卖", "takeaway", "deliver", "meituan", "美团"], a: "Delivery lives in Orders → Delivery — the steps, the Meituan / Dianping buttons, and your hotel card are all there. Want me to open it?", faqId: "faq-delivery" },
-    { keys: ["free", "免费", "price", "cost", "kit", "$6.99", "how much"], a: "Paid unlock is $6.99 for 90 days. The Register card in Account has what's included — and whether payments are open yet.", faqId: "faq-free" },
-    { keys: ["how does this work", "how does bun work", "how do i use", "what can you do", "faq", "frequently asked", "help"], a: "You ask, I answer — snap the menu, say a dish, or type it. I check it and tell you straight if you can eat it. The longer answers live in the FAQ — want me to open it?", openFaqCard: true },
-    { keys: ["find you", "instagram", "tiktok", "where can i find", "social", "follow"], a: "We're #ChinaBite on Instagram, TikTok and X — search any dish name there. Every dish has its own link too.", faqId: "faq-find" },
-    { keys: ["invite", "friend", "referral", "share my link"], a: "Your link gives friends 6 free checks. Your Invite card in Account has the link — the FAQ has the full details.", faqId: "faq-invite" },
-    { keys: ["address", "verified", "where is", "location of"], a: "I don't make up addresses — the city lists show the type of place and the area, not a verified street address. Dianping has the real one.", faqId: "faq-address" },
-    { keys: ["hotel card", "hotel address"], a: "The hotel card holds it — hotel name in Chinese plus your room number.", section: "meituanSection" },
-    { keys: ["are the prices", "prices exact", "price guide"], a: "Rough guides from 2026-11-26, about ¥7.1 to the dollar. Menus change, so treat them as a ballpark.", faqId: "faq-prices" },
-    { keys: ["spicy", "辣", "spice", "hot"], a: "Spice runs 0–3: 0 not spicy, 3 very spicy. If you can't take heat, say so before you order — I'll tell you the number on every dish." },
-    { keys: ["halal", "清真"], a: "Look for the green 清真 sign on the door. Ask staff “这是清真吗?” — want me to show you the halal card?" },
-    { keys: ["peanut", "花生"], a: "Peanuts hide in Sichuan dishes, noodles and hot pot sauce. Tell the waiter before you order — want the peanut card?" },
-    { keys: ["vegetarian", "素食"], a: "Lard, meat stock and oyster sauce hide in veg dishes. Ask first — and keep your vegetarian card handy." }
-  ];
+  // FAQ / how-to answers used to live here as a second copy. They now
+  // live ONLY in kb.js (window.CHINABITE_KB) — the single source for
+  // every topical answer. localAnswer() below delegates to it, and
+  // handleUserText() asks the KB before any LLM call. Keep it that way:
+  // if an answer changes, change kb.js, not this file.
   function matchCardId(q) {
     var s = q.toLowerCase();
     for (var i = 0; i < DIET_WORDS.length; i++) {
@@ -364,9 +375,17 @@
     if (cardId && /card|show|diet|allergy|vegetarian|vegan|halal|peanut|shellfish|gluten|egg|dairy|spicy/i.test(q)) return { kind: "card", cardId: cardId };
     var city = matchCity(q);
     if (city) return { kind: "city", city: city };
-    var s = q.toLowerCase();
-    for (var i = 0; i < FAQ.length; i++) {
-      if (FAQ[i].keys.some(function (k) { return s.indexOf(k) >= 0; })) return { kind: "faq", text: FAQ[i].a, faqId: FAQ[i].faqId, openFaqCard: FAQ[i].openFaqCard, section: FAQ[i].section };
+    // KB topical entries + drink requests — the single matcher for
+    // FAQ/how-to answers now (kb.js). KB.answer() was already tried in
+    // handleUserText; this re-check covers the offline path (LLM
+    // unreachable) with the same matcher, so there is exactly one copy
+    // of every answer. Dish/card/city/recommend above already returned,
+    // so only "kb" and "drink" can come back here.
+    var KB = window.CHINABITE_KB;
+    if (KB) {
+      var kbRes = null;
+      try { kbRes = KB.answer(q, profile); } catch (e) { kbRes = null; }
+      if (kbRes && (kbRes.kind === "kb" || kbRes.kind === "drink")) return kbRes;
     }
     if (cardId) return { kind: "card", cardId: cardId };
     if (city) return { kind: "city", city: city };
@@ -392,23 +411,31 @@
     } else if (res.kind === "city") {
       var c = res.city;
       var dishes = (c.mustEat || []).map(function (m) { return dishById(m.id); }).filter(Boolean);
-      addBun("<b>" + esc(c.en) + " · " + esc(c.zh) + "</b><br>" + esc(c.scene) +
+      addBun("<b>" + esc(c.en) + "</b><br>" + esc(c.scene) +
         "<br><br><b>3 must-eat dishes:</b><br>" + esc(c.tip) +
         "<br><br><b>Getting there:</b> " + esc(c.transport), { cards: dishes });
       suggestChips();
-    } else if (res.kind === "faq") {
-      var btn = res.faqId ? '<p><button type="button" class="ghost" id="chatFaqBtn">See the full answer →</button></p>'
-        : res.openFaqCard ? '<p><button type="button" class="ghost" id="chatFaqBtn">Open the FAQ →</button></p>'
-        : res.section ? '<p><button type="button" class="ghost" id="chatFaqBtn">Open it →</button></p>' : "";
+    } else if (res.kind === "kb") {
+      // KB topical answer (kb.js) — text + an optional "open it" button
+      // to the matching section (same destinations the FAQ used).
+      var entry = res.entry || {};
+      var btn = entry.action ? '<p><button type="button" class="ghost" id="chatKbBtn">' + esc(entry.action.label || "Open it →") + '</button></p>' : "";
       var row = addBun(esc(res.text) + btn);
-      var fb = row.querySelector("#chatFaqBtn");
-      if (fb && res.faqId) fb.onclick = function () { if (CB.openFaq) CB.openFaq(res.faqId); else CB.gotoSection("faqSection"); };
-      else if (fb && res.openFaqCard) fb.onclick = function () { CB.gotoSection("faqSection"); };
-      else if (fb && res.section) fb.onclick = function () { CB.gotoSection(res.section); };
+      var kbBtn = row.querySelector("#chatKbBtn");
+      if (kbBtn && entry.action) kbBtn.onclick = function () { CB.gotoSection(entry.action.section); };
+      suggestChips();
+    } else if (res.kind === "drink") {
+      // Drink request answered locally from drinks.js (no verdict, no
+      // free-count spent — drinks are guidance, not a dish check).
+      var dr = res.drink;
+      var drow = addBun("<b>" + esc(dr.en) + " · " + esc(dr.zh) + "</b><br>" + esc(dr.note || "") +
+        '<p><button type="button" class="ghost" id="chatDrinkBtn">Open Drinks & Beer →</button></p>');
+      var dbtn = drow.querySelector("#chatDrinkBtn");
+      if (dbtn) dbtn.onclick = function () { if (CB.showDrink) CB.showDrink(dr); else CB.gotoSection("drinksSection"); };
       suggestChips();
     } else {
       var sug = recommendDishes(3);
-      addBun("Hmm, not on my list yet — I know 110 dishes, and that one isn't one of them. Yet.<br>I saved it on your phone, and we'll add it.<br>Meanwhile, here are 3 safe bets:", { cards: sug });
+      addBun("Hmm, not on my list yet — I know 125 dishes, and that one isn't one of them. Yet.<br>I saved it on your phone, and we'll add it.<br>Meanwhile, here are 3 safe bets:", { cards: sug });
       suggestChips();
     }
   }
@@ -423,13 +450,26 @@
     });
     return found.slice(0, 3);
   }
+  // KB snippets for the LLM fallback: the nearest KB entries, so the
+  // LLM answers from the KB instead of general knowledge. Sent ONLY
+  // when the KB itself could not satisfy the question (handleUserText
+  // tries the KB first) — the LLM is the last resort, never the first.
+  function kbSnippets(text) {
+    try {
+      var KB = window.CHINABITE_KB;
+      if (!KB) return [];
+      return KB.snippetsFor(text, 3).map(function (s) { return { id: s.id, title: s.title, text: s.text }; });
+    } catch (e) { return []; }
+  }
   // Returns {text, dishes:[ids], cardId, cityId, source:"llm"} or throws.
-  function callWorkerLLM(text) {
+  // lang follows the user's message (detected, same rules as the
+  // decoder) — the Worker answers in that language. Falls back to en.
+  function callWorkerLLM(text, lang) {
     var msgs = history.slice(-10).concat([{ role: "user", content: text }]);
     return fetch(CHAT_API, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ messages: msgs, profile: profile, lang: "en", stream: true })
+      body: JSON.stringify({ messages: msgs, profile: profile, lang: lang || "en", stream: true, kb: kbSnippets(text) })
     }).then(function (r) {
       if (!r.ok || !r.body) throw new Error("worker-" + r.status);
       var reader = r.body.getReader();
@@ -475,7 +515,11 @@
     // (env LLM_MODEL / SILICONFLOW_API_KEY) — this file stays the same.
     // Any failure (no key, Worker down, stream error) falls back to the
     // local rules bot; the caller tells the user honestly.
-    return callWorkerLLM(text).catch(function () { return null; });
+    // v6.7: the chat language follows the message (detected by the
+    // decoder's rules), no longer hardcoded "en".
+    var lang = "en";
+    try { if (CB.detectInputLang) lang = CB.detectInputLang(text); } catch (e) {}
+    return callWorkerLLM(text, lang).catch(function () { return null; });
   }
 
   function handleUserText(text) {
@@ -485,6 +529,18 @@
     history.push({ role: "user", content: text });
     if (history.length > 10) history = history.slice(-10);
     input.value = "";
+    // KB FIRST (Oliver's rule, 2026-11-27): if the knowledge base can
+    // satisfy the question, answer locally — ZERO external LLM call,
+    // zero tokens. The LLM only runs when the KB returns null.
+    var KB = window.CHINABITE_KB;
+    if (KB) {
+      var kbRes = null;
+      try { kbRes = KB.answer(text, profile); } catch (e) { kbRes = null; }
+      if (kbRes) {
+        renderLocal(kbRes);
+        return;
+      }
+    }
     var t = addTyping();
     sendToAssistant(text).then(function (res) {
       if (t.parentNode) t.parentNode.removeChild(t);
@@ -493,7 +549,7 @@
         var dishes = (res.dishes || []).map(dishById).filter(Boolean);
         var row = addBun(esc(res.text), { cards: dishes.length ? dishes : null });
         if (res.cardId) showCard(res.cardId);
-        if (res.cityId) { var c = cityById(res.cityId); if (c) addBun("<b>" + esc(c.en) + " · " + esc(c.zh) + "</b><br>" + esc(c.scene)); }
+        if (res.cityId) { var c = cityById(res.cityId); if (c) addBun("<b>" + esc(c.en) + "</b><br>" + esc(c.scene)); }
         suggestChips();
         return row;
       }
@@ -538,7 +594,7 @@
   }
   function askCity() {
     onboardingStep = "city";
-    sayLater("Hey, I'm Bun — your food friend in China. I know 110 dishes, 12 diet cards and 10 cities, and I'll tell you in 3 seconds if you can eat something.<br><br>First — where are you eating?", null, 600);
+    sayLater("Hey, I'm Bun — your food friend in China. I know 125 dishes, 12 diet cards and 10 cities, and I'll tell you in 3 seconds if you can eat something.<br><br>First — where are you eating?", null, 600);
     setTimeout(function () {
       var list = CITY_CHIPS.concat([{ label: "Not in China yet", value: null }]).map(function (c) {
         return { label: c.label, onClick: function () { pickCity(c.value, c.label); } };
@@ -688,7 +744,7 @@
       llmReady = ready;
       el.textContent = ready
         ? "Bun · AI connected — ask me anything"
-        : "AI coming soon";
+        : "Your Diet Buddy";
     };
     try {
       var ctrl = new AbortController();

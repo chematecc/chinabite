@@ -1,4 +1,4 @@
-/* China Bite — v5.0 Uber Eats home (Oliver: "Go back to uber eats style
+/* Jade Bite — v5.0 Uber Eats home (Oliver: "Go back to uber eats style
    design", "Change hero", "With chat button").
    - Home is a browse-first Uber Eats page: search + chips + hero +
      Ask Bun + Signature big-image cards + 10 cities + decode teaser.
@@ -11,7 +11,7 @@
      human copy, system-follow theme, electric purple, warm colours 0.
    - Not back: 40px/900 titles, grey-blue corporate palette, fat cards,
      grey pill nav, hero text wall.
-   v4.2 English-only UI + smaller app frame (see below for the v4.2 note). */
+   v4.2 English-only UI + smaller app frame (see below for the v4.2 note).
    v4.2 (Oliver: "不要中英文交叉使用", "页面框架偏大，感官非 app 模式", "Kit 直接放 Account"):
    - UI copy is English only. Chinese stays only where it has to be read in the real
      world: dish names + the big waiter sentences (diet cards, order slip, hotel card).
@@ -167,6 +167,7 @@ button.ghost{background:var(--card);color:var(--ink);border:1.5px solid var(--li
 button.big{padding:13px 20px;font-size:16px;font-weight:600;min-height:48px;width:100%;margin:4px 0}
 button:disabled{opacity:.45;cursor:not-allowed}
 input[type=text],input[type=number],input[type=email],select,textarea{font:inherit;font-size:15px;width:100%;padding:12px 18px;border:1.5px solid var(--line-strong);background:var(--input-bg);color:var(--ink);min-height:48px;border-radius:999px;font-weight:500}
+#dishInput::placeholder{font-size:14px}
 label{display:block;font-weight:600;margin:12px 0 6px}
 .chips{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0}
 .chip{border:1.5px solid var(--line-strong);background:var(--card);color:var(--ink);padding:9px 16px;cursor:pointer;min-height:40px;font-size:14px;font-weight:600;border-radius:999px}
@@ -238,17 +239,51 @@ footer{padding:8px 4px;border-top:1px solid var(--line)}
 /* v5.3: the one-line value prop — what this app solves, first screen,
    under the Hero. Cormorant italic, no headline wall, no stats. */
 .value-prop{font-family:var(--font-display);font-size:19px;font-style:italic;font-weight:500;line-height:1.45;color:var(--ink);margin:2px 2px 0;text-align:center}
+/* v6.7: slogan on the home view — the brand line under the Hero, above the value prop. Cormorant, small, quiet. */
+.slogan{font-family:var(--font-display);font-size:17px;font-weight:600;letter-spacing:.05em;line-height:1.4;color:var(--muted);margin:2px 2px 0;text-align:center}
 .ask-bun{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;text-align:left;padding:12px 16px;border-radius:20px;margin:0}
 .ask-bun img{width:32px;height:32px;border-radius:50%;object-fit:cover;display:block;flex:0 0 32px}
 .ask-bun span{flex:1;min-width:0}
-/* v6.5: floating Ask Bun — fixed to the right edge, just above the bottom
-   nav, on every view. Small pill (Bun avatar + "Ask Bun", 13px), card bg,
-   accent text; hugs the 400px column's right edge on wide screens and
-   stays 12px from the edge on phones. z 45: above the nav (40), below
-   toast (60) and overlay (50). Theme follows the phone (vars only). */
-.ask-bun-float{position:fixed;right:max(12px,calc(50% - 200px + 12px));bottom:calc(96px + env(safe-area-inset-bottom));z-index:45;display:flex;align-items:center;gap:6px;height:40px;min-height:40px;padding:0 12px 0 7px;margin:0;border-radius:999px;background:var(--card);border:1.5px solid var(--line-strong);box-shadow:var(--shadow-lift);font-size:13px;font-weight:600;color:var(--accent)}
-.ask-bun-float img{width:26px;height:26px;border-radius:50%;object-fit:cover;display:block}
-.ask-bun-float span{line-height:1}
+/* v6.6: Ask Bun is a curtain, not a pill. A slim vertical tab hugs
+   the right edge (Bun avatar + vertical "Ask Bun"); tap it and the
+   chat slides in from the right as a drawer over the current view —
+   the bottom nav stays visible below it, one tap closes it (scrim,
+   ×, Esc). The tab collapses to a 14px edge strip (›) and back; the
+   entry is never hidden for good. The drawer reuses the real chat
+   view + composer (moved in by JS, moved back on close) — no second
+   chat UI. Cold palette only, vars only, theme follows the phone. */
+.bun-tab{position:fixed;right:max(0px,calc(50% - 200px));bottom:calc(96px + env(safe-area-inset-bottom));z-index:45;width:34px;display:flex;flex-direction:column;background:var(--card);border:1.5px solid var(--line-strong);border-right:0;border-radius:16px 0 0 16px;box-shadow:var(--shadow-lift);overflow:hidden}
+.bun-tab-open{flex:1;min-height:0;margin:0;padding:10px 0 8px;background:transparent;color:var(--accent);border:0;border-radius:0;box-shadow:none;display:flex;flex-direction:column;align-items:center;gap:6px}
+.bun-tab-open img{width:26px;height:26px;border-radius:50%;object-fit:cover;display:block}
+.bun-tab-label{writing-mode:vertical-rl;font-size:12px;font-weight:600;letter-spacing:.08em;line-height:1;color:var(--accent)}
+.bun-tab-collapse{flex:0 0 auto;min-height:24px;height:24px;margin:0;padding:0;background:transparent;color:var(--muted);border:0;border-top:1px solid var(--line);border-radius:0;box-shadow:none;font-size:16px;line-height:1}
+.bun-tab.collapsed{width:14px;border-left:2px solid var(--accent)}
+.bun-tab.collapsed .bun-tab-open{min-height:64px;padding:0}
+.bun-tab.collapsed .bun-tab-open img,.bun-tab.collapsed .bun-tab-label{display:none}
+.bun-tab.collapsed .bun-tab-open::after{content:"›";font-size:16px;font-weight:600;color:var(--accent);line-height:1}
+.bun-tab.collapsed .bun-tab-collapse{display:none}
+/* v6.6: the tab is draggable (touch-action:none lets the pointer drag
+   instead of scrolling the page). In chat it sits above the composer
+   so it never covers the send button. Cold palette only, vars only. */
+.bun-tab{touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
+.bun-tab.dragging{cursor:grabbing}
+.bun-tab.in-chat{bottom:calc(148px + env(safe-area-inset-bottom))}
+/* Drawer: panel stops above the bottom nav, so the nav stays visible
+   and tappable while chatting. Scrim stops at the same line. */
+.bun-drawer-scrim{position:fixed;inset:0 0 calc(84px + env(safe-area-inset-bottom)) 0;background:rgba(10,10,11,.45);z-index:54}
+.bun-drawer{position:fixed;top:0;right:max(0px,calc(50% - 200px));bottom:calc(84px + env(safe-area-inset-bottom));width:min(360px,94vw);z-index:55;background:var(--card);border-left:1px solid var(--line-strong);box-shadow:-12px 0 32px rgba(16,24,40,.18);display:flex;flex-direction:column;transform:translateX(105%);visibility:hidden;transition:transform .28s ease,visibility 0s linear .28s}
+.bun-drawer.open{transform:translateX(0);visibility:visible;transition:transform .28s ease}
+.bun-drawer-close{position:absolute;top:10px;right:10px;z-index:2;width:36px;height:36px;min-height:36px;margin:0;padding:0;border-radius:50%;background:var(--card);color:var(--muted);border:1px solid var(--line-strong);box-shadow:var(--shadow);font-size:20px;line-height:1;display:flex;align-items:center;justify-content:center}
+.bun-drawer-body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:12px 12px 0}
+.bun-drawer-body #backHomeBtn{display:none}
+.bun-drawer-body .chat-head{padding-right:48px}
+.bun-drawer-body #chatLog{min-height:0}
+.bun-drawer-foot{flex:0 0 auto;border-top:1px solid var(--line)}
+.bun-drawer-foot #chatComposer{position:static;left:auto;transform:none;width:100%;max-width:none;bottom:auto;margin:0;border:0;border-radius:0;box-shadow:none;padding:6px 6px 6px 8px}
+body.bun-drawer-open{overflow:hidden}
+@media (prefers-reduced-motion: reduce){
+  .bun-drawer{transition:none}
+}
 .home-sec{margin:6px 0 0}
 .home-sec .block-sub{margin:6px 0 12px}
 /* v5.2: home sections fold — Signature open by default, Cities closed.
@@ -410,3 +445,44 @@ input.blink-input:focus { animation: none; border-color: var(--accent); box-shad
 .qty-btn{width:32px;height:32px;min-width:32px;min-height:32px;padding:0;margin:0;border-radius:50%;font-size:16px;box-shadow:none;display:inline-flex;align-items:center;justify-content:center}
 .qty-btn.ord-remove{background:var(--card);color:var(--muted);border:1.5px solid var(--line-strong)}
 button.armed{background:var(--warn-bg);color:var(--warn);border-color:var(--warn)}
+
+/* ---- Design polish pass, 27 Nov (all screens) ----
+   P0 fix: the header comment above used to close early (after the words
+   "see below for the v4.2 note"), so the note text + :root{...} were
+   swallowed as one invalid selector — every :root variable (--accent,
+   fonts, --radius, --shadow, verdict colours) was dead in light mode.
+   Fixed by removing that stray close; the rules below assume :root
+   works again.
+   P1: solid accent fills. --accent is light lavender (#A78BFA) in dark
+   mode for text, but white text on it is only 2.5:1 — buttons need the
+   deep purple in both themes, so fills use --accent-solid instead.
+   P2: appbar — the currency select inherited width:100% from the global
+   select rule and squeezed the title to 0px wide while bleeding off the
+   right edge; it now sizes to content and the title never wraps.
+   P3: hero dots were 8px tap targets; the visual dot stays 8px (::after)
+   on a 20px hit area. P4: the FX rate phrase no longer breaks mid-line.
+   P5: search row gives the placeholder a little more room. */
+:root{--accent-solid:#6D28D9}
+html[data-theme="dark"]{--accent-solid:#6D28D9}
+button{background:var(--accent-solid)}
+.btn-link{background:var(--accent-solid)}
+.camera-btn{background:var(--accent-solid)}
+.order-tabs button[aria-selected="true"]{background:var(--accent-solid)}
+.chip[aria-pressed="true"]{background:var(--accent-solid)}
+.cat-chips .chip[aria-pressed="true"]{background:var(--accent-solid)}
+.chat-chips .chip-done{background:var(--accent-solid)}
+.dev-badge{background:var(--accent-solid)}
+.progress>div{background:var(--accent-solid)}
+.ord-badge{background:var(--accent-solid)}
+.steps li.current::before{background:var(--accent-solid)}
+.msg.user .bubble{background:var(--accent-solid)}
+.fx-select{width:auto;max-width:160px}
+.appbar-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hero-dot{position:relative;width:20px;height:20px;background:transparent;box-shadow:none}
+.hero-dot::after{content:"";position:absolute;left:6px;top:6px;width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.55);box-shadow:0 0 0 1px rgba(0,0,0,.18)}
+.hero-dot.is-active{background:transparent;transform:scale(1.3)}
+.hero-dot.is-active::after{background:#fff}
+.fx-basis{white-space:nowrap}
+.searchbar{padding:4px 12px}
+.searchbar svg{width:22px;height:22px}
+.bun-btn{padding:0 10px 0 6px}

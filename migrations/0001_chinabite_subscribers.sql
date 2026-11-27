@@ -1,4 +1,4 @@
--- China Bite 订阅表（独立表，不混 chinavisacheck 的订阅表）
+-- Jade Bite 订阅表（独立表，不混 chinavisacheck 的订阅表）
 -- D1 未接：本 SQL 先存档，接 D1 后执行。
 -- 执行：wrangler d1 execute chinabite --file migrations/0001_chinabite_subscribers.sql
 -- （需先在 Dashboard Worker 的 wrangler.toml 加 [[d1_databases]] 绑定 CHINABITE_DB）
