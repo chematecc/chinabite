@@ -1,9 +1,9 @@
-// China Bite — POST /api/subscribe
+// Jade Bite — POST /api/subscribe
 // Worker 模块（ESM）。2026-11-26 已合入 Dashboard Worker `china-bite-dashboard`
 // 的 src/index.js 并部署上线（版本 4，c9b2783d），D1 chinabite_subscribers 已接通。
-// 生产地址：https://bite-api.chinavisacheck.com/api/subscribe（自定义域名路由；
+// 生产地址：https://api.jadebite.otto-lux.com/api/subscribe（自定义域名路由；
 // workers.dev 生产域名 2026-11-26 14:38 起报 404 error code 1042，脚本本身正常，
-// 已改走 bite-api.chinavisacheck.com）。前端 app.js 直接 fetch 该地址。
+// 已改走 api.jadebite.otto-lux.com）。前端 app.js 直接 fetch 该地址。
 // 本文件保留为源码备份 + 合入说明；不要改 Dashboard 目录之外的东西。
 //
 // 状态（2026-11-26，实测）：
@@ -12,7 +12,7 @@
 // - D1 已接：库 chinabite（f25b6ee5-46e2-492d-b0de-904ddd7e009d），
 //   wrangler.toml 有 [[d1_databases]] 绑定 CHINABITE_DB；建表 SQL 已执行。
 // - Resend 已接（v5.5）：确认邮件由 Dashboard Worker 的 sendResendEmail 真发
-//   （from China Bite <hello@chinavisacheck.com>），见 subscribeConfirmTemplate。
+//   （from Jade Bite <hello@chinavisacheck.com>），见 subscribeConfirmTemplate。
 // - 订阅表独立：chinabite_subscribers，不混 chinavisacheck 的订阅表。
 //   建表 SQL 在 migrations/0001_chinabite_subscribers.sql。
 
@@ -42,27 +42,27 @@ export function normalizeLang(v) {
 export function subscribeConfirmTemplate(lang, email) {
   const useZh = lang === "zh";
   const subject = useZh
-    ? "订好了 — 欢迎来到 China Bite"
-    : "You're in — welcome to China Bite";
+    ? "订好了 — 欢迎来到 Jade Bite"
+    : "You're in — welcome to Jade Bite";
   const body = useZh
     ? [
         `你好，${email}，`,
-        "订好了。你已订阅 China Bite。",
+        "订好了。你已订阅 Jade Bite。",
         "有新内容时我会发一封邮件告诉你——新菜、新城市，或者值得知道的吃喝小贴士。",
-        "只收 China Bite 的更新，不收营销。",
+        "只收 Jade Bite 的更新，不收营销。",
         "随时可退订。",
         "",
-        "— 包子 Bun，China Bite",
+        "— 包子 Bun，Jade Bite",
         SITE_URL,
       ].join("\n")
     : [
         `Hi ${email},`,
-        "You're in. You're subscribed to China Bite.",
+        "You're in. You're subscribed to Jade Bite.",
         "You'll hear from me when there's something new — a new dish, a new city, or a food tip worth knowing.",
-        "Only China Bite updates. No marketing.",
+        "Only Jade Bite updates. No marketing.",
         "Unsubscribe anytime.",
         "",
-        "— Bun, China Bite",
+        "— Bun, Jade Bite",
         SITE_URL,
       ].join("\n");
   return {
@@ -70,7 +70,7 @@ export function subscribeConfirmTemplate(lang, email) {
     requestedLang: lang,
     subject,
     body,
-    from: "China Bite <hello@chinavisacheck.com>",
+    from: "Jade Bite <hello@chinavisacheck.com>",
     resend: { connected: false, sent: false, status: "待接 Resend 后发送（Resend 未接，未发送）" },
   };
 }
@@ -206,7 +206,7 @@ export default {
 //    if (path === "/api/subscribe") return handleSubscribe(request, env);
 //    另加 OPTIONS 预检 + CORS 头（subscribeCors），前端跨域 POST 才能读响应。
 // 4. 部署：python3 /tmp/worker-deploy.py（Cloudflare API 直连，wrangler 未登录）。
-//    生产地址：https://bite-api.chinavisacheck.com/api/subscribe
+//    生产地址：https://api.jadebite.otto-lux.com/api/subscribe
 //    （自定义域名路由；workers.dev 生产域名 2026-11-26 起报 404 error code 1042）。
 // 5. Resend 已接入（v5.5）：Dashboard Worker 的 handleSubscribe 里调
 //    sendResendEmail 真发确认邮件，再把 resend.connected / sent 写回响应。

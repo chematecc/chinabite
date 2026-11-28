@@ -1,17 +1,17 @@
-/* China Bite — v5.0 Uber Eats home (Oliver: "Go back to uber eats style
+/* Jade Bite — v5.0 Uber Eats home (Oliver: "Go back to uber eats style
    design", "Change hero", "With chat button").
    - Home is a browse-first Uber Eats page: search + chips + hero +
      Ask Bun + Signature big-image cards + 10 cities + decode teaser.
    - Chat is a feature, not the homepage: Bun avatar button beside the
      search bar + a full-width Ask Bun button under the hero.
    - Bottom nav is Home / Search / Orders / Account (v3.2 naming).
-   - Kept from v4.1–v4.4: Cormorant Garamond + Inter, small sizes
+   - Kept from v4.1–v4.4: Fraunces + Manrope since v6.9 (self-hosted, SIL OFL), small sizes
      (h1 26px/600, dish names 16px/600, body 15px), English-only UI,
      400px frame, FAQ, Kit at top of Account, diet multi-select,
      human copy, system-follow theme, electric purple, warm colours 0.
    - Not back: 40px/900 titles, grey-blue corporate palette, fat cards,
      grey pill nav, hero text wall.
-   v4.2 English-only UI + smaller app frame (see below for the v4.2 note). */
+   v4.2 English-only UI + smaller app frame (see below for the v4.2 note).
    v4.2 (Oliver: "不要中英文交叉使用", "页面框架偏大，感官非 app 模式", "Kit 直接放 Account"):
    - UI copy is English only. Chinese stays only where it has to be read in the real
      world: dish names + the big waiter sentences (diet cards, order slip, hotel card).
@@ -40,10 +40,20 @@
      no menu button, no localStorage override. <head> sets data-theme
      before CSS; app.js listens for system changes.
    - Warm colours 0, gradients 0. Bottom nav stays solid black.
-   - Bottom clearance untouched (v3.1): main padding-bottom 168px. */
+   - Bottom clearance untouched (v3.1): main padding-bottom 168px.
+   v6.9 (Oliver 28 Nov, "字体也要高级", "无版权"): Fraunces (display) +
+   Manrope (body), both SIL OFL, self-hosted in assets/fonts/ — no Google
+   Fonts CDN. Headings stay small & refined, no big bold; bold is only
+   for key words inside body text (strong 600) + .hl purple highlight. */
+/* v6.9: self-hosted fonts — Fraunces (display) + Manrope (body), SIL OFL.
+   No Google Fonts CDN (blocked/slow in mainland China). Paths are
+   relative to this file, so /styles.css serves /assets/fonts/*.woff2. */
+@font-face{font-family:"Fraunces";font-style:normal;font-weight:400 900;font-display:swap;src:url("assets/fonts/fraunces-normal-400-900.woff2") format("woff2")}
+@font-face{font-family:"Fraunces";font-style:italic;font-weight:400 900;font-display:swap;src:url("assets/fonts/fraunces-italic-400-900.woff2") format("woff2")}
+@font-face{font-family:"Manrope";font-style:normal;font-weight:400 800;font-display:swap;src:url("assets/fonts/manrope-normal-400-800.woff2") format("woff2")}
 :root{
-  --font-display:"Cormorant Garamond",Georgia,"Times New Roman",serif;
-  --font-body:Inter,-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+  --font-display:"Fraunces",Georgia,"Times New Roman",serif;
+  --font-body:Manrope,-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
   --accent:#6D28D9; --accent-ink:#ffffff; --accent-soft:#F1EBFE;
   --ok:#15803d; --ok-bg:#DCFCE7; --warn:#92400E; --warn-bg:#FEF3C7;
   --bad:#B91C1C; --bad-bg:#FEE2E2;
@@ -65,8 +75,13 @@ html[data-theme="dark"]{
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:76px;scroll-padding-bottom:168px}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 var(--font-body);overflow-x:hidden;-webkit-font-smoothing:antialiased}
-img{max-width:100%}
+img{max-width:100%;height:auto}
 html[data-theme="dark"] img{filter:brightness(.92)}
+/* v6.9: key-word emphasis — bold is only for key words inside body text,
+   never big bold headings. .hl = purple highlight for the one thing to
+   remember in a sentence (font specimen A). Theme-safe via accent vars. */
+b,strong{font-weight:600}
+.hl{background:var(--accent-soft);color:var(--accent);font-weight:600;padding:0 4px;border-radius:4px}
 /* v4.2 bottom clearance: bottom nav footprint max ~102px (12px bottom margin +
    ~56px nav height + up to 34px iPhone safe area); main bottom padding 156px
    leaves ~54px clear above the nav. */
@@ -81,7 +96,6 @@ a{color:var(--accent)}
 
 /* ---- Dev badge ---- */
 .dev-badge{display:inline-block;background:var(--accent);color:var(--accent-ink);font-size:11px;font-weight:700;letter-spacing:.05em;padding:5px 10px;border-radius:999px;white-space:nowrap;flex:0 0 auto}
-.dev-note{background:var(--accent-soft);color:var(--ink);font-weight:600;padding:14px 16px;border-radius:20px}
 
 /* ---- App bar (sticky top) ---- */
 .appbar{position:sticky;top:0;z-index:40;background:var(--card);border-bottom:1px solid var(--line)}
@@ -95,14 +109,17 @@ a{color:var(--accent)}
 .bottomnav a{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;padding:9px 4px;font-size:12px;font-weight:600;line-height:1.2;color:#9CA3AF;text-decoration:none;min-height:56px}
 .bottomnav a svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .bottomnav a.active{color:#C4B5FD}
+/* ---- Decode: the App's main feature — centre, raised, accent (28 Nov 2026, Oliver) ---- */
+.bottomnav a.nav-decode{flex:1.2;background:#6D28D9;color:#fff;border-radius:22px;margin:-18px 2px 0;padding:12px 4px 10px;min-height:76px;justify-content:center;box-shadow:0 12px 24px rgba(109,40,217,.45)}
+.bottomnav a.nav-decode svg{width:24px;height:24px}
+.bottomnav a.nav-decode.active{color:#fff}
 html[data-theme="dark"] .bottomnav{background:#000000;border:1px solid #232E3D}
 
 /* ---- Cards: every section is one card ---- */
 .card{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:20px;margin:0;scroll-margin-top:68px;scroll-margin-bottom:168px;overflow:hidden;overflow-wrap:anywhere}
 .card-body{padding-top:4px}
-.card-decoder{border:2px solid var(--accent)}
+.card-decoder{border:2px solid var(--accent);box-shadow:var(--shadow-lift)}
 .sec-kicker{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 8px}
-.block-sub{font-size:15px;color:var(--muted);margin:0 0 14px;line-height:1.6}
 
 /* ---- Collapsible card headers (<details class="card">) ---- */
 details.card>summary{list-style:none;cursor:pointer;display:flex;align-items:flex-start;gap:12px;padding:0}
@@ -127,7 +144,6 @@ details.card[open]>summary .card-sub{white-space:normal}
 /* v6.4: dropdowns replace the chip rows (category + city) — one <select>
    each, same filter behaviour. Header currency select sits at the right. */
 .filter-select{display:block;width:100%;min-height:44px;margin:6px 0 10px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);font:inherit;font-size:15px}
-.fx-select{flex:0 0 auto;min-height:36px;margin-left:auto;padding:6px 8px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink);font:inherit;font-size:13px;font-weight:600}
 
 /* ---- Decoder ---- */
 .count-slim{margin:12px 0 0}
@@ -167,6 +183,7 @@ button.ghost{background:var(--card);color:var(--ink);border:1.5px solid var(--li
 button.big{padding:13px 20px;font-size:16px;font-weight:600;min-height:48px;width:100%;margin:4px 0}
 button:disabled{opacity:.45;cursor:not-allowed}
 input[type=text],input[type=number],input[type=email],select,textarea{font:inherit;font-size:15px;width:100%;padding:12px 18px;border:1.5px solid var(--line-strong);background:var(--input-bg);color:var(--ink);min-height:48px;border-radius:999px;font-weight:500}
+#dishInput::placeholder{font-size:14px}
 label{display:block;font-weight:600;margin:12px 0 6px}
 .chips{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0}
 .chip{border:1.5px solid var(--line-strong);background:var(--card);color:var(--ink);padding:9px 16px;cursor:pointer;min-height:40px;font-size:14px;font-weight:600;border-radius:999px}
@@ -195,7 +212,7 @@ th{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06
 .mascot-mini{width:36px;height:36px;border-radius:50%;object-fit:cover;display:block;margin:4px 0;border:1px solid var(--line)}
 #subscribeDone .verdict{margin:10px 0}
 footer{padding:8px 4px;border-top:1px solid var(--line)}
-.city-img{width:100%;height:200px;object-fit:cover;display:block;margin:10px 0;border-radius:20px}
+.city-img{width:100%;height:auto;aspect-ratio:3/2;object-fit:cover;display:block;margin:10px 0;border-radius:20px}
 .btn-link{display:block;text-align:center;background:var(--accent);color:var(--accent-ink);font-weight:600;padding:14px 20px;font-size:15px;min-height:48px;text-decoration:none;margin:4px 0;border-radius:999px;box-shadow:0 6px 16px rgba(109,40,217,.25)}
 
 /* ---- v3.1: thumb-cluster REMOVED (was fixed right:12px bottom:100px,
@@ -205,23 +222,20 @@ footer{padding:8px 4px;border-top:1px solid var(--line)}
 /* ---- Camera-first decode ---- */
 .camera-btn{background:var(--accent)}
 #photoPreview img{margin-top:4px}
-#manualInput summary{cursor:pointer;font-weight:600;list-style:none}
-#manualInput summary::-webkit-details-marker{display:none}
 
 
 /* ---- v5.3: decoder, clearer — one purpose line, three labelled ways in,
    live suggestions under the input, one-line price basis everywhere. ---- */
-.decode-purpose{font-size:15px;line-height:1.6;color:var(--ink);margin:0 0 4px}
+/* ---- Decoder hero intro (28 Nov 2026, Oliver): highlight block — accent-soft
+   background + accent bar, bold lead. No gradient, no warm colour. ---- */
+.decode-intro{background:var(--accent-soft);border-left:3px solid var(--accent);border-radius:14px;padding:12px 14px;margin:0 0 12px}
+.decode-intro p{margin:0;font-size:15px;line-height:1.6}
 .decode-ways{display:flex;gap:10px;margin:4px 0}
 .decode-ways .way-btn{flex:1;min-width:0;margin:0;padding:12px 8px;font-size:15px}
 .decode-suggest{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 0}
 .decode-suggest .chip{margin:0}
-.price-note{font-size:13px !important;line-height:1.5}
 #decodeStatus{margin:8px 0 0}
-.chat-dish .cd-note{font-size:12px;color:var(--muted);display:block;margin-top:2px}
 /* ---- v3.4: three ways in (Mindtrip-style — one row, plain language) ---- */
-.input-row{display:flex;gap:10px;margin:4px 0}
-.input-row button{flex:1;min-width:0;margin:0;padding:12px 10px;font-size:14px}
 .camera-btn{background:var(--accent)}
 .voice-btn{background:var(--card);color:var(--accent);border:1.5px solid var(--accent);box-shadow:none}
 .voice-row{display:flex;align-items:center;gap:10px;margin:8px 0 0}
@@ -236,21 +250,53 @@ footer{padding:8px 4px;border-top:1px solid var(--line)}
 .bun-btn img{width:34px;height:34px;border-radius:50%;object-fit:cover;display:block}
 .bun-btn span{line-height:1}
 /* v5.3: the one-line value prop — what this app solves, first screen,
-   under the Hero. Cormorant italic, no headline wall, no stats. */
-.value-prop{font-family:var(--font-display);font-size:19px;font-style:italic;font-weight:500;line-height:1.45;color:var(--ink);margin:2px 2px 0;text-align:center}
+   under the Hero. Fraunces italic, no headline wall, no stats. */
+/* v6.7: slogan on the home view — the brand line under the Hero, above the value prop. Fraunces, small, quiet. */
+.slogan{font-family:var(--font-display);font-size:17px;font-weight:600;letter-spacing:.05em;line-height:1.4;color:var(--muted);margin:2px 2px 0;text-align:center}
 .ask-bun{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;text-align:left;padding:12px 16px;border-radius:20px;margin:0}
 .ask-bun img{width:32px;height:32px;border-radius:50%;object-fit:cover;display:block;flex:0 0 32px}
 .ask-bun span{flex:1;min-width:0}
-/* v6.5: floating Ask Bun — fixed to the right edge, just above the bottom
-   nav, on every view. Small pill (Bun avatar + "Ask Bun", 13px), card bg,
-   accent text; hugs the 400px column's right edge on wide screens and
-   stays 12px from the edge on phones. z 45: above the nav (40), below
-   toast (60) and overlay (50). Theme follows the phone (vars only). */
-.ask-bun-float{position:fixed;right:max(12px,calc(50% - 200px + 12px));bottom:calc(96px + env(safe-area-inset-bottom));z-index:45;display:flex;align-items:center;gap:6px;height:40px;min-height:40px;padding:0 12px 0 7px;margin:0;border-radius:999px;background:var(--card);border:1.5px solid var(--line-strong);box-shadow:var(--shadow-lift);font-size:13px;font-weight:600;color:var(--accent)}
-.ask-bun-float img{width:26px;height:26px;border-radius:50%;object-fit:cover;display:block}
-.ask-bun-float span{line-height:1}
+/* v6.6: Ask Bun is a curtain, not a pill. A slim vertical tab hugs
+   the right edge (Bun avatar + vertical "Ask Bun"); tap it and the
+   chat slides in from the right as a drawer over the current view —
+   the bottom nav stays visible below it, one tap closes it (scrim,
+   ×, Esc). The tab collapses to a 14px edge strip (›) and back; the
+   entry is never hidden for good. The drawer reuses the real chat
+   view + composer (moved in by JS, moved back on close) — no second
+   chat UI. Cold palette only, vars only, theme follows the phone. */
+.bun-tab{position:fixed;right:max(0px,calc(50% - 200px));bottom:calc(96px + env(safe-area-inset-bottom));z-index:45;width:34px;display:flex;flex-direction:column;background:var(--card);border:1.5px solid var(--line-strong);border-right:0;border-radius:16px 0 0 16px;box-shadow:var(--shadow-lift);overflow:hidden}
+.bun-tab-open{flex:1;min-height:0;margin:0;padding:10px 0 8px;background:transparent;color:var(--accent);border:0;border-radius:0;box-shadow:none;display:flex;flex-direction:column;align-items:center;gap:6px}
+.bun-tab-open img{width:26px;height:26px;border-radius:50%;object-fit:cover;display:block}
+.bun-tab-label{writing-mode:vertical-rl;font-size:12px;font-weight:600;letter-spacing:.08em;line-height:1;color:var(--accent)}
+.bun-tab-collapse{flex:0 0 auto;min-height:24px;height:24px;margin:0;padding:0;background:transparent;color:var(--muted);border:0;border-top:1px solid var(--line);border-radius:0;box-shadow:none;font-size:16px;line-height:1}
+.bun-tab.collapsed{width:14px;border-left:2px solid var(--accent)}
+.bun-tab.collapsed .bun-tab-open{min-height:64px;padding:0}
+.bun-tab.collapsed .bun-tab-open img,.bun-tab.collapsed .bun-tab-label{display:none}
+.bun-tab.collapsed .bun-tab-open::after{content:"›";font-size:16px;font-weight:600;color:var(--accent);line-height:1}
+.bun-tab.collapsed .bun-tab-collapse{display:none}
+/* v6.6: the tab is draggable (touch-action:none lets the pointer drag
+   instead of scrolling the page). In chat it sits above the composer
+   so it never covers the send button. Cold palette only, vars only. */
+.bun-tab{touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
+.bun-tab.dragging{cursor:grabbing}
+.bun-tab.in-chat{bottom:calc(148px + env(safe-area-inset-bottom))}
+/* Drawer: panel stops above the bottom nav, so the nav stays visible
+   and tappable while chatting. Scrim stops at the same line. */
+.bun-drawer-scrim{position:fixed;inset:0 0 calc(84px + env(safe-area-inset-bottom)) 0;background:rgba(10,10,11,.45);z-index:54}
+.bun-drawer{position:fixed;top:0;right:max(0px,calc(50% - 200px));bottom:calc(84px + env(safe-area-inset-bottom));width:min(360px,94vw);z-index:55;background:var(--card);border-left:1px solid var(--line-strong);box-shadow:-12px 0 32px rgba(16,24,40,.18);display:flex;flex-direction:column;transform:translateX(105%);visibility:hidden;transition:transform .28s ease,visibility 0s linear .28s}
+.bun-drawer.open{transform:translateX(0);visibility:visible;transition:transform .28s ease}
+.bun-drawer-close{position:absolute;top:10px;right:10px;z-index:2;width:36px;height:36px;min-height:36px;margin:0;padding:0;border-radius:50%;background:var(--card);color:var(--muted);border:1px solid var(--line-strong);box-shadow:var(--shadow);font-size:20px;line-height:1;display:flex;align-items:center;justify-content:center}
+.bun-drawer-body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:12px 12px 0}
+.bun-drawer-body #backHomeBtn{display:none}
+.bun-drawer-body .chat-head{padding-right:48px}
+.bun-drawer-body #chatLog{min-height:0}
+.bun-drawer-foot{flex:0 0 auto;border-top:1px solid var(--line)}
+.bun-drawer-foot #chatComposer{position:static;left:auto;transform:none;width:100%;max-width:none;bottom:auto;margin:0;border:0;border-radius:0;box-shadow:none;padding:6px 6px 6px 8px}
+body.bun-drawer-open{overflow:hidden}
+@media (prefers-reduced-motion: reduce){
+  .bun-drawer{transition:none}
+}
 .home-sec{margin:6px 0 0}
-.home-sec .block-sub{margin:6px 0 12px}
 /* v5.2: home sections fold — Signature open by default, Cities closed.
    Same summary pattern as details.card (title + sub + chevron), lighter
    chrome: no card border. <summary> is natively keyboard-operable;
@@ -267,9 +313,6 @@ footer{padding:8px 4px;border-top:1px solid var(--line)}
 .order-tabs{display:flex;gap:8px;margin:0 0 12px}
 .order-tabs button{flex:1;margin:0;min-height:48px;background:var(--card2);color:var(--ink);border:1.5px solid var(--line-strong);box-shadow:none}
 .order-tabs button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
-.city-row{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 6px;scrollbar-width:none}
-.city-row::-webkit-scrollbar{display:none}
-.city-row .chip{flex:0 0 auto;margin:0}
 /* While a search / chip filter is active, Home shows only the results. */
 #homeView.filtering .browse-block{display:none}
 .back-home{margin:0 0 4px;min-height:40px;padding:8px 14px;font-size:14px}
@@ -315,6 +358,11 @@ footer{padding:8px 4px;border-top:1px solid var(--line)}
 .chat-chips{display:flex;gap:6px;overflow-x:auto;padding:4px 4px 6px;scrollbar-width:none}
 .chat-chips::-webkit-scrollbar{display:none}
 .chat-chips .chip{flex:0 0 auto;margin:0}
+/* Follow-up Suggestions (Learn from Ask Lucy, 2026-11-28): up to 3
+   tappable follow-ups under a Bun reply. Pills, wrap, left-aligned. */
+.suggestions{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 2px}
+.suggestions .sug{border:1.5px solid var(--line-strong);background:var(--card2);color:var(--ink);padding:7px 13px;cursor:pointer;min-height:36px;font-size:13px;font-weight:600;border-radius:999px;text-align:left}
+.suggestions .sug:active{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 /* v4.3: diet step is multi-select — chips wrap so all 8 + Done are visible
    without scrolling; Done is a solid accent button, not a plain chip. */
 .chat-chips.wrap{flex-wrap:wrap;overflow-x:visible}
@@ -327,7 +375,7 @@ footer{padding:8px 4px;border-top:1px solid var(--line)}
 .chat-cards{display:flex;gap:12px;overflow-x:auto;padding:12px 2px 8px;scrollbar-width:none}
 .chat-cards::-webkit-scrollbar{display:none}
 .chat-dish{flex:0 0 200px;background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:var(--shadow);text-align:left;padding:0}
-.chat-dish img{width:100%;height:110px;object-fit:cover;display:block}
+.chat-dish img{width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;display:block}
 .chat-dish .cd-body{padding:12px 14px}
 .chat-dish .en{font-size:16px;font-weight:600;display:block;line-height:1.25}
 .chat-dish .zh{font-size:14px;color:var(--muted);display:block;margin-top:2px}
@@ -342,7 +390,6 @@ footer{padding:8px 4px;border-top:1px solid var(--line)}
 .story .thumb-ph .ph-zh{font-family:var(--font-display);font-size:44px;font-weight:600;color:var(--accent);line-height:1}
 .sig-city{margin-top:18px}
 .sig-city:first-child{margin-top:8px}
-#sigCityChips{margin:0 0 4px}
 /* ---- v4.1: FAQ — read-only answers live here, nowhere else ---- */
 .faq-item{border-bottom:1px solid var(--line);padding:12px 0}
 .faq-item:last-child{border-bottom:0}
@@ -404,9 +451,236 @@ input.blink-input:focus { animation: none; border-color: var(--accent); box-shad
 #qrTable th{white-space:nowrap}
 #qrTable td:first-child{white-space:nowrap}
 .ord-line .ord-name{flex:1;min-width:0}
-.ord-line .ord-price{font-weight:700;white-space:nowrap}
 .ord-qty{display:flex;align-items:center;gap:6px;flex:0 0 auto}
 .ord-n{min-width:24px;text-align:center;font-weight:600}
 .qty-btn{width:32px;height:32px;min-width:32px;min-height:32px;padding:0;margin:0;border-radius:50%;font-size:16px;box-shadow:none;display:inline-flex;align-items:center;justify-content:center}
 .qty-btn.ord-remove{background:var(--card);color:var(--muted);border:1.5px solid var(--line-strong)}
 button.armed{background:var(--warn-bg);color:var(--warn);border-color:var(--warn)}
+
+/* ---- Design polish pass, 27 Nov (all screens) ----
+   P0 fix: the header comment above used to close early (after the words
+   "see below for the v4.2 note"), so the note text + :root{...} were
+   swallowed as one invalid selector — every :root variable (--accent,
+   fonts, --radius, --shadow, verdict colours) was dead in light mode.
+   Fixed by removing that stray close; the rules below assume :root
+   works again.
+   P1: solid accent fills. --accent is light lavender (#A78BFA) in dark
+   mode for text, but white text on it is only 2.5:1 — buttons need the
+   deep purple in both themes, so fills use --accent-solid instead.
+   P2: appbar — the currency select inherited width:100% from the global
+   select rule and squeezed the title to 0px wide while bleeding off the
+   right edge; it now sizes to content and the title never wraps.
+   P3: hero dots were 8px tap targets; the visual dot stays 8px (::after)
+   on a 20px hit area. P4: the FX rate phrase no longer breaks mid-line.
+   P5: search row gives the placeholder a little more room. */
+:root{--accent-solid:#6D28D9}
+html[data-theme="dark"]{--accent-solid:#6D28D9}
+button{background:var(--accent-solid)}
+.btn-link{background:var(--accent-solid)}
+.camera-btn{background:var(--accent-solid)}
+.order-tabs button[aria-selected="true"]{background:var(--accent-solid)}
+.chip[aria-pressed="true"]{background:var(--accent-solid)}
+.cat-chips .chip[aria-pressed="true"]{background:var(--accent-solid)}
+.chat-chips .chip-done{background:var(--accent-solid)}
+.dev-badge{background:var(--accent-solid)}
+.progress>div{background:var(--accent-solid)}
+.ord-badge{background:var(--accent-solid)}
+.steps li.current::before{background:var(--accent-solid)}
+.msg.user .bubble{background:var(--accent-solid)}
+.appbar-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hero-dot{position:relative;width:20px;height:20px;background:transparent;box-shadow:none}
+.hero-dot::after{content:"";position:absolute;left:6px;top:6px;width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.55);box-shadow:0 0 0 1px rgba(0,0,0,.18)}
+.hero-dot.is-active{background:transparent;transform:scale(1.3)}
+.hero-dot.is-active::after{background:#fff}
+.searchbar{padding:4px 12px}
+.searchbar svg{width:22px;height:22px}
+.bun-btn{padding:0 10px 0 6px}
+
+/* ---- v6.8: big photo cards (Oliver 28 Nov: big images human +
+   atmospheric — health, at ease; Happy Family; western acceptable;
+   Gen Z pushed one notch further). Photo-first cards, cold palette
+   only, no gradients, no warm colours, accent #6D28D9, small type. ---- */
+/* Hero photo: bleeds to the card edges (cards are overflow:hidden).
+   The tag is a solid accent pill — never text straight on the photo. */
+.hero-photo{position:relative;margin:0 -20px 14px;padding:0}
+.hero-photo-top{margin-top:-20px}
+.hero-photo img{width:100%;height:auto;aspect-ratio:3/2;object-fit:cover;display:block}
+.hero-photo-sm img{height:auto;aspect-ratio:2/1}
+.hero-tag{position:absolute;top:10px;left:10px;background:var(--accent-solid);color:#fff;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px}
+/* City strip: horizontal snap-scroll photo cards (Gen Z social feel).
+   The old dropdown stays in the DOM, hidden — all its logic (location
+   upgrades, localStorage, selectCity) keeps working untouched. */
+.city-strip{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 10px;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.city-strip::-webkit-scrollbar{display:none}
+.city-card{flex:0 0 118px;scroll-snap-align:start;background:var(--card);border:1.5px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:var(--shadow);cursor:pointer;padding:0;margin:0;text-align:left;color:var(--ink);font:inherit}
+.city-card img{width:118px;height:88px;object-fit:cover;display:block}
+.city-card p{margin:0;padding:8px 10px 10px;font-size:13px;font-weight:700;line-height:1.3}
+.city-card small{display:block;font-size:11px;color:var(--muted);font-weight:400;margin-top:2px}
+.city-card.on{border-color:var(--accent-solid);box-shadow:0 0 0 2px var(--accent-solid)}
+.city-card.on p{color:var(--accent)}
+.city-card:active{transform:scale(.97)}
+/* Signature dishes: horizontal snap-scroll of big vertical cards. */
+.sig-row{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 10px;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.sig-row::-webkit-scrollbar{display:none}
+.sig-card{position:relative;flex:0 0 200px;scroll-snap-align:start;background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:var(--shadow);cursor:pointer;padding:0;margin:0;text-align:left;color:var(--ink);font:inherit}
+.sig-card img{width:200px;height:150px;object-fit:cover;display:block}
+.sig-ph{height:150px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center}
+.sig-ph .ph-zh{font-family:var(--font-display);font-size:44px;font-weight:600;color:var(--accent);line-height:1}
+.sig-card .sig-body{display:block;padding:12px 14px 14px}
+.sig-card .en{font-size:16px;font-weight:600;display:block;line-height:1.25}
+.sig-card .zh{font-size:14px;color:var(--muted);display:block;margin-top:2px}
+.sig-card .spice{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--accent);display:block;margin-top:6px}
+.sig-card:active{transform:scale(.98)}
+/* Diet cards are an inset grouped list now (v6.10, .group/.row below) —
+   the old two-column photo-tile rules were deleted with the tiles. */
+#dietCards{display:block}
+/* Drinks: 56px thumb (photo where one exists, accent-soft category
+   tile otherwise — never a wrong drink's photo, never a fake one). */
+.drink-top{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+.drink-thumb{flex:0 0 56px;width:56px;height:56px;border-radius:14px;overflow:hidden;background:var(--card2)}
+.drink-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.drink-thumb-tile{flex:0 0 56px;width:56px;height:56px;border-radius:14px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;letter-spacing:.05em;color:var(--accent);text-transform:uppercase;text-align:center;line-height:1.2}
+.drink-top h3{margin:0}
+/* Menu rows: 56px thumb + Check › (social-app row language). */
+.dish{display:flex;align-items:center;gap:12px;padding:10px 14px;margin:0;min-height:84px}
+.dish-thumb{flex:0 0 64px;width:64px;height:64px;border-radius:14px;overflow:hidden;background:var(--card2)}
+.dish-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.dish-thumb-ph{flex:0 0 64px;width:64px;height:64px;border-radius:14px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center}
+.dish-thumb-ph .ph-zh{font-family:var(--font-display);font-size:26px;font-weight:600;color:var(--accent);line-height:1}
+.dish .dish-text{flex:1;min-width:0}
+.dish .dish-go{flex:0 0 auto;font-size:12px;font-weight:700;color:var(--accent)}
+/* Swipe hints: small, right-aligned, quiet. */
+.swipe-hint{font-size:12px;color:var(--muted);text-align:right;margin:0 2px 6px}
+
+/* ---- v6.10: Apple UI style (Oliver 28 Nov 2026: "跟随 apple 的 UI 风格").
+   iOS grouped background + inset grouped cards + hairline separators +
+   frosted bars. Tokens remapped to Apple system values; accent stays
+   Jade Bite purple #6D28D9, fills stay --accent-solid (deep purple in
+   both themes — the dark-mode primary-button contrast fix the draft
+   called out). Fonts unchanged (Fraunces + Manrope, v6.9). The old
+   v6.8 rules below are overridden here where the two disagree; nothing
+   about behaviour changes in this block. ---- */
+:root{
+  --separator:rgba(60,60,67,.12);
+  --tabbar-bg:rgba(249,249,249,.78);
+  --chev:#C6C6C8;
+  --shadow:0 1px 3px rgba(0,0,0,.06);
+}
+html[data-theme="light"]{
+  --bg:#F2F2F7; --card:#FFFFFF; --card2:#E8E8ED; --ink:#000000; --muted:#6D6D72;
+  --line:rgba(60,60,67,.12); --line-strong:rgba(60,60,67,.29);
+  --input-bg:#FFFFFF; --code-bg:#F2F2F7;
+}
+html[data-theme="dark"]{
+  --bg:#000000; --card:#1C1C1E; --card2:#2C2C2E; --ink:#FFFFFF; --muted:#98989D;
+  --line:rgba(84,84,88,.36); --line-strong:rgba(84,84,88,.6);
+  --input-bg:#1C1C1E; --code-bg:#2C2C2E;
+  --tabbar-bg:rgba(28,28,30,.72); --chev:#636366;
+  --shadow:0 1px 3px rgba(0,0,0,.4);
+}
+main{padding:12px 16px 156px}
+/* Large title: one per screen, Fraunces 34px, left-aligned. The app's
+   title block (#largeTitle, first child of <main>) shows on Home +
+   Search, where the decoder is the hero. */
+.large-title{font-family:var(--font-display);font-size:34px;line-height:1.1;font-weight:600;letter-spacing:-.01em;margin:8px 0 2px}
+.screen-sub{font-size:14px;color:var(--muted);margin:0 0 14px}
+#largeTitle{padding:0}
+/* Inset grouped cards: no border, 10px radius, hairline shadow.
+   overflow:hidden clips the full-bleed hero photos to the rounded
+   corners (otherwise the photo's square corners poke past the card). */
+.card{border:0;border-radius:10px;padding:16px;overflow:hidden}
+.card-decoder{border:0}
+.hero-photo{margin:0 -16px 14px}
+.hero-photo-top{margin-top:-16px}
+details.card>summary .chev,.home-sec>summary .chev{color:var(--chev)}
+details.card[open]>summary .chev,.home-sec[open ]>summary .chev{transform:rotate(90deg)}
+.sec-kicker{font-size:13px;color:var(--muted);letter-spacing:.06em}
+.home-sec>summary h2{font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.04em}
+.home-sec>summary .card-sub{font-size:15px;color:var(--ink);margin-top:2px}
+/* Frosted app bar (was solid card + 1px border). */
+.appbar{background:var(--tabbar-bg);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border-bottom:.5px solid var(--line)}
+/* Frosted bottom tab bar (was a solid black floating pill). Full-width
+   within the 400px frame, hairline top border, 10px labels. Decode
+   stays the centre raised purple round button — the dot is the only
+   purple in the bar. */
+.bottomnav{bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:400px;background:var(--tabbar-bg);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border:0;border-top:.5px solid var(--line);border-radius:0;box-shadow:none;padding:6px 4px calc(8px + env(safe-area-inset-bottom))}
+html[data-theme="dark"] .bottomnav{background:var(--tabbar-bg);border:0;border-top:.5px solid var(--line)}
+.bottomnav a{padding:4px 4px 0;font-size:10px;color:var(--muted);min-height:52px}
+.bottomnav a svg{width:23px;height:23px;stroke-width:1.7}
+.bottomnav a.active{color:var(--accent)}
+.bottomnav a.nav-decode{flex:1;background:transparent;border-radius:0;margin:0;padding:2px 4px 0;min-height:52px;box-shadow:none;justify-content:flex-start}
+.bottomnav a.nav-decode .decode-dot{width:52px;height:52px;margin-top:-26px;border-radius:50%;background:var(--accent-solid);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 18px rgba(109,40,217,.45)}
+.bottomnav a.nav-decode .decode-dot svg{width:26px;height:26px;stroke-width:1.8}
+.bottomnav a.nav-decode.active{color:var(--muted)}
+/* iOS search field: grey rounded rect, no border. */
+.searchbar{background:var(--card2);border:0;border-radius:10px;padding:9px 12px;box-shadow:none;color:var(--muted)}
+.searchbar svg{width:16px;height:16px;stroke:currentColor;stroke-width:2}
+/* Segmented controls: the three ways in (Type / Speak / Snap) and the
+   Dine-in / Delivery tabs. Selected segment = card bg + soft shadow. */
+.decode-ways{display:flex;background:var(--card2);border-radius:9px;padding:2px;margin:4px 0;gap:0}
+.decode-ways .way-btn{flex:1;min-width:0;margin:0;padding:7px 0;font-size:13px;font-weight:600;background:transparent;border:0;border-radius:7px;box-shadow:none;color:var(--ink);min-height:36px}
+.decode-ways .way-btn.on{background:var(--card);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.order-tabs{display:flex;background:var(--card2);border-radius:9px;padding:2px;margin:0 0 12px;gap:0}
+.order-tabs button{flex:1;margin:0;min-height:36px;background:transparent;border:0;border-radius:7px;box-shadow:none;padding:7px 0;font-size:13px;font-weight:600;color:var(--ink)}
+.order-tabs button[aria-selected="true"]{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+/* City strip: circular avatar-style chips (was 118px photo cards). */
+.city-card{flex:0 0 auto;background:transparent;border:0;box-shadow:none;padding:0;margin:0;text-align:center}
+.city-card img{width:72px;height:72px;border-radius:50%;border:2px solid var(--card);box-shadow:var(--shadow);object-fit:cover}
+.city-card p{margin:5px 0 0;padding:0;font-size:12px;font-weight:600;text-align:center}
+.city-card small{display:block;font-size:11px;color:var(--muted);font-weight:400;margin-top:2px}
+.city-card.on{border:0;box-shadow:none}
+.city-card.on img{border-color:var(--accent-solid)}
+.city-card.on p{color:var(--accent)}
+/* Photo cards: 12px radius, titles below the photo, never on it. The
+   Must-eat pill on every signature card is dropped — the section is
+   "Signature Dishes", the tag said nothing new. */
+.sig-card{border-radius:12px}
+.city-img{border-radius:12px}
+.tag{display:inline-block;background:var(--accent-solid);color:#fff;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 8px;border-radius:999px;vertical-align:2px}
+.tag.soft{background:var(--accent-soft);color:var(--accent)}
+/* Inset grouped list rows (diet cards): 52px thumb + title + sub +
+   chevron. The whole row opens Enlarge; Share is a small button. */
+.group{margin:0;background:var(--card);border-radius:10px;box-shadow:var(--shadow);overflow:hidden}
+.row{display:flex;align-items:center;gap:12px;min-height:52px;padding:8px 16px;cursor:pointer}
+.row + .row{border-top:.5px solid var(--line)}
+.row img.thumb{width:52px;height:52px;border-radius:8px;object-fit:cover;flex:0 0 auto}
+.row .row-body{flex:1;min-width:0}
+.row .row-title{font-size:16px;line-height:1.3}
+.row .row-title b{font-weight:600}
+.row .row-sub{font-size:13px;color:var(--muted);line-height:1.35;margin-top:1px}
+.row .chev{color:var(--chev);font-size:17px;font-weight:600;flex:0 0 auto}
+.row .row-share{flex:0 0 auto;min-height:32px;padding:6px 10px;font-size:13px;margin:0;box-shadow:none;background:var(--card2);color:var(--ink);border:0;border-radius:8px}
+#dietCards{display:block}
+/* Menu: the 125 rows become one inset grouped list, hairlines between. */
+#dishList{display:flex;flex-direction:column;gap:0;background:var(--card);border-radius:10px;box-shadow:var(--shadow);overflow:hidden}
+#dishList .dish{background:var(--card);border:0;border-radius:0;box-shadow:none;margin:0}
+#dishList .dish + .dish{border-top:.5px solid var(--line)}
+.dish-thumb,.dish-thumb-ph{border-radius:10px}
+/* Drinks: thumbs + cards follow the same radii. */
+.drink-thumb,.drink-thumb-tile{border-radius:10px}
+/* Apple radii elsewhere: buttons + fields are rounded rects, not pills. */
+.hero-banner{border-radius:12px}
+.verdict{border-radius:12px}
+.subcard{border-radius:12px}
+.chat-dish{border-radius:12px}
+.ad{border-radius:12px}
+.filter-select{border-radius:10px}
+button{border-radius:12px}
+.btn-link{border-radius:12px}
+input[type=text],input[type=number],input[type=email],select,textarea{border-radius:10px}
+.progress{height:5px}
+/* Ask Bun as a group row (was a purple pill button). */
+.ask-bun{border-radius:10px;background:var(--card);color:var(--ink);border:0;box-shadow:var(--shadow)}
+.ask-bun .ask-bun-text{flex:1;min-width:0;text-align:left}
+.ask-bun .ask-bun-sub{display:block;font-size:13px;color:var(--muted);font-weight:400;margin-top:2px}
+.ask-bun .chev{color:var(--chev);font-size:17px;font-weight:600;flex:0 0 auto}
+/* iOS switch (the app's only toggle is the paid-preview checkbox in
+   the ad section — hidden in dev mode). On-state is purple, never
+   Apple green. */
+.switch-row{display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;font-weight:600;margin:12px 0 6px}
+.switch-input{position:absolute;opacity:0;pointer-events:none}
+.switch{width:51px;height:31px;border-radius:999px;background:#E9E9EA;position:relative;flex:0 0 auto;transition:background .2s}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25);transition:left .2s}
+.switch.on{background:var(--accent-solid)}
+.switch.on::after{left:22px}
+html[data-theme="dark"] .switch{background:#39393D}

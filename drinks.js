@@ -1,8 +1,6 @@
-// China Bite — drinks & beer (v5.9).
-// ONE place for every drink on the list. Same rules as the dishes:
-// prices are reference only — a mid-range local restaurant in a Tier-1
-// city (Shanghai / Beijing), ¥→$ at 7.1 (2026-11-26). Numbers are NOT
-// verified against real menus; the price basis line on the page says so.
+// Jade Bite — drinks & beer (v5.9).
+// ONE place for every drink on the list. No reference prices
+// (removed 2026-11-27, Oliver: 参考价格全部去掉).
 //
 // Why drinks need their own list: in China drinks arrive at ROOM
 // TEMPERATURE unless you ask. Beer, Coke, water — all of it. A foreign
@@ -13,82 +11,80 @@
 // accident. Baijiu is never iced; red wine is room temp; yellow wine
 // is often served warm — those temps aren't offered.
 //
-// Fields: id, en, zh, py, price (¥), cat (beer/soft/tea/juice/spirit),
+// Fields: id, en, zh, py, cat (beer/soft/tea/juice/spirit),
 // temps (subset of iced/room/hot/warm), defaultTemp, unit (瓶/壶/杯),
 // icedWord (the word for "iced" in the order sentence — 冰镇 for beer,
 // 冰 for everything else), note (one line, human, no fluff).
 window.CHINABITE_DRINKS = {
-  rate: 7.1,
-  rateDate: "2026-11-26",
   drinks: [
     // ---- Beer 啤酒 ----
-    { id: "qingdao", en: "Tsingtao Beer", zh: "青岛啤酒", py: "Qīng dǎo pí jiǔ", price: 10, cat: "beer",
+    { id: "qingdao", en: "Tsingtao Beer", zh: "青岛啤酒", py: "Qīng dǎo pí jiǔ", cat: "beer",
       temps: ["iced", "room"], defaultTemp: "iced", unit: "瓶", icedWord: "冰镇",
       note: "China's most famous beer — light lager, 4.7%." },
-    { id: "snow", en: "Snow Beer", zh: "雪花啤酒", py: "Xuě huā pí jiǔ", price: 8, cat: "beer",
+    { id: "snow", en: "Snow Beer", zh: "雪花啤酒", py: "Xuě huā pí jiǔ", cat: "beer",
       temps: ["iced", "room"], defaultTemp: "iced", unit: "瓶", icedWord: "冰镇",
       note: "China's best-selling beer — light and easy, 4.3%. The one on every table." },
-    { id: "yanjing", en: "Yanjing Beer", zh: "燕京啤酒", py: "Yàn jīng pí jiǔ", price: 8, cat: "beer",
+    { id: "yanjing", en: "Yanjing Beer", zh: "燕京啤酒", py: "Yàn jīng pí jiǔ", cat: "beer",
       temps: ["iced", "room"], defaultTemp: "iced", unit: "瓶", icedWord: "冰镇",
       note: "Beijing's local lager — crisp, 4.5%." },
-    { id: "harbin", en: "Harbin Beer", zh: "哈尔滨啤酒", py: "Hā ěr bīn pí jiǔ", price: 10, cat: "beer",
+    { id: "harbin", en: "Harbin Beer", zh: "哈尔滨啤酒", py: "Hā ěr bīn pí jiǔ", cat: "beer",
       temps: ["iced", "room"], defaultTemp: "iced", unit: "瓶", icedWord: "冰镇",
       note: "Northeast lager — a little stronger, 4.8%." },
-    { id: "budweiser", en: "Budweiser", zh: "百威啤酒", py: "Bǎi wēi pí jiǔ", price: 12, cat: "beer",
+    { id: "budweiser", en: "Budweiser", zh: "百威啤酒", py: "Bǎi wēi pí jiǔ", cat: "beer",
       temps: ["iced", "room"], defaultTemp: "iced", unit: "瓶", icedWord: "冰镇",
       note: "Brewed in China — the familiar one, 5%." },
     // ---- Soft drinks 软饮 ----
-    { id: "coke", en: "Coca-Cola", zh: "可口可乐", py: "Kě kǒu kě lè", price: 8, cat: "soft",
+    { id: "coke", en: "Coca-Cola", zh: "可口可乐", py: "Kě kǒu kě lè", cat: "soft",
       temps: ["iced", "room"], defaultTemp: "iced", unit: "瓶",
       note: "The classic — sweet, fizzy, everywhere." },
-    { id: "sprite", en: "Sprite", zh: "雪碧", py: "Xuě bì", price: 8, cat: "soft",
+    { id: "sprite", en: "Sprite", zh: "雪碧", py: "Xuě bì", cat: "soft",
       temps: ["iced", "room"], defaultTemp: "iced", unit: "瓶",
       note: "Lemon-lime, crisp and clear." },
-    { id: "fanta", en: "Fanta", zh: "芬达", py: "Fēn dá", price: 8, cat: "soft",
+    { id: "fanta", en: "Fanta", zh: "芬达", py: "Fēn dá", cat: "soft",
       temps: ["iced", "room"], defaultTemp: "iced", unit: "瓶",
       note: "Usually orange in China." },
-    { id: "water", en: "Mineral Water", zh: "矿泉水", py: "Kuàng quán shuǐ", price: 3, cat: "soft",
+    { id: "water", en: "Mineral Water", zh: "矿泉水", py: "Kuàng quán shuǐ", cat: "soft",
       temps: ["iced", "room"], defaultTemp: "room", unit: "瓶",
       note: "Nongfu Spring is the one you'll see everywhere. Cheapest thing on the menu." },
-    { id: "coconut", en: "Coconut Water", zh: "椰汁", py: "Yē zhī", price: 10, cat: "soft",
+    { id: "coconut", en: "Coconut Water", zh: "椰汁", py: "Yē zhī", cat: "soft",
       temps: ["iced", "room"], defaultTemp: "iced", unit: "瓶",
       note: "Sweet, milky coconut drink — a restaurant classic, not plain coconut water." },
     // ---- Tea 茶 ----
-    { id: "green-tea", en: "Green Tea", zh: "绿茶", py: "Lǜ chá", price: 15, cat: "tea",
+    { id: "green-tea", en: "Green Tea", zh: "绿茶", py: "Lǜ chá", cat: "tea",
       temps: ["hot", "iced"], defaultTemp: "hot", unit: "壶",
       note: "A pot of hot tea — the house default, sometimes free." },
-    { id: "jasmine-tea", en: "Jasmine Tea", zh: "茉莉花茶", py: "Mò lì huā chá", price: 15, cat: "tea",
+    { id: "jasmine-tea", en: "Jasmine Tea", zh: "茉莉花茶", py: "Mò lì huā chá", cat: "tea",
       temps: ["hot", "iced"], defaultTemp: "hot", unit: "壶",
       note: "Light and floral — the Beijing restaurant classic, by the pot." },
-    { id: "black-tea", en: "Black Tea", zh: "红茶", py: "Hóng chá", price: 15, cat: "tea",
+    { id: "black-tea", en: "Black Tea", zh: "红茶", py: "Hóng chá", cat: "tea",
       temps: ["hot", "iced"], defaultTemp: "hot", unit: "壶",
       note: "Served hot by the pot." },
-    { id: "iced-black-tea", en: "Iced Black Tea", zh: "冰红茶", py: "Bīng hóng chá", price: 8, cat: "tea",
+    { id: "iced-black-tea", en: "Iced Black Tea", zh: "冰红茶", py: "Bīng hóng chá", cat: "tea",
       temps: ["iced"], defaultTemp: "iced", unit: "瓶",
       note: "Bottled sweet iced tea — the convenience-store favourite. Always cold." },
     // ---- Juice & traditional 果汁 · 传统 ----
-    { id: "orange-juice", en: "Orange Juice", zh: "橙汁", py: "Chéng zhī", price: 12, cat: "juice",
+    { id: "orange-juice", en: "Orange Juice", zh: "橙汁", py: "Chéng zhī", cat: "juice",
       temps: ["iced", "room"], defaultTemp: "iced", unit: "瓶",
       note: "Usually bottled, not fresh. Fresh-squeezed is a separate listing." },
-    { id: "fresh-orange", en: "Fresh Orange Juice", zh: "现榨橙汁", py: "Xiàn zhà chéng zhī", price: 18, cat: "juice",
+    { id: "fresh-orange", en: "Fresh Orange Juice", zh: "现榨橙汁", py: "Xiàn zhà chéng zhī", cat: "juice",
       temps: ["iced"], defaultTemp: "iced", unit: "杯",
       note: "Fresh-squeezed, made to order." },
-    { id: "suanmeitang", en: "Sour Plum Drink", zh: "酸梅汤", py: "Suān méi tāng", price: 10, cat: "juice",
+    { id: "suanmeitang", en: "Sour Plum Drink", zh: "酸梅汤", py: "Suān méi tāng", cat: "juice",
       temps: ["iced", "room"], defaultTemp: "iced", unit: "杯",
       note: "Sweet-sour plum — the classic with hotpot and BBQ. Usually served chilled." },
-    { id: "doujiang-drink", en: "Soy Milk", zh: "豆浆", py: "Dòu jiāng", price: 6, cat: "juice",
+    { id: "doujiang-drink", en: "Soy Milk", zh: "豆浆", py: "Dòu jiāng", cat: "juice",
       temps: ["hot", "iced"], defaultTemp: "hot", unit: "杯",
       note: "Warm and lightly sweet — the breakfast-table classic. (Also a dish — the decoder checks dishes first.)" },
     // ---- Spirits 酒 — brief, no deep dive ----
-    { id: "baijiu", en: "Baijiu", zh: "白酒", py: "Bái jiǔ", price: 30, cat: "spirit",
+    { id: "baijiu", en: "Baijiu", zh: "白酒", py: "Bái jiǔ", cat: "spirit",
       temps: ["room"], defaultTemp: "room", unit: "瓶",
-      note: "China's white spirit, 40–53%. Strong. From ¥30 a small bottle." },
-    { id: "red-wine", en: "Red Wine", zh: "红酒", py: "Hóng jiǔ", price: 88, cat: "spirit",
+      note: "China's white spirit, 40–53%. Strong." },
+    { id: "red-wine", en: "Red Wine", zh: "红酒", py: "Hóng jiǔ", cat: "spirit",
       temps: ["room"], defaultTemp: "room", unit: "瓶",
-      note: "From ¥88 a bottle in a mid-range restaurant." },
-    { id: "huangjiu", en: "Yellow Wine", zh: "黄酒", py: "Huáng jiǔ", price: 25, cat: "spirit",
+      note: "Served at room temperature, never iced." },
+    { id: "huangjiu", en: "Yellow Wine", zh: "黄酒", py: "Huáng jiǔ", cat: "spirit",
       temps: ["warm", "room"], defaultTemp: "warm", unit: "壶",
-      note: "Mellow rice wine, brewed for centuries. From ¥25." }
+      note: "Mellow rice wine, brewed for centuries." }
   ],
   // Alias keys are matched AFTER app.js normStr() runs (same convention
   // as aliases.js): lowercase, tones stripped, spaces + punctuation

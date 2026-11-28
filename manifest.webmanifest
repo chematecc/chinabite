@@ -19,10 +19,10 @@
       "type": "image/webp"
     }
   ],
-  "name": "China Bite",
+  "name": "Jade Bite",
   "orientation": "portrait",
   "scope": "./",
-  "short_name": "China Bite",
+  "short_name": "Jade Bite",
   "start_url": "./",
   "theme_color": "#6D28D9"
 }

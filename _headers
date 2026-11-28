@@ -1,0 +1,6 @@
+# Cloudflare Pages headers — Jade Bite
+# Images are content-stable files: cache them immutably for a year.
+# If a photo is ever replaced, rename the file (cache-bust) — same-name
+# replacements will not reach returning visitors until the cache expires.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
