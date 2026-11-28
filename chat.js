@@ -146,7 +146,7 @@
   var DISH_IMG = {
   "baiqie-chicken": "assets/dish-baiqiechicken.webp", "bingfen": "assets/dish-bingfen.webp", "blanched-shrimp": "assets/dish-blanchedshrimp.webp",
   "bobo-chicken": "assets/dish-bobochicken.webp", "changfen": "assets/dish-changfen.webp", "chaoshan-beef-balls": "assets/dish-chaoshanbeefballs.webp",
-  "chashao-bao": "assets/dish-chashaobao.webp", "chengdu-zhongshuijiao": "assets/dish-chengduzhongshuijiao.webp", "chizhi-fengzhua": "assets/dish-chizhifengzhua.webp",
+  "chashao-bao": "assets/dish-chashaobao.webp", "chengdu-zhongshuijiao": "assets/dish-chengduzhongshuijiao.webp",
   "chongqing-noodles": "assets/dish-chongqingnoodles.webp", "congyou-banmian": "assets/dish-congyoubanmian.webp", "congyou-bing": "assets/dish-congyoubing.webp", "dahu-mian": "assets/dish-dahumian.webp",
   "dandan-mian": "assets/dish-dandanmian.webp", "daoxiao-mian": "assets/dish-daoxiaomian.webp", "dapanji": "assets/dish-dapanji.webp",
   "disanxian": "assets/dish-disanxian.webp", "doufunao": "assets/dish-doufunao.webp", "douhua": "assets/dish-douhua.webp",
@@ -179,7 +179,7 @@
   // Overseas dishes (2026-11-27, 15) + backfilled photos (3) — filenames are pinyin-based, NOT id-based.
   "beef-broccoli": "assets/dish-beefbroccoli.webp", "chop-suey": "assets/dish-chopsuey.webp", "chow-mein": "assets/dish-chowmein.webp",
   "crab-rangoon": "assets/dish-crabrangoon.webp", "egg-drop-soup": "assets/dish-eggdropsoup.webp", "egg-foo-young": "assets/dish-eggfooyoung.webp",
-  "general-tsos-chicken": "assets/dish-generaltsoschicken.webp", "hot-sour-soup-overseas": "assets/dish-hotsoursoupoverseas.webp", "jitouni": "assets/dish-jitouni.webp",
+  "general-tsos-chicken": "assets/dish-generaltsoschicken.webp", "hot-sour-soup-overseas": "assets/dish-hotsoursoupoverseas.webp", "guihua-tangou": "assets/dish-guihuatangou.webp",
   "kao-qiezi": "assets/dish-kaoqiezi.webp", "lemon-chicken": "assets/dish-lemonchicken.webp", "lo-mein": "assets/dish-lomein.webp",
   "mongolian-beef": "assets/dish-mongolianbeef.webp", "orange-chicken": "assets/dish-orangechicken.webp", "sesame-chicken": "assets/dish-sesamechicken.webp",
   "suchao-sansi": "assets/dish-suchaosansi.webp", "sweet-sour-pork": "assets/dish-sweetsourpork.webp", "wonton-soup": "assets/dish-wontonsoup.webp"
@@ -494,7 +494,7 @@
       suggestChips();
     } else {
       var sug = recommendDishes(3);
-      addBun("Hmm, not on my list yet — I know 125 dishes, and that one isn't one of them. Yet.<br>I saved it on your phone, and we'll add it.<br>Meanwhile, here are 3 safe bets:", { cards: sug });
+      addBun("Hmm, not on my list yet — I know 124 dishes, and that one isn't one of them. Yet.<br>I saved it on your phone, and we'll add it.<br>Meanwhile, here are 3 safe bets:", { cards: sug });
       suggestChips();
     }
   }
@@ -653,7 +653,7 @@
   }
   function askCity() {
     onboardingStep = "city";
-    sayLater("Hey, I'm Bun — your food friend in China. I know 125 dishes, 12 diet cards and 10 cities, and I'll tell you in 3 seconds if you can eat something.<br><br>First — where are you eating?", null, 600);
+    sayLater("Hey, I'm Bun — your food friend in China. I know 124 dishes, 12 diet cards and 10 cities, and I'll tell you in 3 seconds if you can eat something.<br><br>First — where are you eating?", null, 600);
     setTimeout(function () {
       var list = CITY_CHIPS.concat([{ label: "Not in China yet", value: null }]).map(function (c) {
         return { label: c.label, onClick: function () { pickCity(c.value, c.label); } };

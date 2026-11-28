@@ -18,7 +18,7 @@
 // Every KB answer carries its source id (kb:<id>, dish:<id>, ...) for
 // debugging — the source is NOT shown to the user.
 //
-// Sources: ONLY the site's own verified content. Dishes (125), drinks
+// Sources: ONLY the site's own verified content. Dishes (124), drinks
 // (21), diet cards (12) and cities (10) are REFERENCED by id — never
 // copied here; data.js / drinks.js stay the single source of truth.
 // The 18 entries below are the KB-only consolidation of the scattered
@@ -102,7 +102,7 @@
       answer: "3 free checks a day. A friend's link gets you 6. Watch a 5-second ad for +3 more, up to 5 ads a day. Paid unlock is $6.99 for 90 days — see Register in Account." },
     { id: "kb-kit", type: "faq", title: "What do I get when I pay $6.99?",
       keys: ["what do i get", "6.99", "$6.99", "worth it", "what's included", "what is included", "unlock", "paid unlock", "kit include", "what do you get", "what does it include"],
-      answer: "One payment, 90 days: 125 dishes with photos, 12 diet cards, 10 cities. Unlimited checks, no ads. What's included — and whether payments are open yet — is in the Register card in Account." },
+      answer: "One payment, 90 days: 124 dishes with photos, 12 diet cards, 10 cities. Unlimited checks, no ads. What's included — and whether payments are open yet — is in the Register card in Account." },
     { id: "kb-cost", type: "faq", title: "How much does a dish cost?",
       keys: ["how much does it cost", "how much does a dish cost", "what does it cost", "what's the price", "what is the price", "how much is this dish", "how much", "cost", "price", "how expensive", "dish price", "price of", "多少钱", "价格", "贵吗", "收费吗"],
       answer: "We don't list prices — they change too fast to keep right. Check the menu, or look the dish up on Dianping before you order." },
@@ -139,7 +139,7 @@
       action: { section: "delivery", label: "Open Delivery" } },
     { id: "kb-how", type: "faq", title: "How does Bun work?",
       keys: ["how does bun work", "how does this work", "how do i use", "what can you do", "help", "faq", "frequently asked", "what is jade bite", "how does it work"],
-      answer: "You ask, I answer — snap the menu, say a dish, or type it. I check it and tell you straight if you can eat it. I know 125 dishes, 12 diet cards and 10 cities. The longer answers live in the FAQ — want me to open it?",
+      answer: "You ask, I answer — snap the menu, say a dish, or type it. I check it and tell you straight if you can eat it. I know 124 dishes, 12 diet cards and 10 cities. The longer answers live in the FAQ — want me to open it?",
       action: { section: "faqSection", label: "Open the FAQ" } }
   ];
 

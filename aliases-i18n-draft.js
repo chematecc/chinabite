@@ -71,7 +71,6 @@ window.CHINABITE_ALIASES_I18N_DRAFT = {
     "mala-gao": { ko: "마라가오", ja: "マーラーカオ", de: "Malay-Kuchen", fr: "Gâteau malais" }, // DRAFT
     "liusha-bao": { ko: "류사바오", ja: "流沙包", de: "Liusha-Brötchen", fr: "Brioche au jaune d'œuf coulant" }, // DRAFT
     "furu-tongcai": { ko: "푸루퉁차이", ja: "腐乳通菜", de: "Wasserspinat mit fermentiertem Tofu", fr: "Liseron d'eau au tofu fermenté" }, // DRAFT
-    "chizhi-fengzhua": { ko: "츠즈펑자오", ja: "豉汁鳳爪", de: "Hähnchenfüße in schwarzer Bohnensoße", fr: "Pattes de poulet sauce haricots noirs" }, // DRAFT
     "dahu-mian": { ko: "다루몐", ja: "打滷麺", de: "Dalu-Nudeln", fr: "Nouilles Dalu" }, // DRAFT
     "daoxiao-mian": { ko: "다오샤오몐", ja: "刀削麺", de: "Daoxiao-Nudeln", fr: "Nouilles Daoxiao" }, // DRAFT
     "youpo-mian": { ko: "유포몐", ja: "油泼麺", de: "Youpo-Nudeln", fr: "Nouilles Youpo" }, // DRAFT
@@ -109,7 +108,7 @@ window.CHINABITE_ALIASES_I18N_DRAFT = {
     "xiangyou-shanhu": { ko: "샹유산후", ja: "響油鱔糊", de: "Sizzling-Aal", fr: "Anguille grésillante" }, // DRAFT
     "tangcu-xiaopai": { ko: "탕추샤오파이", ja: "糖醋小排", de: "Süß-saure Rippchen", fr: "Petites côtes aigre-douces" }, // DRAFT
     "shizitou": { ko: "스쯔터우", ja: "獅子頭", de: "Löwenkopf-Fleischbällchen", fr: "Boulettes Tête de lion" }, // DRAFT
-    "jitouni": { ko: "지터우미", ja: "鶏頭米", de: "Jitouni", fr: "Jitouni" }, // DRAFT
+    "guihua-tangou": { ko: "계화탕우", ja: "桂花糖藕", de: "Guihua Tangou", fr: "Guihua Tangou" }, // DRAFT
     "songshu-guiyu": { ko: "쑹수구이위", ja: "松鼠桂魚", de: "Eichhörnchen-Fisch", fr: "Poisson Écureuil" }, // DRAFT
     "xiefen-xiaolong": { ko: "셰펀샤오룽", ja: "蟹粉小籠", de: "Xiaolongbao mit Krabbenrogen", fr: "Xiaolongbao au crabe" }, // DRAFT
     "qingtang-huoguo": { ko: "칭탕훠궈", ja: "清湯火鍋", de: "Klare Hot-Pot-Brühe", fr: "Fondue au bouillon clair" }, // DRAFT

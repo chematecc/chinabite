@@ -17,7 +17,7 @@
 
 - Beer: Tsingtao 青岛啤酒 · Snow 雪花啤酒 · Yanjing 燕京啤酒 · Harbin 哈尔滨啤酒 · Budweiser 百威啤酒. Soft drinks: Coca-Cola 可口可乐 · Sprite 雪碧 · Fanta 芬达 · Mineral Water 矿泉水 · Coconut Water 椰汁. Tea: Green Tea 绿茶 · Jasmine Tea 茉莉花茶 · Black Tea 红茶 · Iced Black Tea 冰红茶. Juice & traditional: Orange Juice 橙汁 · Fresh Orange Juice 现榨橙汁 · Sour Plum Drink 酸梅汤 · Soy Milk 豆浆. Spirits: Baijiu 白酒 · Red Wine 红酒 · Yellow Wine 黄酒.
 
-## Dishes (125)
+## Dishes (124)
 
 - 麻婆豆腐 (Má pó dòufu) — Mapo Tofu: Tofu, minced pork, chili bean paste. Spice 3/3.
 - 宫保鸡丁 (Gōng bǎo jī dīng) — Kung Pao Chicken: Chicken, peanuts, dried chili. Spice 2/3.
@@ -62,7 +62,6 @@
 - 马拉糕 (Mǎ lā gāo) — Malay Sponge Cake: Steamed sponge, egg, milk. Spice 0/3.
 - 流沙包 (Liú shā bāo) — Salted Egg Yolk Bun: Salted egg yolk, butter, wheat. Spice 0/3.
 - 腐乳通菜 (Fǔ rǔ tōng cài) — Water Spinach with Fermented Tofu: Water spinach, fermented tofu. Spice 0/3.
-- 豉汁凤爪 (Chǐ zhī fèng zhuǎ) — Chicken Feet in Black Bean Sauce: Chicken feet, black bean sauce. Spice 1/3.
 - 打卤面 (Dǎ lǔ miàn) — Noodles in Gravy (Da Lu Mian): Noodles, pork, egg, mushroom. Spice 0/3.
 - 刀削面 (Dāo xiāo miàn) — Knife-Cut Noodles: Noodles, beef, tomato. Spice 1/3.
 - 油泼面 (Yóu pō miàn) — Oil-Splashed Noodles: Noodles, chili oil, garlic. Spice 2/3.
@@ -100,7 +99,7 @@
 - 响油鳝糊 (Xiǎng yóu shàn hú) — Sizzling Eel: Eel, oil, garlic. Spice 0/3.
 - 糖醋小排 (Táng cù xiǎo pái) — Sweet & Sour Pork Ribs (Shanghai): Pork ribs, sugar, vinegar. Spice 0/3.
 - 狮子头 (Shī zi tóu) — Lion's Head Meatballs: Pork meatballs, cabbage. Spice 0/3.
-- 鸡头米 (Jī tóu mǐ) — Fox Nut (Gorgon Fruit): Fox nut seeds, sugar, water. Spice 0/3.
+- 桂花糖藕 (Guì huā táng ǒu) — Sweet Osmanthus Lotus Root: Lotus root, sticky rice, osmanthus, sugar. Spice 0/3.
 - 松鼠桂鱼 (Sōng shǔ guì yú) — Squirrel Fish (Mandarin Fish): Mandarin fish, sweet-sour sauce. Spice 0/3.
 - 蟹粉小笼 (Xiè fěn xiǎo lóng) — Crab Roe Soup Dumplings: Crab roe, pork, wheat wrapper. Spice 0/3.
 - 清汤火锅 (Qīng tāng huǒ guō) — Clear Broth Hot Pot: Clear broth, meat, veg, tofu. Spice 0/3.
@@ -153,7 +152,7 @@
 - Xi'an 西安 — 羊肉泡馍, 肉夹馍, 油泼面. Watch: Huimin Street, look for the green 清真 sign first; lots of lamb, ask about pork. Metro to Zhonglou Station, walk to Huimin Street.
 - Guangzhou 广州 — 烧鹅, 虾饺, 肠粉. Watch: dim sum charges per person (tea fee extra); order by basket, a little at a time. Metro to Beijing Road / Shangxiajiu.
 - Shenzhen 深圳 — 潮汕牛肉丸, 白切鸡, 肠粉. Watch: most eating is in malls and urban villages; small shops are Chinese-only menus, bring your diet card. Metro to Gangxia / Convention Centre.
-- Hangzhou 杭州 — 狮子头, 鸡头米, 豆花. Watch: food runs sweet and light; West Lake area is pricey, ask price first. Metro to Longxiangqiao Station, walk to West Lake.
+- Hangzhou 杭州 — 狮子头, 桂花糖藕, 豆花. Watch: food runs sweet and light; West Lake area is pricey, ask price first. Metro to Longxiangqiao Station, walk to West Lake.
 - Chongqing 重庆 — 清汤火锅, 番茄火锅, 凉粉. Watch: hot pot defaults to beef-tallow red broth, order clear or tomato broth if you can't take spice; noodles default very spicy, say 微辣. Metro to Jiaochangkou Station, walk to Jiefangbei.
 - Kunming 昆明 — 过桥米线, 凉粉, 豆花. Watch: food runs sour-spicy; night-market menus are Chinese-only, bring your diet card; ask if mushrooms are farmed. Metro to Nanping Street Station.
 - Guilin 桂林 — 桂林米粉, 凉拌木耳, 酸梅汤. Watch: Yangshuo West Street, ask price first; beer fish is not in this list, ask how it's made and the price. High-speed rail to Guilin Station, taxi in town; Yangshuo has no metro, take a car to West Street.

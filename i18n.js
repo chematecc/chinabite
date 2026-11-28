@@ -87,7 +87,7 @@ window.CHINABITE_I18N = (function () {
       "nomatch.body": "I know {count} dishes — and “{q}” isn't one of them. Yet.",
       "nomatch.saved": "I saved it on your phone, and we'll add it.",
       "nomatch.askBun": "Ask Bun — he'll check with AI",
-      "nomatch.browse": "Browse all 125 dishes",
+      "nomatch.browse": "Browse all 124 dishes",
       "nomatch.tryAnother": "Try another name for it — the same dish can have two names. Or snap the menu photo and I'll read it.",
       "nomatch.didYouMean": "Did you mean…",
       "toast.pickDiet": "Pick your diet first — tap a chip above."
@@ -169,7 +169,7 @@ window.CHINABITE_I18N = (function () {
       "nomatch.body": "I know {count} dishes — and “{q}” isn't one of them. Yet.",
       "nomatch.saved": "I saved it on your phone, and we'll add it.",
       "nomatch.askBun": "Ask Bun — he'll check with AI",
-      "nomatch.browse": "Browse all 125 dishes",
+      "nomatch.browse": "Browse all 124 dishes",
       "nomatch.tryAnother": "Try another name for it — the same dish can have two names. Or snap the menu photo and I'll read it.",
       "nomatch.didYouMean": "Did you mean…",
       "toast.pickDiet": "Pick your diet first — tap a chip above."

@@ -1,4 +1,4 @@
-// Jade Bite — Day 3-8 validation build. 125 dishes, 12 diet cards, 10 cities.
+// Jade Bite — Day 3-8 validation build. 124 dishes, 12 diet cards, 10 cities.
 // No reference prices — removed 2026-11-27 (Oliver: 参考价格全部去掉).
 window.CHINABITE_DATA = {
   dishes: [
@@ -217,11 +217,6 @@ window.CHINABITE_DATA = {
       hidden:"腐乳是豆制品。",
       spicy:0, flags:["soy"],
       waiter:"这个菜用猪油炒的吗？", note:"腐乳味咸，素菜" },
-    { id:"chizhi-fengzhua", cuisine:"粤菜", overseas:"国内版", zh:"豉汁凤爪", py:"Chǐ zhī fèng zhuǎ", en:"Chicken Feet in Black Bean Sauce",
-      main:"Chicken feet, black bean sauce",
-      hidden:"鸡爪带骨。微辣。",
-      spicy:1, flags:["chicken", "soy", "gluten"],
-      waiter:"这个是鸡爪吗？有骨头吗？", note:"鸡爪带骨，小心" },
     { id:"dahu-mian", cuisine:"京菜", overseas:"国内版", zh:"打卤面", py:"Dǎ lǔ miàn", en:"Noodles in Gravy (Da Lu Mian)",
       main:"Noodles, pork, egg, mushroom",
       hidden:"卤有肉有蛋。",
@@ -407,11 +402,11 @@ window.CHINABITE_DATA = {
       hidden:"猪肉丸。或有蛋。",
       spicy:0, flags:["pork", "egg", "stock"],
       waiter:"这个肉丸是猪肉吗？", note:"狮子头猪肉丸" },
-    { id:"jitouni", cuisine:"苏菜", overseas:"国内版", zh:"鸡头米", py:"Jī tóu mǐ", en:"Fox Nut (Gorgon Fruit)",
-      main:"Fox nut seeds, sugar, water",
-      hidden:"植物种子。甜。",
+    { id:"guihua-tangou", cuisine:"苏菜", overseas:"国内版", zh:"桂花糖藕", py:"Guì huā táng ǒu", en:"Sweet Osmanthus Lotus Root",
+      main:"Lotus root, sticky rice, osmanthus, sugar",
+      hidden:"莲藕糯米。甜。",
       spicy:0, flags:[],
-      waiter:"这个是甜的吗？有肉吗？", note:"鸡头米是种子，甜" },
+      waiter:"这个是甜的吗？有肉吗？", note:"桂花糖藕是甜的素菜" },
     { id:"songshu-guiyu", cuisine:"苏菜", overseas:"国内版", zh:"松鼠桂鱼", py:"Sōng shǔ guì yú", en:"Squirrel Fish (Mandarin Fish)",
       main:"Mandarin fish, sweet-sour sauce",
       hidden:"整鱼。酸甜。",
@@ -768,7 +763,7 @@ window.CHINABITE_DATA = {
       scene:"Tired from walking around West Lake, sit down and order lion's head meatballs with plain rice.",
       mustEat:[
         { id:"shizitou", note:"Big pork meatballs, a bit oily. Best with plain rice." },
-        { id:"jitouni", note:"Fox nut is a seed, not chicken. Seasonal — ask if they have it." },
+        { id:"guihua-tangou", note:"Sweet lotus root stuffed with sticky rice — a sweet vegetarian dish." },
         { id:"douhua", note:"Douhua comes sweet or savoury — ask before ordering." }
       ],
       tip:"Hangzhou food is sweet and light. Restaurants by West Lake are pricey — ask the price first.",

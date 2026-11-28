@@ -31,7 +31,7 @@
   };
   var D = window.CHINABITE_DATA;
   // v5.9: drinks live in drinks.js — same shape as the dishes, separate
-  // file so the 125-dish data is never touched. DR.drinks, DR.aliases.
+  // file so the 124-dish data is never touched. DR.drinks, DR.aliases.
   var DR = window.CHINABITE_DRINKS || { drinks: [], aliases: {} };
   var TEMP_EN = { iced: "Iced", room: "Room temp", hot: "Hot", warm: "Warm" };
   var TEMP_ZH = { iced: "冰镇", room: "常温", hot: "热", warm: "温" };
@@ -493,7 +493,7 @@
       return { k: "ok", t: t(lang, "verdict.ok"), why: containsText(lang, dish) };
     }
     if (id === "treenut") {
-      // No dish carries treenut data yet (0/125) — never call it safe.
+      // No dish carries treenut data yet (0/124) — never call it safe.
       // Unknown, not a skip: ask before ordering.
       return { k: "ask", t: t(lang, "verdict.ask"), why: t(lang, "why.treenutUnknown") };
     }
@@ -664,7 +664,7 @@
   // So "麻婆豆付", "Mapo Tofu", "mapo doufu" and "  麻婆豆腐，" all reduce
   // to comparable keys. Alias keys live ONLY in aliases.js
   // (window.CHINABITE_ALIASES) — never scattered through the code.
-  // Pinyin keys are derived from data.js `py` at runtime, so the 125
+  // Pinyin keys are derived from data.js `py` at runtime, so the 124
   // dishes never need a hand-kept pinyin table.
   function normStr(s) {
     return String(s || "").toLowerCase()
@@ -930,7 +930,7 @@
     $("dymNoBtn").onclick = function () { renderNoMatch(q); };
   }
   // No match at all: never a dead end. Closest dishes to tap, Bun (LLM)
-  // as the fallback, the full 125 list, and one honest tip.
+  // as the fallback, the full 124 list, and one honest tip.
   function renderNoMatch(q) {
     var res = $("result"), lang = getInputLang();
     var cands = suggestDishes(q, 3);
@@ -1027,7 +1027,7 @@
   var typeBtn = $("typeBtn");
   if (typeBtn) { typeBtn.onclick = function () { markWay(typeBtn); $("dishInput").focus(); }; markWay(typeBtn); }
 
-  // Quick-pick dish list (125) — Uber Eats-style rows, English first.
+  // Quick-pick dish list (124) — Uber Eats-style rows, English first.
   // Re-rendered by the top search bar and the category chips (v3.2).
   // ---- v5.1: Signature = every city's 3 must-eats (10 cities x 3 = 30
   // slots, 27 unique dishes; changfen, liangfen and douhua appear in two
@@ -1039,7 +1039,7 @@
       if (SIGNATURE_IDS.indexOf(m.id) < 0) SIGNATURE_IDS.push(m.id);
     });
   });
-  // Dish photos that actually exist (125 files). chat.js keeps the same map
+  // Dish photos that actually exist (124 files). chat.js keeps the same map
   // for its dish cards — keep both in sync. Filenames are pinyin-based,
   // NOT id-based: mapo-tofu -> dish-mapodoufu.webp, huiguo-pork ->
   // dish-huiguorou.webp (the old id-derived filename built 404s for both).
@@ -1048,7 +1048,7 @@
   var DISH_IMG = {
   "baiqie-chicken": "assets/dish-baiqiechicken.webp", "bingfen": "assets/dish-bingfen.webp", "blanched-shrimp": "assets/dish-blanchedshrimp.webp",
   "bobo-chicken": "assets/dish-bobochicken.webp", "changfen": "assets/dish-changfen.webp", "chaoshan-beef-balls": "assets/dish-chaoshanbeefballs.webp",
-  "chashao-bao": "assets/dish-chashaobao.webp", "chengdu-zhongshuijiao": "assets/dish-chengduzhongshuijiao.webp", "chizhi-fengzhua": "assets/dish-chizhifengzhua.webp",
+  "chashao-bao": "assets/dish-chashaobao.webp", "chengdu-zhongshuijiao": "assets/dish-chengduzhongshuijiao.webp",
   "chongqing-noodles": "assets/dish-chongqingnoodles.webp", "congyou-banmian": "assets/dish-congyoubanmian.webp", "congyou-bing": "assets/dish-congyoubing.webp", "dahu-mian": "assets/dish-dahumian.webp",
   "dandan-mian": "assets/dish-dandanmian.webp", "daoxiao-mian": "assets/dish-daoxiaomian.webp", "dapanji": "assets/dish-dapanji.webp",
   "disanxian": "assets/dish-disanxian.webp", "doufunao": "assets/dish-doufunao.webp", "douhua": "assets/dish-douhua.webp",
@@ -1081,7 +1081,7 @@
   // Overseas dishes (2026-11-27, 15) + backfilled photos (3) — filenames are pinyin-based, NOT id-based.
   "beef-broccoli": "assets/dish-beefbroccoli.webp", "chop-suey": "assets/dish-chopsuey.webp", "chow-mein": "assets/dish-chowmein.webp",
   "crab-rangoon": "assets/dish-crabrangoon.webp", "egg-drop-soup": "assets/dish-eggdropsoup.webp", "egg-foo-young": "assets/dish-eggfooyoung.webp",
-  "general-tsos-chicken": "assets/dish-generaltsoschicken.webp", "hot-sour-soup-overseas": "assets/dish-hotsoursoupoverseas.webp", "jitouni": "assets/dish-jitouni.webp",
+  "general-tsos-chicken": "assets/dish-generaltsoschicken.webp", "hot-sour-soup-overseas": "assets/dish-hotsoursoupoverseas.webp", "guihua-tangou": "assets/dish-guihuatangou.webp",
   "kao-qiezi": "assets/dish-kaoqiezi.webp", "lemon-chicken": "assets/dish-lemonchicken.webp", "lo-mein": "assets/dish-lomein.webp",
   "mongolian-beef": "assets/dish-mongolianbeef.webp", "orange-chicken": "assets/dish-orangechicken.webp", "sesame-chicken": "assets/dish-sesamechicken.webp",
   "suchao-sansi": "assets/dish-suchaosansi.webp", "sweet-sour-pork": "assets/dish-sweetsourpork.webp", "wonton-soup": "assets/dish-wontonsoup.webp"
@@ -1710,10 +1710,10 @@
   // v6.8b: HD originals (480px) in the tiles, not the -240 thumbs.
   var DIET_IMG = { vegetarian: "assets/dish-qingchaoshishu-240.webp", vegan: "assets/dish-luohanzhai-240.webp", halal: "assets/dish-halalbeefnoodles-240.webp", peanut: "assets/dish-kungpao-240.webp", shellfish: "assets/dish-blanchedshrimp-240.webp", egg: "assets/dish-tomatoegg-240.webp", dairy: "assets/dish-shuangpinai-240.webp", gluten: "assets/dish-jiaozi-240.webp", treenut: "assets/human/nuts-bowl-sq.jpg", sesame: "assets/dish-sesamechicken-240.webp", soy: "assets/dish-mapodoufu-240.webp", nospicy: "assets/dish-baiqiechicken-240.webp" };
   // v6.10: diet cards are one inset grouped list (Apple grouped list
-  // rows) — 52px thumb + title + "N of 125 dishes" + chevron. The whole
+  // rows) — 52px thumb + title + "N of 124 dishes" + chevron. The whole
   // row opens the Enlarge overlay; Share stays a small button on the
   // row. Counts are computed live from singleVerdict (treenut is 0 of
-  // 125 — no dish carries treenut data — so its row says so and shows
+  // 124 — no dish carries treenut data — so its row says so and shows
   // an Unknown tag instead of a count).
   function renderDietCards() {
     if (!cardsEl) return;
@@ -1734,10 +1734,10 @@
         : '<img class="thumb" src="assets/china-bite-mascot-dumpling-288.webp" alt="Bun" width="52" height="52" loading="lazy">';
       var sub, tag = "";
       if (c.id === "treenut") {
-        sub = '0 of 125 confirmed — <span class="hl">ask them first</span>';
+        sub = '0 of 124 confirmed — <span class="hl">ask them first</span>';
         tag = ' <span class="tag soft">Unknown</span>';
       } else {
-        sub = esc(n + " of 125 dishes");
+        sub = esc(n + " of 124 dishes");
       }
       row.innerHTML = photo +
         '<div class="row-body"><div class="row-title"><b>' + esc(c.en) + "</b>" + tag + '</div><div class="row-sub">' + sub + "</div></div>" +
@@ -2114,7 +2114,7 @@
   // Photo stays on this device, never uploaded. OCR runs in the browser
   // via Tesseract.js (CDN, lazy-loaded on first photo). If the library
   // can't load here (offline / CDN blocked), we say so honestly and fall
-  // back to the 125-dish quick pick — we never pretend OCR worked.
+  // back to the 124-dish quick pick — we never pretend OCR worked.
   // Low confidence (< 60) or no dish matched: "didn't recognise, tap one
   // below" — never guess. Native OCR is still the App-stage feature.
   var OCR_URL = "https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";
@@ -2313,7 +2313,7 @@
   // ---- App mode nav: views (v5.0 — homepage IS the Uber Eats browse;
   // chat is a feature behind the Bun button / Ask Bun, not the homepage) ----
   // v5.0: Home = search + chips + hero + Ask Bun + Signature + cities +
-  // decode teaser. Search = the decoder (type / voice / camera / 125
+  // decode teaser. Search = the decoder (type / voice / camera / 124
   // quick-pick). Orders = QR order slip. Account = one clean page:
   // Register (email, blinking) + Share + Invite + FAQ. No Kit zone, no
   // separate paid zone (v6.1). Unlock lives only in Account — everywhere
