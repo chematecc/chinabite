@@ -1018,9 +1018,14 @@
     // Let the tap on a suggestion land before the list disappears.
     setTimeout(hideSuggestions, 200);
   });
-  // "Type" is one of the three ways in — it just focuses the input.
+  // v6.10: the three ways in are one segmented control — the tapped
+  // segment gets the .on state (Apple segmented control). Type is the
+  // default selected segment.
+  function markWay(btn) {
+    document.querySelectorAll(".decode-ways .way-btn").forEach(function (b) { b.classList.toggle("on", b === btn); });
+  }
   var typeBtn = $("typeBtn");
-  if (typeBtn) typeBtn.onclick = function () { $("dishInput").focus(); };
+  if (typeBtn) { typeBtn.onclick = function () { markWay(typeBtn); $("dishInput").focus(); }; markWay(typeBtn); }
 
   // Quick-pick dish list (125) — Uber Eats-style rows, English first.
   // Re-rendered by the top search bar and the category chips (v3.2).
@@ -1128,7 +1133,15 @@
       shown++;
       var b = document.createElement("button");
       b.className = "dish"; b.type = "button";
-      b.innerHTML = '<span class="en">' + esc(d.en) + '</span><br><span class="zh">' + esc(d.zh) + " · Spice " + d.spicy + "/3</span>";
+      // v6.8: menu rows get a 56px thumb (the -240 file, full-size as
+      // fallback) + a "Check ›" cue. No photo at all -> first Chinese
+      // character on an accent-soft tile, never a wrong dish's photo.
+      var dImg = DISH_IMG[d.id];
+      var dThumb = dImg ? dImg.replace(/\.webp$/, "-240.webp") : null;
+      var dThumbHtml = dThumb
+        ? '<span class="dish-thumb"><img src="' + dThumb + '" alt="" width="64" height="64" loading="lazy" onerror="this.onerror=null;this.src=\'' + dImg + '\'"></span>'
+        : '<span class="dish-thumb-ph" aria-hidden="true"><span class="ph-zh">' + esc((d.zh || "?").charAt(0)) + '</span></span>';
+      b.innerHTML = dThumbHtml + '<span class="dish-text"><span class="en">' + esc(d.en) + '</span><br><span class="zh">' + esc(d.zh) + " · Spice " + d.spicy + "/3</span></span>" + '<span class="dish-go">Check ›</span>';
       // Same verdict path as the chat: checkDish -> decode -> renderResult.
       b.onclick = function () { window.checkDish(d.zh); };
       el.appendChild(b);
@@ -1152,6 +1165,8 @@
   // with its 3 dishes (the picture is part of the reveal). City photos
   // come from the same map as the Cities view.
   var CITY_IMG = { beijing: "assets/city-beijing.webp", chengdu: "assets/city-chengdu.webp", chongqing: "assets/city-chongqing.webp", guangzhou: "assets/city-guangzhou.webp", guilin: "assets/city-guilin.webp", hangzhou: "assets/city-hangzhou.webp", kunming: "assets/city-kunming.webp", shanghai: "assets/city-shanghai.webp", shenzhen: "assets/city-shenzhen.webp", xian: "assets/city-xian.webp" };
+  var CITY_ALT = { shanghai: "Xintiandi, Shanghai" };
+  function cityAlt(c) { return CITY_ALT[c.id] || (esc(c.en) + " street scene"); }
   var selectedCity = (currentLocation.cityOrder && currentLocation.cityOrder[0]) || "shanghai"; // v6.7: location default (was hardcoded Shanghai in v6.5); null = nothing picked yet (only via the placeholder option)
   var renderSigGroups = null;
   function renderHomeSignature() {
@@ -1166,13 +1181,16 @@
     });
     function sigCard(d) {
       var b = document.createElement("button");
-      b.className = "story"; b.type = "button";
+      b.className = "sig-card"; b.type = "button";
       var img = DISH_IMG[d.id];
-      var thumbImg = img ? img.replace(/\.webp$/, "-240.webp") : null;
-      var thumb = thumbImg
-        ? '<span class="thumb"><img src="' + thumbImg + '" alt="' + esc(d.en) + '" width="120" height="120" loading="lazy" onerror="this.onerror=null;this.src=\'' + img + '\'"></span>'
-        : '<span class="thumb thumb-ph" aria-hidden="true"><span class="ph-zh">' + esc((d.zh || "?").charAt(0)) + '</span></span>';
-      b.innerHTML = thumb + '<span><span class="en">' + esc(d.en) + '</span><span class="zh">' + esc(d.zh) + '</span><span class="spice">Spicy ' + d.spicy + '/3</span></span>';
+      // v6.8b: HD originals, not the -240 thumbs — the local full-size
+      // files are 480px wide, so a 200px card gets a 2.4x source.
+      // Tall photo (220px) + cover crop = a tight close-up, not a
+      // distant plate shot. No photo -> character tile.
+      var thumb = img
+        ? '<img src="' + img + '" alt="' + esc(d.en) + '" width="200" height="150" loading="lazy">'
+        : '<span class="sig-ph" aria-hidden="true"><span class="ph-zh">' + esc((d.zh || "?").charAt(0)) + '</span></span>';
+      b.innerHTML = thumb + '<span class="sig-body"><span class="en">' + esc(d.en) + '</span><span class="zh">' + esc(d.zh) + '</span><span class="spice">Spicy ' + d.spicy + '/3</span></span>';
       // Same verdict path as everywhere else: checkDish -> decode -> renderResult.
       b.onclick = function () { window.checkDish(d.zh); };
       return b;
@@ -1188,15 +1206,19 @@
         var img = CITY_IMG[g.city.id];
         if (img) {
           var ph = document.createElement("p");
-          ph.innerHTML = '<img class="city-img" src="' + img + '" alt="' + esc(g.city.en) + ' street scene" width="491" height="327" loading="lazy">';
+          ph.innerHTML = '<img class="city-img" src="' + img + '" alt="' + cityAlt(g.city) + '" width="491" height="327" loading="lazy">';
           wrap.appendChild(ph);
         }
         var h = document.createElement("p");
         h.className = "story-city sig-city";
         h.textContent = g.city.en;
         wrap.appendChild(h);
+        var hint = document.createElement("p");
+        hint.className = "swipe-hint";
+        hint.textContent = "Swipe →";
+        wrap.appendChild(hint);
         var grid = document.createElement("div");
-        grid.className = "story-grid";
+        grid.className = "sig-row";
         g.dishes.forEach(function (d) { grid.appendChild(sigCard(d)); });
         wrap.appendChild(grid);
       });
@@ -1208,6 +1230,13 @@
     selectedCity = id || null;
     var sel = $("citySelect");
     if (sel && sel.value !== (selectedCity || "")) sel.value = selectedCity || "";
+    // v6.8: keep the city strip's active card in sync with the select.
+    var strip = $("cityStrip");
+    if (strip) Array.prototype.forEach.call(strip.querySelectorAll(".city-card"), function (el) {
+      var on = el.getAttribute("data-city") === (selectedCity || "");
+      el.classList.toggle("on", on);
+      el.setAttribute("aria-selected", on ? "true" : "false");
+    });
     if (renderSigGroups) renderSigGroups(selectedCity);
     if (!selectedCity || noScroll) return;
     var hs = $("homeSignature");
@@ -1232,6 +1261,36 @@
       sel.appendChild(o);
     });
     sel.value = selectedCity || ""; // v6.7: location default (was hardcoded Shanghai)
+    // v6.8: the visible city picker is now a horizontal snap-scroll
+    // strip of photo cards (Gen Z social feel). The <select> stays in
+    // the DOM, hidden — its logic (location upgrades, localStorage,
+    // selectCity) keeps working untouched. The strip is rebuilt here
+    // on every location upgrade, same as the select options.
+    var strip = $("cityStrip");
+    if (strip) {
+      strip.innerHTML = "";
+      currentLocation.cityOrder.forEach(function (id) {
+        var c = cityById(id);
+        if (!c) return;
+        var card = document.createElement("button");
+        card.className = "city-card" + (id === selectedCity ? " on" : "");
+        card.type = "button";
+        card.setAttribute("role", "option");
+        card.setAttribute("data-city", c.id);
+        card.setAttribute("aria-selected", id === selectedCity ? "true" : "false");
+        var cImg = CITY_IMG[c.id];
+        // Circle chip: square center-crop file, so cover never cuts the landmark.
+        var cImgSq = cImg ? cImg.replace(/\.webp$/, "-sq.webp") : null;
+        card.innerHTML = (cImgSq ? '<img src="' + cImgSq + '" alt="" width="72" height="72" loading="lazy">' : "") +
+          "<p>" + esc(c.en) + "<small>" + (c.mustEat || []).length + " must-eats</small></p>";
+        card.onclick = function () {
+          cityUserPicked = true; // a real user pick beats later location upgrades
+          try { localStorage.setItem(LOC_CITY_KEY, c.id); } catch (e) {}
+          selectCity(c.id);
+        };
+        strip.appendChild(card);
+      });
+    }
     // onchange (not addEventListener): renderHomeCities() runs again on
     // every location upgrade, and the assignment stays single.
     sel.onchange = function () {
@@ -1643,25 +1702,60 @@
   // renderDietCards() is a function (not a one-off loop) so the
   // zh-variant toggle can rebuild the cards in the new variant.
   var cardsEl = $("dietCards");
+  // v6.8: diet tiles are photo-first — the tile photo IS the thing to
+  // watch (peanut card shows kung pao, gluten shows dumplings). Tree
+  // nut has no dish photo (0 dishes carry treenut data), so the tile
+  // shows the nuts themselves (Unsplash, Charles Chen). The full
+  // Chinese card still lives behind Enlarge, unchanged.
+  // v6.8b: HD originals (480px) in the tiles, not the -240 thumbs.
+  var DIET_IMG = { vegetarian: "assets/dish-qingchaoshishu-240.webp", vegan: "assets/dish-luohanzhai-240.webp", halal: "assets/dish-halalbeefnoodles-240.webp", peanut: "assets/dish-kungpao-240.webp", shellfish: "assets/dish-blanchedshrimp-240.webp", egg: "assets/dish-tomatoegg-240.webp", dairy: "assets/dish-shuangpinai-240.webp", gluten: "assets/dish-jiaozi-240.webp", treenut: "assets/human/nuts-bowl-sq.jpg", sesame: "assets/dish-sesamechicken-240.webp", soy: "assets/dish-mapodoufu-240.webp", nospicy: "assets/dish-baiqiechicken-240.webp" };
+  var DIET_SUMMARY = { vegetarian: "No meat, no fish, no seafood.", vegan: "No meat, fish, egg, dairy, honey.", halal: "No pork, no lard, no alcohol.", peanut: "No peanuts, peanut oil or sauce.", shellfish: "No shrimp, crab or shellfish.", egg: "No egg.", dairy: "No milk, butter or cream.", gluten: "No wheat, no soy sauce.", treenut: "No tree nuts yet — ask first, none checked.", sesame: "No sesame or sesame oil.", soy: "No soy, tofu or soy sauce.", nospicy: "No chili, no spicy food." };
+  // v6.10: diet cards are one inset grouped list (Apple grouped list
+  // rows) — 52px thumb + title + "N of 125 dishes" + chevron. The whole
+  // row opens the Enlarge overlay; Share stays a small button on the
+  // row. Counts are computed live from singleVerdict (treenut is 0 of
+  // 125 — no dish carries treenut data — so its row says so and shows
+  // an Unknown tag instead of a count).
   function renderDietCards() {
     if (!cardsEl) return;
+    cardsEl.className = "group";
     cardsEl.innerHTML = "";
     D.cards.forEach(function (c) {
-      var div = document.createElement("div");
-      div.className = "subcard";
-      div.innerHTML = "<h3>" + esc(c.en) + "</h3>" +
-        c.lines.map(function (l) { return "<p class=\"bigzh\">" + esc(zhOut(l)) + "</p>"; }).join("") +
-        '<button type="button" class="ghost">Enlarge</button> ' +
-        '<button type="button" class="ghost">Share</button>';
-      div.querySelectorAll("button")[0].onclick = function () {
+      var n = 0;
+      (D.dishes || []).forEach(function (d) {
+        if (singleVerdict(c.id, d, "en").k === "ok") n++;
+      });
+      var row = document.createElement("div");
+      row.className = "row";
+      row.setAttribute("role", "button");
+      row.setAttribute("tabindex", "0");
+      var dImg = DIET_IMG[c.id];
+      var photo = dImg
+        ? '<img class="thumb" src="' + dImg + '" alt="' + esc(c.en) + '" width="52" height="52" loading="lazy">'
+        : '<img class="thumb" src="assets/china-bite-mascot-dumpling-288.webp" alt="Bun" width="52" height="52" loading="lazy">';
+      var sub, tag = "";
+      if (c.id === "treenut") {
+        sub = '0 of 125 confirmed — <span class="hl">ask them first</span>';
+        tag = ' <span class="tag soft">Unknown</span>';
+      } else {
+        sub = esc(n + " of 125 dishes");
+      }
+      row.innerHTML = photo +
+        '<div class="row-body"><div class="row-title"><b>' + esc(c.en) + "</b>" + tag + '</div><div class="row-sub">' + sub + "</div></div>" +
+        '<button type="button" class="row-share">Share</button><span class="chev">›</span>';
+      row.onclick = function () {
         overlayCtx = { kind: "diet", card: c };
         renderCardOverlay();
         $("cardOverlay").classList.remove("hidden");
       };
-      div.querySelectorAll("button")[1].onclick = function () {
+      row.onkeydown = function (e) {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); row.onclick(); }
+      };
+      row.querySelector(".row-share").onclick = function (e) {
+        e.stopPropagation();
         shareText(c.en + " card — Jade Bite", c.lines.map(zhOut).join("\n") + "\nMade with Jade Bite: " + location.origin + location.pathname + "?ref=" + state.myRef);
       };
-      cardsEl.appendChild(div);
+      cardsEl.appendChild(row);
     });
   }
   renderDietCards();
@@ -1700,10 +1794,23 @@
     var w = temp === "iced" ? (dr.icedWord || "冰") : temp === "room" ? "常温" : temp === "hot" ? "热" : "温";
     return "请给我一" + dr.unit + w + dr.zh + "，谢谢。";
   }
+  // v6.8: drink rows get a 56px thumb — the real photo where one
+  // exists (suanmeitang), otherwise an accent-soft tile with the
+  // drink type. Never a wrong drink's photo, never a fake one.
+  // v6.9: category photos (Unsplash) for beer + tea — a glass of beer
+  // stands for the beer category, the tea set for the tea category;
+  // never a specific brand's photo on another brand's row.
+  var DRINK_IMG = { suanmeitang: "assets/dish-suanmeitang-240.webp" };
+  var DRINK_CAT_IMG = { beer: "assets/human/beer-toast-sq.jpg", tea: "assets/human/tea-set-sq.jpg" };
+  var DRINK_CAT_LABEL = { beer: "Beer", soft: "Soft", tea: "Tea", juice: "Juice", spirit: "Spirit" };
   function drinkCardHTML(dr, pfx) {
     var temp = drinkTemp[dr.id] || dr.defaultTemp;
+    var drImg = DRINK_IMG[dr.id] || DRINK_CAT_IMG[dr.cat];
+    var thumb = drImg
+      ? '<span class="drink-thumb"><img src="' + drImg + '" alt="" width="56" height="56" loading="lazy"></span>'
+      : '<span class="drink-thumb-tile">' + esc(DRINK_CAT_LABEL[dr.cat] || dr.cat) + "</span>";
     return '<div class="subcard drink-card" id="' + pfx + 'Card-' + dr.id + '">' +
-      "<h3>" + esc(dr.en) + " · " + esc(dr.zh) + "</h3>" +
+      '<div class="drink-top">' + thumb + "<h3>" + esc(dr.en) + " · " + esc(dr.zh) + "</h3></div>" +
       '<p class="small">' + esc(dr.py) + "</p>" +
       "<p>" + esc(dr.note) + "</p>" +
       '<div class="drink-temp" role="group" aria-label="Temperature">' +
@@ -1818,7 +1925,7 @@
       div.className = "subcard";
       var cityImg = CITY_IMG[c.id];
       var html = "<h3>" + esc(c.en) + "</h3>" +
-        (cityImg ? "<img class=\"city-img\" src=\"" + cityImg + "\" alt=\"" + esc(c.en) + " street scene\" width=\"491\" height=\"327\" loading=\"lazy\">" : "") +
+        (cityImg ? "<img class=\"city-img\" src=\"" + cityImg + "\" alt=\"" + cityAlt(c) + "\" width=\"491\" height=\"327\" loading=\"lazy\">" : "") +
         "<p>" + esc(c.scene) + "</p>" +
         "<p><b>3 must-eat dishes</b></p>" +
         (c.mustEat || []).map(function (m) {
@@ -1990,6 +2097,7 @@
   }
   if (voiceBtn) {
     voiceBtn.onclick = function () {
+      markWay(voiceBtn);
       // Pass the spoken language through: a Latin-script transcript
       // (e.g. German "Mapo Tofu") would otherwise detect as English.
       speakInto($("dishInput"), $("voiceStatus"), function () { decode(langFromVoice(voiceLang)); });
@@ -2048,7 +2156,7 @@
   }
   var cameraBtn = $("cameraBtn"), photoInput = $("photoInput");
   if (cameraBtn && photoInput) {
-    cameraBtn.onclick = function () { photoInput.click(); };
+    cameraBtn.onclick = function () { markWay(cameraBtn); photoInput.click(); };
     photoInput.addEventListener("change", function () {
       var f = photoInput.files && photoInput.files[0];
       if (!f) return;
@@ -2216,11 +2324,11 @@
   // else just links there. Views are show/hide only — all sections stay
   // in the DOM, so decode, deep links (#/dish/, #/diet/) and the order
   // slip keep working.
-  var VIEW_SECTIONS = ["homeView", "chatView", "chatComposer", "decoder", "dishPicker", "qrSection", "dietSection", "drinksSection", "adSection", "citiesSection", "meituanSection", "shareSection", "referral", "faqSection", "subscribe"];
+  var VIEW_SECTIONS = ["largeTitle", "homeView", "chatView", "chatComposer", "decoder", "dishPicker", "qrSection", "dietSection", "drinksSection", "adSection", "citiesSection", "meituanSection", "shareSection", "referral", "faqSection", "subscribe"];
   var VIEWS = {
-    home: ["homeView", "decoder", "dishPicker"],
+    home: ["largeTitle", "homeView", "decoder", "dishPicker"],
     chat: ["chatView", "chatComposer"],
-    search: ["decoder", "dishPicker"],
+    search: ["largeTitle", "decoder", "dishPicker"],
     orders: ["qrSection"],
     cities: ["citiesSection"],
     diet: ["dietSection"],
@@ -2230,7 +2338,7 @@
     meituan: ["meituanSection"],
     subscribe: ["subscribe"],
   };
-  var SECTION_VIEW = { homeView: "home", chatView: "chat", chatComposer: "chat", decoder: "search", dishPicker: "search", qrSection: "orders", dietSection: "diet", drinksSection: "drinks", adSection: "search", citiesSection: "cities", meituanSection: "meituan", shareSection: "account", referral: "account", faqSection: "account", subscribe: "subscribe" };
+  var SECTION_VIEW = { largeTitle: "home", homeView: "home", chatView: "chat", chatComposer: "chat", decoder: "search", dishPicker: "search", qrSection: "orders", dietSection: "diet", drinksSection: "drinks", adSection: "search", citiesSection: "cities", meituanSection: "meituan", shareSection: "account", referral: "account", faqSection: "account", subscribe: "subscribe" };
   var currentView = "chat";
   function showView(name) {
     // v6.6: any view switch closes the chat drawer first, instantly —
@@ -2255,6 +2363,14 @@
     // switch views but leave the card collapsed, so it looked dead.
     if (name === "orders") {
       var q = $("qrSection"); if (q) q.open = true;
+    }
+    // 28 Nov 2026: Diet / Drinks views hold a single card each — open it
+    // on entry, otherwise the view is one collapsed card over blank space.
+    if (name === "diet") {
+      var ds = $("dietSection"); if (ds) ds.open = true;
+    }
+    if (name === "drinks") {
+      var dr = $("drinksSection"); if (dr) dr.open = true;
     }
     window.scrollTo(0, 0);
     document.querySelectorAll(".bottomnav a").forEach(function (x) {
@@ -2530,6 +2646,12 @@
   // ---- Paid preview toggle (no real payment) ----
   // PAYWALL：DEV_MODE 下强制等同已购（paidPreview=true），开关锁定在 ON，
   // 广告区保持隐藏；DEV_MODE=false 时恢复手动切换。
+  // v6.10: the paid-preview checkbox is an iOS switch — the visual
+  // .switch span follows the real checkbox.
+  function syncPaidSwitch() {
+    var sw = $("paidToggleSwitch"), tgl = $("paidToggle");
+    if (sw && tgl) sw.classList.toggle("on", !!tgl.checked);
+  }
   $("paidToggle").onchange = function (e) {
     if (DEV_MODE) {
       paidPreview = true;
@@ -2537,6 +2659,7 @@
       $("adSection").classList.add("hidden");
       $("paidNote").textContent = "Dev mode: all unlocked, no ads.";
       updateCounts();
+      syncPaidSwitch();
       return;
     }
     paidPreview = e.target.checked;
@@ -2545,7 +2668,9 @@
       ? "Paid preview ON: no ads. Unlimited."
       : "Free version. Demo ads on.";
     updateCounts();
+    syncPaidSwitch();
   };
+  syncPaidSwitch();
 
 
   // ---- Theme follows the phone (v3.4) ----
@@ -2556,7 +2681,7 @@
     var dark = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches;
     document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute("content", dark ? "#0A0E14" : "#ffffff");
+    if (meta) meta.setAttribute("content", dark ? "#000000" : "#F2F2F7");
   }
   syncThemeFromSystem();
   try {
@@ -2575,7 +2700,7 @@
     var adSec = $("adSection");
     if (adSec) adSec.classList.add("hidden");
     var paidTgl = $("paidToggle");
-    if (paidTgl) { paidTgl.checked = true; }
+    if (paidTgl) { paidTgl.checked = true; syncPaidSwitch(); }
     var paidN = $("paidNote");
     if (paidN) paidN.textContent = "Dev mode: all unlocked, no ads.";
     document.querySelectorAll(".paywall-lock").forEach(function (el) { el.classList.add("hidden"); });
