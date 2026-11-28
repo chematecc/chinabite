@@ -1709,7 +1709,6 @@
   // Chinese card still lives behind Enlarge, unchanged.
   // v6.8b: HD originals (480px) in the tiles, not the -240 thumbs.
   var DIET_IMG = { vegetarian: "assets/dish-qingchaoshishu-240.webp", vegan: "assets/dish-luohanzhai-240.webp", halal: "assets/dish-halalbeefnoodles-240.webp", peanut: "assets/dish-kungpao-240.webp", shellfish: "assets/dish-blanchedshrimp-240.webp", egg: "assets/dish-tomatoegg-240.webp", dairy: "assets/dish-shuangpinai-240.webp", gluten: "assets/dish-jiaozi-240.webp", treenut: "assets/human/nuts-bowl-sq.jpg", sesame: "assets/dish-sesamechicken-240.webp", soy: "assets/dish-mapodoufu-240.webp", nospicy: "assets/dish-baiqiechicken-240.webp" };
-  var DIET_SUMMARY = { vegetarian: "No meat, no fish, no seafood.", vegan: "No meat, fish, egg, dairy, honey.", halal: "No pork, no lard, no alcohol.", peanut: "No peanuts, peanut oil or sauce.", shellfish: "No shrimp, crab or shellfish.", egg: "No egg.", dairy: "No milk, butter or cream.", gluten: "No wheat, no soy sauce.", treenut: "No tree nuts yet — ask first, none checked.", sesame: "No sesame or sesame oil.", soy: "No soy, tofu or soy sauce.", nospicy: "No chili, no spicy food." };
   // v6.10: diet cards are one inset grouped list (Apple grouped list
   // rows) — 52px thumb + title + "N of 125 dishes" + chevron. The whole
   // row opens the Enlarge overlay; Share stays a small button on the
@@ -1943,9 +1942,6 @@
   renderCities();
 
   // ---- Share helpers ----
-  function dishUrl(dish) {
-    return location.origin + location.pathname + "?ref=" + state.myRef + "#/dish/" + dish.id;
-  }
   function setMeta(name, content) {
     var el = document.querySelector('meta[name="' + name + '"]') ||
              document.querySelector('meta[property="' + name + '"]');
