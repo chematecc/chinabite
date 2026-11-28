@@ -492,6 +492,11 @@
       if (has("soy")) return { k: "no", t: t(lang, "verdict.no"), why: t(lang, "why.soy") };
       return { k: "ok", t: t(lang, "verdict.ok"), why: containsText(lang, dish) };
     }
+    if (id === "treenut") {
+      // No dish carries treenut data yet (0/125) — never call it safe.
+      // Unknown, not a skip: ask before ordering.
+      return { k: "ask", t: t(lang, "verdict.ask"), why: t(lang, "why.treenutUnknown") };
+    }
     if (id === "gluten") {
       if (has("gluten")) return { k: "no", t: t(lang, "verdict.no"), why: t(lang, "why.gluten", { contains: containsText(lang, dish) }) };
       return { k: "ok", t: t(lang, "verdict.ok"), why: containsText(lang, dish) };
@@ -970,14 +975,16 @@
     }
   }
   $("decodeBtn").onclick = function () { decode(); };
-  // Menu button (27 Nov 2026, Oliver): opens the dish list below
-  // ("Or tap a dish") — the same list, no new page. Just expands it
+  // Dish picker (27 Nov 2026, Oliver; moved to the bottom of the page
+  // 28 Nov 2026): the "Menu" button in the decoder and the Dishes entry
+  // in the bottom nav open the same list — no new page. Just expands it
   // and scrolls it into view.
-  var menuBtn = $("menuBtn");
-  if (menuBtn) menuBtn.onclick = function () {
+  function openDishPicker() {
     var p = $("dishPicker");
     if (p) { p.open = true; p.scrollIntoView({ behavior: "smooth", block: "start" }); }
-  };
+  }
+  var menuBtn = $("menuBtn");
+  if (menuBtn) menuBtn.onclick = openDishPicker;
   $("dishInput").addEventListener("keydown", function (e) { if (e.key === "Enter") decode(); });
   // Live suggestions while typing: up to 3 dishes, tap one to check it.
   // Debounced so typing stays smooth; hidden on empty input and on decode.
@@ -2209,11 +2216,11 @@
   // else just links there. Views are show/hide only — all sections stay
   // in the DOM, so decode, deep links (#/dish/, #/diet/) and the order
   // slip keep working.
-  var VIEW_SECTIONS = ["homeView", "chatView", "chatComposer", "decoder", "qrSection", "dietSection", "drinksSection", "adSection", "citiesSection", "meituanSection", "shareSection", "referral", "faqSection", "subscribe"];
+  var VIEW_SECTIONS = ["homeView", "chatView", "chatComposer", "decoder", "dishPicker", "qrSection", "dietSection", "drinksSection", "adSection", "citiesSection", "meituanSection", "shareSection", "referral", "faqSection", "subscribe"];
   var VIEWS = {
-    home: ["homeView"],
+    home: ["homeView", "decoder", "dishPicker"],
     chat: ["chatView", "chatComposer"],
-    search: ["decoder"],
+    search: ["decoder", "dishPicker"],
     orders: ["qrSection"],
     cities: ["citiesSection"],
     diet: ["dietSection"],
@@ -2223,7 +2230,7 @@
     meituan: ["meituanSection"],
     subscribe: ["subscribe"],
   };
-  var SECTION_VIEW = { homeView: "home", chatView: "chat", chatComposer: "chat", decoder: "search", qrSection: "orders", dietSection: "diet", drinksSection: "drinks", adSection: "search", citiesSection: "cities", meituanSection: "meituan", shareSection: "account", referral: "account", faqSection: "account", subscribe: "subscribe" };
+  var SECTION_VIEW = { homeView: "home", chatView: "chat", chatComposer: "chat", decoder: "search", dishPicker: "search", qrSection: "orders", dietSection: "diet", drinksSection: "drinks", adSection: "search", citiesSection: "cities", meituanSection: "meituan", shareSection: "account", referral: "account", faqSection: "account", subscribe: "subscribe" };
   var currentView = "chat";
   function showView(name) {
     // v6.6: any view switch closes the chat drawer first, instantly —
@@ -2429,7 +2436,7 @@
     var f = $(id);
     if (f) { f.open = true; f.scrollIntoView({ behavior: "smooth", block: "start" }); }
   }
-  // Homepage order v3.0: signature dishes first, decoder last.
+  // Homepage order (28 Nov 2026, Oliver): decoder first — it's the hero on Home.
   // Tapping a dish anywhere (signature card, city must-eat, deep link,
   // search result) must switch to the Search view FIRST, otherwise the
   // verdict would render inside the hidden decoder and the user would
@@ -2459,6 +2466,25 @@
       e.preventDefault();
       showView(a.getAttribute("data-view"));
     });
+  });
+  // Bottom nav, Decode (28 Nov 2026, Oliver): Decode is the App's main
+  // feature, so its centre button also scrolls to the decoder and focuses
+  // the input — the user can type at once. Runs after the generic
+  // [data-view] handler above, which already called showView("search").
+  var navDecode = $("navDecode");
+  if (navDecode) navDecode.addEventListener("click", function () {
+    var d = $("decoder");
+    if (d) d.scrollIntoView({ behavior: "smooth", block: "start" });
+    var inp = $("dishInput");
+    if (inp) inp.focus({ preventScroll: true });
+  });
+  // Bottom nav, Dishes: same picker as the decoder's Menu button.
+  var navDishes = $("navDishes");
+  if (navDishes) navDishes.addEventListener("click", function (e) {
+    e.preventDefault();
+    showView("search");
+    openDishPicker();
+    document.querySelectorAll(".bottomnav a").forEach(function (x) { x.classList.toggle("active", x === navDishes); });
   });
   // v5.2: keep aria-expanded in sync on every <details> summary.
   // <summary> is natively keyboard-operable (Enter/Space); the attribute

@@ -92,6 +92,7 @@
     log.appendChild(row);
     if (opts.cards) row.querySelector(".bubble").appendChild(renderCards(opts.cards));
     if (opts.nextSteps) row.querySelector(".bubble").appendChild(renderNextSteps(opts.nextSteps));
+    if (opts.suggestions) row.querySelector(".bubble").appendChild(renderSuggestions(opts.suggestions));
     scrollDown();
     return row;
   }
@@ -240,6 +241,64 @@
     return wrap;
   }
 
+  // ---- Follow-up Suggestions (Learn from Ask Lucy, 2026-11-28) ----
+  // Up to 3 tappable follow-ups under a Bun reply, like Lucy's
+  // Suggestions after every answer. Tapping one asks it straight away
+  // — no typing. Each item is {label, onClick} or a plain string
+  // (plain strings go through handleUserText).
+  function renderSuggestions(list) {
+    var wrap = document.createElement("div");
+    wrap.className = "suggestions";
+    (list || []).slice(0, 3).forEach(function (item) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "sug";
+      if (typeof item === "string") {
+        b.textContent = item;
+        b.onclick = function () { handleUserText(item); };
+      } else {
+        b.textContent = item.label;
+        b.onclick = item.onClick;
+      }
+      wrap.appendChild(b);
+    });
+    return wrap;
+  }
+  // Dish follow-ups: all answered locally, no LLM needed.
+  // "Write a line for the waiter" shows this dish's waiter sentence;
+  // "Something similar but milder?" picks gentler dishes from the same
+  // cuisine (any cuisine if none) that pass the current profile;
+  // "What should I order here?" is the normal 3-dish recommendation.
+  function dishSuggestions(dish) {
+    return [
+      { label: "Write a line for the waiter", onClick: function () {
+        addBun("Show them this:<p class=\"bigzh\">" + esc(dish.waiter) + "</p><p class=\"small\">" + esc(dish.py || "") + "</p>", { suggestions: dishSuggestions(dish) });
+      } },
+      { label: "Something similar but milder?", onClick: function () {
+        var milder = D.dishes.filter(function (d) {
+          return d.id !== dish.id && d.spicy < dish.spicy && CB.verdictFor(d).k !== "no";
+        });
+        var same = dish.cuisine ? milder.filter(function (d) { return d.cuisine === dish.cuisine; }) : [];
+        var picks = (same.length ? same : milder).slice(0, 3);
+        if (!picks.length) {
+          addBun("This one's already the mildest I know — nothing gentler on my list. Want the 3 must-eats instead?", { suggestions: dishSuggestions(dish) });
+          return;
+        }
+        addBun("Here's something gentler — same kind of food, less heat:", { cards: picks, suggestions: dishSuggestions(dish) });
+      } },
+      { label: "What should I order here?", onClick: function () { recommendReply(); } }
+    ];
+  }
+  // Generic follow-ups for LLM replies with no dish mentioned — all
+  // three resolve through the local pipeline (KB / local bot), so they
+  // work even when the LLM is unreachable.
+  function genericSuggestions() {
+    return [
+      { label: "Recommend 3 dishes for me", onClick: function () { handleUserText("Recommend 3 dishes for me"); } },
+      { label: "Show my diet card", onClick: function () { handleUserText("Show my diet card"); } },
+      { label: "How do I order?", onClick: function () { handleUserText("How do I order with a QR code?"); } }
+    ];
+  }
+
   // ---- Dish verdict as a Bun reply ----
   function dishDetail(dish, intro) {
     var v = CB.verdictFor(dish);
@@ -252,7 +311,7 @@
       "<p><b>How hot:</b> " + esc(CB.spiceLabel(dish.spicy)) + "</p>" +
       "<p><b>Show them this:</b></p><p class=\"bigzh\">" + esc(dish.waiter) + "</p>" +
       "<p class=\"small\">" + esc(dish.py || "") + "</p>";
-    addBun(html, { cards: [dish], nextSteps: dish });
+    addBun(html, { cards: [dish], nextSteps: dish, suggestions: dishSuggestions(dish) });
   }
 
   // ---- Diet card as a Bun reply ----
@@ -547,7 +606,7 @@
       if (res && res.text) {
         history.push({ role: "assistant", content: res.text });
         var dishes = (res.dishes || []).map(dishById).filter(Boolean);
-        var row = addBun(esc(res.text), { cards: dishes.length ? dishes : null });
+        var row = addBun(esc(res.text), { cards: dishes.length ? dishes : null, suggestions: dishes.length ? dishSuggestions(dishes[0]) : genericSuggestions() });
         if (res.cardId) showCard(res.cardId);
         if (res.cityId) { var c = cityById(res.cityId); if (c) addBun("<b>" + esc(c.en) + "</b><br>" + esc(c.scene)); }
         suggestChips();

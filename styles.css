@@ -95,12 +95,16 @@ a{color:var(--accent)}
 .bottomnav a{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;padding:9px 4px;font-size:12px;font-weight:600;line-height:1.2;color:#9CA3AF;text-decoration:none;min-height:56px}
 .bottomnav a svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .bottomnav a.active{color:#C4B5FD}
+/* ---- Decode: the App's main feature — centre, raised, accent (28 Nov 2026, Oliver) ---- */
+.bottomnav a.nav-decode{flex:1.2;background:#6D28D9;color:#fff;border-radius:22px;margin:-18px 2px 0;padding:12px 4px 10px;min-height:76px;justify-content:center;box-shadow:0 12px 24px rgba(109,40,217,.45)}
+.bottomnav a.nav-decode svg{width:24px;height:24px}
+.bottomnav a.nav-decode.active{color:#fff}
 html[data-theme="dark"] .bottomnav{background:#000000;border:1px solid #232E3D}
 
 /* ---- Cards: every section is one card ---- */
 .card{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:20px;margin:0;scroll-margin-top:68px;scroll-margin-bottom:168px;overflow:hidden;overflow-wrap:anywhere}
 .card-body{padding-top:4px}
-.card-decoder{border:2px solid var(--accent)}
+.card-decoder{border:2px solid var(--accent);box-shadow:var(--shadow-lift)}
 .sec-kicker{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 8px}
 .block-sub{font-size:15px;color:var(--muted);margin:0 0 14px;line-height:1.6}
 
@@ -212,7 +216,10 @@ footer{padding:8px 4px;border-top:1px solid var(--line)}
 
 /* ---- v5.3: decoder, clearer — one purpose line, three labelled ways in,
    live suggestions under the input, one-line price basis everywhere. ---- */
-.decode-purpose{font-size:15px;line-height:1.6;color:var(--ink);margin:0 0 4px}
+/* ---- Decoder hero intro (28 Nov 2026, Oliver): highlight block — accent-soft
+   background + accent bar, bold lead. No gradient, no warm colour. ---- */
+.decode-intro{background:var(--accent-soft);border-left:3px solid var(--accent);border-radius:14px;padding:12px 14px;margin:0 0 12px}
+.decode-intro p{margin:0;font-size:15px;line-height:1.6}
 .decode-ways{display:flex;gap:10px;margin:4px 0}
 .decode-ways .way-btn{flex:1;min-width:0;margin:0;padding:12px 8px;font-size:15px}
 .decode-suggest{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 0}
@@ -238,7 +245,6 @@ footer{padding:8px 4px;border-top:1px solid var(--line)}
 .bun-btn span{line-height:1}
 /* v5.3: the one-line value prop — what this app solves, first screen,
    under the Hero. Cormorant italic, no headline wall, no stats. */
-.value-prop{font-family:var(--font-display);font-size:19px;font-style:italic;font-weight:500;line-height:1.45;color:var(--ink);margin:2px 2px 0;text-align:center}
 /* v6.7: slogan on the home view — the brand line under the Hero, above the value prop. Cormorant, small, quiet. */
 .slogan{font-family:var(--font-display);font-size:17px;font-weight:600;letter-spacing:.05em;line-height:1.4;color:var(--muted);margin:2px 2px 0;text-align:center}
 .ask-bun{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;text-align:left;padding:12px 16px;border-radius:20px;margin:0}
@@ -350,6 +356,11 @@ body.bun-drawer-open{overflow:hidden}
 .chat-chips{display:flex;gap:6px;overflow-x:auto;padding:4px 4px 6px;scrollbar-width:none}
 .chat-chips::-webkit-scrollbar{display:none}
 .chat-chips .chip{flex:0 0 auto;margin:0}
+/* Follow-up Suggestions (Learn from Ask Lucy, 2026-11-28): up to 3
+   tappable follow-ups under a Bun reply. Pills, wrap, left-aligned. */
+.suggestions{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 2px}
+.suggestions .sug{border:1.5px solid var(--line-strong);background:var(--card2);color:var(--ink);padding:7px 13px;cursor:pointer;min-height:36px;font-size:13px;font-weight:600;border-radius:999px;text-align:left}
+.suggestions .sug:active{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 /* v4.3: diet step is multi-select — chips wrap so all 8 + Done are visible
    without scrolling; Done is a solid accent button, not a plain chip. */
 .chat-chips.wrap{flex-wrap:wrap;overflow-x:visible}

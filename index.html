@@ -1600,7 +1600,38 @@
 </div>
 </header>
 <main>
-<!-- v5.7: clean, short home — search, chips, hero, value line, Ask Bun, Signature, Cities (folded). Decode teaser deleted (v5.7): it repeated the value line a third time and duplicated the Search view decoder + bottom nav. Chat lives behind the Bun button / Ask Bun. -->
+<section class="card card-decoder" id="decoder">
+<h2>Decode</h2>
+<div class="decode-intro">
+<p><b>Can't read the menu?</b> Type it, say it, or snap a photo — Bun tells you in 3 seconds if you can eat it.</p>
+</div>
+
+<div class="count-slim">
+<p id="countText">Left today: 3 of 3</p>
+<div class="progress"><div id="countBar" style="width:100%"></div></div>
+</div>
+<p><b>Step 1 — Pick one way in</b></p>
+<div class="decode-ways">
+<button type="button" class="way-btn" id="typeBtn">⌨️ Type</button>
+<button type="button" class="way-btn voice-btn" id="voiceBtn">🎙 Speak</button>
+<button type="button" class="way-btn camera-btn" id="cameraBtn">📷 Snap</button>
+</div>
+<p class="voice-row"><button type="button" class="voice-lang" id="voiceLangBtn" aria-label="Voice language">Voice: English</button><span class="small" id="voiceStatus" role="status"></span></p>
+<input type="file" id="photoInput" accept="image/*" capture="environment" class="hidden" aria-label="Menu photo">
+<div id="photoPreview" class="hidden"></div>
+<p id="photoStatus" class="small hidden" role="status"></p>
+<label for="dishInput">Dish name</label>
+<input type="text" id="dishInput" placeholder="Mapo Tofu / 麻婆豆腐 — any language" autocomplete="off" lang="zh-CN">
+<div id="decodeSuggest" class="decode-suggest hidden" aria-live="polite"></div>
+<p><button type="button" class="big" id="decodeBtn">Check this dish</button> <button type="button" class="ghost" id="menuBtn">Menu</button></p>
+<p id="decodeStatus" class="small hidden" role="status"></p>
+<div id="result" class="hidden"></div>
+<p><b>Step 2 — Your diet</b></p>
+<div class="chips" id="profiles"></div>
+<p class="muted" id="profileDesc">No restriction.</p>
+<p class="small">Just a guide, not medical advice.<br>If you're not sure, don't eat it.</p>
+</section>
+<!-- v5.7: clean, short home — search, chips, hero, value line, Ask Bun, Signature, Cities (folded). Decoder is the hero now (28 Nov 2026, Oliver): it sits first in <main>, above this home section — the value line was removed as a duplicate of the decoder intro. Chat lives behind the Bun button / Ask Bun. -->
 <section id="homeView" aria-label="Home">
 <div class="search-row">
 <div class="searchbar" id="searchBar" role="search">
@@ -1614,8 +1645,10 @@
 <p class="sec-kicker" id="homeResultsTitle">Matches</p>
 <div class="grid" id="homeDishList"></div>
 </div>
-<!-- v6.2: hero is a 3-photo carousel (banquet / Peking duck / flat-lay feast), auto-rotates every 4.5s, dots + swipe, pauses 12s after any interaction. All 3 slides are plain <img> in the DOM so they preload — no white flash on switch. No video, no sound. -->
-<div class="hero-banner browse-block" id="heroCarousel" role="region" aria-roledescription="carousel" aria-label="Chinese food photos">
+<!-- v6.2: hero is a 3-photo carousel (banquet / Peking duck / flat-lay feast), auto-rotates every 4.5s, dots + swipe, pauses 12s after any interaction. All 3 slides are plain <img> in the DOM so they preload — no white flash on switch. No video, no sound. 28 Nov 2026: wrapped in a <details> so this block folds like the other home sections; default open. -->
+<details class="home-sec browse-block" id="homePhotos" open>
+<summary><span class="card-head"><h2>Photos</h2><span class="card-sub">A taste of China — swipe through.</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<div class="hero-banner" id="heroCarousel" role="region" aria-roledescription="carousel" aria-label="Chinese food photos">
 <div class="hero-slides">
 <figure class="hero-slide is-active"><img src="assets/china-bite-hero-v55.webp" alt="A round table of elegant Chinese banquet dishes — bamboo steamers of dim sum, soups and greens on dark wood" width="800" height="320" fetchpriority="high" decoding="async"><figcaption>A full table, family-style.</figcaption></figure>
 <figure class="hero-slide"><img src="assets/china-bite-hero-v62-duck.webp" alt="Peking duck with pancakes, cucumber, scallion and sauces, seen from above" width="800" height="320" decoding="async"><figcaption>Peking duck, sliced at the table.</figcaption></figure>
@@ -1627,8 +1660,8 @@
 <button type="button" class="hero-dot" data-hero-dot="2" aria-label="Photo 3: family-style dishes"></button>
 </div>
 </div>
+</details>
 <p class="slogan browse-block">Discover China, One Bite at a Time.</p>
-<p class="value-prop browse-block">The menu is in Chinese. Bun tells you what it is, if you can eat it, and how to order it — in 3 seconds.</p>
 <button type="button" class="ask-bun browse-block" id="askBunBtn" data-view="chat"><img src="assets/china-bite-mascot-dumpling-288.webp" alt="Bun" width="32" height="32"><span><b>Ask Bun</b></span></button>
 <details class="home-sec browse-block" id="homeSignature" open>
 <summary><span class="card-head"><h2>Signature Dishes</h2><span class="card-sub">Pick a city below — its 3 must-eats appear here.</span></span><span class="chev" aria-hidden="true">▾</span></summary>
@@ -1795,46 +1828,6 @@
 <div id="cityList"></div>
 </div>
 </details>
-<section class="card card-decoder" id="decoder">
-<h2>Decode</h2>
-<p class="decode-purpose">Can't read the menu? Type it, say it, or snap it — Bun tells you if you can eat it.</p>
-
-<div class="count-slim">
-<p id="countText">Left today: 3 of 3</p>
-<div class="progress"><div id="countBar" style="width:100%"></div></div>
-</div>
-<p><b>Step 1 — Your diet</b></p>
-<div class="chips" id="profiles"></div>
-<p class="muted" id="profileDesc">No restriction.</p>
-<p><b>Step 2 — Pick one way in</b></p>
-<div class="decode-ways">
-<button type="button" class="way-btn" id="typeBtn">⌨️ Type</button>
-<button type="button" class="way-btn voice-btn" id="voiceBtn">🎙 Speak</button>
-<button type="button" class="way-btn camera-btn" id="cameraBtn">📷 Snap</button>
-</div>
-<p class="voice-row"><button type="button" class="voice-lang" id="voiceLangBtn" aria-label="Voice language">Voice: English</button><span class="small" id="voiceStatus" role="status"></span></p>
-<input type="file" id="photoInput" accept="image/*" capture="environment" class="hidden" aria-label="Menu photo">
-<div id="photoPreview" class="hidden"></div>
-<p id="photoStatus" class="small hidden" role="status"></p>
-<label for="dishInput">Dish name</label>
-<input type="text" id="dishInput" placeholder="Mapo Tofu / 麻婆豆腐 — any language" autocomplete="off" lang="zh-CN">
-<div id="decodeSuggest" class="decode-suggest hidden" aria-live="polite"></div>
-<p><button type="button" class="big" id="decodeBtn">Check this dish</button> <button type="button" class="ghost" id="menuBtn">Menu</button></p>
-<p id="decodeStatus" class="small hidden" role="status"></p>
-<div id="result" class="hidden"></div>
-<details class="subcard" id="dishPicker">
-<summary>Or tap a dish — all 125</summary>
-<p class="small">Tap one — I'll tell you in 3 seconds.</p>
-<div class="grid" id="dishList"></div>
-</details>
-<p class="small">Just a guide, not medical advice.<br>If you're not sure, don't eat it.</p>
-</section>
-
-
-
-
-
-
 
 <details class="card" id="meituanSection">
 <summary><span class="card-head"><h2>Hotel Card</h2><span class="card-sub">Fill it once, copy it whenever you order</span></span><span class="chev" aria-hidden="true">▾</span></summary>
@@ -1905,8 +1898,6 @@
 <p>Friends invited: <span id="inviteCount">0</span></p>
 </div>
 </details>
-</div>
-</details>
 
 <details class="card" id="faqSection">
 <summary><span class="card-head"><h2>Questions?</h2><span class="card-sub">Short answers, no fluff — ask Bun and he'll answer these too</span></span><span class="chev" aria-hidden="true">▾</span></summary>
@@ -1970,6 +1961,15 @@
 </div>
 </details>
 
+<!-- Menu (28 Nov 2026, Oliver): the dish list lives at the very bottom of the page, folded by default. Dishes in the bottom nav and Menu in the decoder both open it — see openDishPicker in app.js. -->
+<details class="card" id="dishPicker">
+<summary><span class="card-head"><h2>Menu</h2><span class="card-sub">All 125 dishes — tap one to check it</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+<div class="card-body">
+<p class="small">Tap one — I'll tell you in 3 seconds.</p>
+<div class="grid" id="dishList"></div>
+</div>
+</details>
+
 </main>
 
 <div id="chatComposer" class="chat-composer">
@@ -1991,7 +1991,8 @@
 </div>
 <nav class="bottomnav" aria-label="Bottom navigation">
 <a href="#homeView" data-view="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/></svg><span>Home</span></a>
-<a href="#decoder" data-view="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></svg><span>Search</span></a>
+<a href="#dishPicker" id="navDishes"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg><span>Dishes</span></a>
+<a href="#decoder" data-view="search" id="navDecode" class="nav-decode" aria-label="Decode a dish"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V6a2 2 0 0 1 2-2h2"/><path d="M16 4h2a2 2 0 0 1 2 2v2"/><path d="M20 16v2a2 2 0 0 1-2 2h-2"/><path d="M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M4 12h16"/></svg><span>Decode</span></a>
 <a href="#qrSection" data-view="orders"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3z"/><path d="M9 8h6M9 12h6"/></svg><span>Orders</span><span class="ord-badge hidden" id="ordBadge">0</span></a>
 <a href="#subscribe" data-view="account"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg><span>Account</span></a>
 </nav>

@@ -638,6 +638,7 @@ window.CHINABITE_DATA = {
     { id:"egg", en:"Egg allergy", zh:"蛋过敏", desc:"No egg." },
     { id:"dairy", en:"Dairy allergy", zh:"奶过敏", desc:"No milk, butter or cream." },
     { id:"gluten", en:"Gluten-free", zh:"无麸质", desc:"No wheat, no soy sauce." },
+    { id:"treenut", en:"Tree nut allergy", zh:"坚果过敏", desc:"No tree nuts — ask first, none checked yet." },
     { id:"sesame", en:"Sesame allergy", zh:"芝麻过敏", desc:"No sesame or sesame oil." },
     { id:"soy", en:"Soy allergy", zh:"大豆过敏", desc:"No soy, tofu or soy sauce." },
     { id:"nospicy", en:"No spicy", zh:"不吃辣", desc:"No chili, no spicy food." }
